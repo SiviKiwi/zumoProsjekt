@@ -53,4 +53,4 @@ void loop() {
 }
 
 
-// Jeg heter iver.
+// Jeg heter iver. Haha. Hallo Sivert. Med stor s.
