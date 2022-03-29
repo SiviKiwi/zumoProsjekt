@@ -27,12 +27,12 @@ float getSpeed(float distance, unsigned long ms)
 
 float setCapacity(float speed, unsigned long ms)
 {
-  if (abs(speed) < 0.1)
+  if (speed < 0.1)
   {
     speed = 0;
   }
 
-  float currentUsage = 2.0 * abs(speed) + 10.0;
+  float currentUsage = 2.0 * speed + 10.0;
 
   currentCapacity -= currentUsage * (float)ms / 1000.0;
 
