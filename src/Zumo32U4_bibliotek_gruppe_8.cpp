@@ -29,14 +29,28 @@ float Zumo32U4_bibliotek_gruppe_8::getSpeed(float distance, unsigned long ms)
   return cmSecond; 
 }
 
-float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
+float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, bool SOSmode, float currentCapacity)
 {
   if (speed < 0.1)
   {
     speed = 0;  
   }
 
-  float currentUsage = 2.0 * speed + 10.0;
+  if ((SOSmode == true) && (currentCapacity < 864000))
+  {
+    int multiplyer = 10;
+  }
+  else
+  {
+    multiplyer = 1;
+  }
+  
+  if (currentCapacity > 864000)
+  {
+    SOSmode = false;
+  }
+
+  float currentUsage = 2.0 * multiplyer * speed + 10.0;
   currentCapacity -= currentUsage * (float)ms / 1000.0;
   return currentCapacity;
 }

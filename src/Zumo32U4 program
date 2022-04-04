@@ -11,17 +11,16 @@
 Zumo32U4Encoders encoders;
 Zumo32U4Motors motors;
 Zumo32U4ButtonA buttonA;
+Zumo32U4ButtonB buttonB;
 Zumo32U4LCD display;
 Zumo32U4_bibliotek_gruppe_8 egendefinert;
-
-
-
 
 unsigned long time;
 float speed;
 float prevDist = 0;
 float currentCapacity = 1200.0 * 3600;
-
+bool SOSmode = false;
+bool SOSmodeOneTimeOnly = false;
 
 unsigned long sekstiSekTimerFor = 0;
 unsigned long sekstiSekTimerEtter = 0;
@@ -62,7 +61,13 @@ void loop()
     unsigned long elapsedTime = timeNow - time;
     speed = egendefinert.getSpeed(dist - prevDist, elapsedTime);
 
-    egendefinert.setCapacity(speed, elapsedTime);
+    if((buttonB == true) && (SOSmodeOneTimeOnly == false))
+    {
+        SOSmode = true;
+        SOSmodeOneTimeOnly = true;
+    }
+
+    egendefinert.setCapacity(speed, elapsedTime, SOSmode, currentCapacity);
 
     display.clear();
     display.gotoXY(0, 0);
