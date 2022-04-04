@@ -95,7 +95,7 @@ void loop()
         sekstiSekTimerFor = millis();
     }
 
-    if (speed < 0.1)
+    else if (speed < 0.1)
     {
         sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
         sekstiSekTimerFor = 0;
@@ -142,4 +142,9 @@ void loop()
 
     }
 }
+
+
+/* Det går ann å kutte ned på koden jeg har skrevet, men for å få det inn i
+   funksjoner så må man få funksjonene til å levere lister/tupler/arrays og 
+   deretter ha variabler som kan fange opp de ulike delene av lister/tupler/array. */
 
