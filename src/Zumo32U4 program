@@ -28,7 +28,7 @@ unsigned long sekstiSekTimerEtter = 0;
 unsigned long sekstiSekTimer = 0;
 
 float sekstiSekMaksHastighet = 0;
-float GjennomsnittsHastighet = 0;
+float gjennomsnittsHastighet = 0;
 float sekstiSekunderDist = 0;
 float prevSekstiSekunderDist = 0;
 
@@ -75,69 +75,71 @@ void loop()
 
   }
     
+    
     /* Under er for sekstisekunders */
 
-  
+
+    if (sekstiSekTimerFor == 0)
+    {
+        sekstiSekTimerEtter = 0;
+    }
+
+    else 
+    {
+        sekstiSekTimerEtter = millis();   
+    }
+
+    if (speed > 0.1)
+    {
+        sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
+        sekstiSekTimerFor = millis();
+    }
+
+    if (speed < 0.1)
+    {
+        sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
+        sekstiSekTimerFor = 0;
+    }
+
+
+
     if (sekstiSekTimer > 60000)
     {
-    
-    if (speed > sekstiSekMaksHastighet)
-    {                           // Her henter jeg inn makshastigheten som skal vises etter seksti sekunder.
-        sekstiSekMaksHastighet = speed;
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+        if (speed > sekstiSekMaksHastighet)
+        {                 // Her henter jeg inn makshastigheten som skal vises etter seksti sekunder.
+            sekstiSekMaksHastighet = speed; // VIKTIG
+        }
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        
+
+        GjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist)/60; // VIKTIG
+        prevSekstiSekunderDist = sekstiSekunderDist;
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+        if (speed > maksHastiget)
+        {
+            tid70 = millis();
+        }
+
+        if (speed < maksHastiget)
+        {
+            tid70Etter = millis();
+            tid70Differensial = tid70Etter - tid70; // VIKTIG
+        }
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    sekstiSekTimer = 0;
+
     }
-
-    GjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist)/60;
-
-
-
-    if (speed > maksHastiget)
-    {
-        tid70 = millis();
-    }
-
-    if (speed < maksHastiget)
-    {
-        tid70Etter = millis();
-        tid70Differensial = tid70Etter - tid70;
-    }
-
-  }
 }
 
-
-
-
-
-
-
-if (sekstiSekTimerFor == 0)
-{
-    sekstiSekTimerEtter = 0
-}
-else 
-{
-    sekstiSekTimerEtter = millis();   
-}
-
-
-if (speed > 0)
-{
-    sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
-    sekstiSekTimerFor = millis();
-}
-
-if (speed == 0)
-{
-    
-    sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
-    sekstiSekTimerFor = 0;
-}
-
-
-
-// Jeg har lyst til aa bruke interrupts for baade sekstiSek og 70%avHastighet. Er det mulig?
-
-
-// evt. en boolsk variabel som viser tilstand om speed har blitt hoyere enn 70%.
-// Den vil deretter gjøre det mulig å sette en timer, hvis timeren er på vil vi få
-// hvor lang tid den har blitt høyere
