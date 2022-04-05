@@ -94,3 +94,5 @@ void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
 }
 
 
+/* Disse funksjonene fungerer nok ikke pågrunn av mangel på constructors.*/
+

@@ -251,9 +251,8 @@ unsigned long tid70Differensial = 0;
 const int maksHastiget = 0; // NB: husk å endre denne verdien til faktisk makshastighet.
 
 
-unsigned long speedometerEvery60()
+unsigned long speedometerEvery60(float speed, const int maksHastiget)
 {
-
 
 if (Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid > 60000)
     {
@@ -270,7 +269,7 @@ if (Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid > 60000)
         
 
         GjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist)/60; // VIKTIG
-        prevSekstiSekunderDist = sekstiSekunderDist;
+        prevSekstiSekunderDist = sekstiSekunderDist; // sekstiSekunderDist trenger en verdi.
 
 
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -295,7 +294,7 @@ if (Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid > 60000)
     }
 
     unsigned long resultArray[0] = sekstiSekMaksHastighet;
-    resulArray[1] = GjennomsnittsHastighet;
+    resultArray[1] = GjennomsnittsHastighet;
     resultArray[2] = tid70Differensial;
 
     return resultArray;
