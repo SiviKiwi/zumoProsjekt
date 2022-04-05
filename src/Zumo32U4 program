@@ -153,3 +153,9 @@ void loop()
    funksjoner så må man få funksjonene til å levere lister/tupler/arrays og 
    deretter ha variabler som kan fange opp de ulike delene av lister/tupler/array. */
 
+
+
+
+
+   /* Under her er koden til displayets */
+
