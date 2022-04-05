@@ -57,7 +57,7 @@ void loop()
   egendefinert.oneSecBatState(); // Denne funksjonen sjekker om det har gått ti sekunder siden
                                  // den sist. gå til library c++ for å legge til statusfunksjoner.
 
-  int16_t countLeft = encoders.getCountsLeft();
+  int16_t countLeft = encoders.getCountsLeft();             
   int16_t countRight = encoders.getCountsRight();
 
   int16_t avgCount = (countLeft + countRight) / 2;
@@ -176,3 +176,127 @@ ISR(TIMER1_OVF_VECT)
     egendefinert.vectorOverflow(); 
 }
 
+
+
+/* Under her kommer funksjoner som jeg skal forkorte hovedprogrammet med*/
+        // Jeg er skeptisk til om disse kommer til å fungere.
+
+
+float distance()  // Denne funksjonen erstatter distanse koden. 
+{
+  int16_t countLeft = encoders.getCountsLeft();
+  int16_t countRight = encoders.getCountsRight();
+
+  int16_t avgCount = (countLeft + countRight) / 2;
+
+  float dist = Zumo32U4_bibliotek_gruppe_8::getDistance(avgCount);
+
+  return dist;
+}
+
+
+
+
+
+
+
+unsigned long sekstiSekTimerFor = 0;
+unsigned long sekstiSekTimerEtter = 0;
+unsigned long sekstiSekTimer = 0;
+
+unsigned long findSekstiSekTid()
+{
+
+    if (sekstiSekTimerFor == 0)
+    {
+        sekstiSekTimerEtter = 0;
+    }
+
+    else 
+    {
+        sekstiSekTimerEtter = millis();   
+    }
+
+    if (speed > 0.1)
+    {
+        sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
+        sekstiSekTimerFor = millis();
+    }
+
+    else if (speed < 0.1)
+    {
+        sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
+        sekstiSekTimerFor = 0;
+    }
+
+    return sekstiSekTimer;
+}
+
+
+
+
+
+
+
+
+
+float sekstiSekMaksHastighet = 0;
+float gjennomsnittsHastighet = 0;
+float sekstiSekunderDist = 0;
+float prevSekstiSekunderDist = 0;
+
+unsigned long tid70 = 0;
+unsigned long tid70Etter = 0;
+unsigned long tid70Differensial = 0;
+const int maksHastiget = 0; // NB: husk å endre denne verdien til faktisk makshastighet.
+
+
+unsigned long speedometerEvery60()
+{
+
+
+if (Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid > 60000)
+    {
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+        if (speed > sekstiSekMaksHastighet)
+        {                 // Her henter jeg inn makshastigheten som skal vises etter seksti sekunder.
+            sekstiSekMaksHastighet = speed; // VIKTIG
+        }
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        
+
+        GjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist)/60; // VIKTIG
+        prevSekstiSekunderDist = sekstiSekunderDist;
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+        if (speed > maksHastiget)
+        {
+            tid70 = millis();
+        }
+
+        if (speed < maksHastiget)
+        {
+            tid70Etter = millis();
+            tid70Differensial = tid70Etter - tid70; // VIKTIG
+        }
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    sekstiSekTimer = 0;
+
+    }
+
+    unsigned long resultArray[0] = sekstiSekMaksHastighet;
+    resulArray[1] = GjennomsnittsHastighet;
+    resultArray[2] = tid70Differensial;
+
+    return resultArray;
+}
