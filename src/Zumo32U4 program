@@ -19,6 +19,7 @@ unsigned long time;
 float speed;
 float prevDist = 0;
 float currentCapacity = 1200.0 * 3600;
+
 bool SOSmode = false;
 bool SOSmodeOneTimeOnly = false;
 
@@ -40,6 +41,13 @@ void setup()
 {
   display.init();
   time = millis();
+
+  noInterrupts();
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCCR1B |= 0b00000101;
+  TIMSK1 |= 0b00000001;
+  interrupts();
 }
 
 
@@ -159,3 +167,43 @@ void loop()
 
    /* Under her er koden til displayets */
 
+  int twoToTenCounter = 0;
+  bool tenAchieved = false;
+
+void timer1OverflowCounter()
+{
+  unsigned long time_now = millis();
+  while (millis() < time_now + 1000)
+  {
+      // Her går koden som skal vises på skjermen.
+      // Trengs det å starte skjerm, så gjør det
+      // før time_now variabelen.
+  } 
+
+  twoToTenCounter = 0;
+  tenAchieved = false;
+}
+
+
+ISR(TIMER1_OVF_VECT)
+{  
+    TCNT1 = 31250;
+    twoToTenCounter = twoToTenCounter + 1; 
+}
+
+void vectorOverflow(int, twoToTenCounter)
+{
+    twoToTenCounter = twoToTenCounter + 1;
+    if (twoToTenCounter >= 5)
+    {
+        tenAchieved = true;
+    }
+}
+
+void oneSecBatState()
+{
+    if (tenAchieved = true)
+    {
+        timer1OverflowCounter();
+    }
+}
