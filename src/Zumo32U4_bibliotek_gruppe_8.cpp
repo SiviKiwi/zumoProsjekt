@@ -12,6 +12,10 @@ Zumo32U4Motors motors;
 Zumo32U4ButtonA buttonA;
 Zumo32U4LCD display;
 
+int twoToTenCounter = 0;
+bool tenAchieved = false;
+
+
 Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   
 }
@@ -54,3 +58,39 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, bo
   currentCapacity -= currentUsage * (float)ms / 1000.0;
   return currentCapacity;
 }
+
+
+
+
+void Zumo32U4_bibliotek_gruppe_8::timer1OverflowCounter()
+{
+  unsigned long time_now = millis();
+  while (millis() < time_now + 1000)
+  {
+      // Her går koden som skal vises på skjermen.
+      // Trengs det å starte skjerm, så gjør det
+      // før time_now variabelen.
+  } 
+
+  twoToTenCounter = 0;
+  tenAchieved = false;
+}
+
+void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
+{
+    twoToTenCounter = twoToTenCounter + 1;
+    if (twoToTenCounter >= 5)
+    {
+        tenAchieved = true;
+    }
+}
+
+void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
+{
+    if (tenAchieved = true)
+    {
+        Zumo32U4_bibliotek_gruppe_8::timer1OverflowCounter();
+    }
+}
+
+

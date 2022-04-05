@@ -15,6 +15,9 @@ class Zumo32U4_bibliotek_gruppe_8{
     double getDistance(int16_t encoderCount);
     double getSpeed(float distance, unsigned long ms);
     double setCapacity(float speed, unsigned long ms);
+    void timer1OverflowCounter();
+    void vectorOverflow();
+    void oneSecBatState();
 };
 
 #endif
