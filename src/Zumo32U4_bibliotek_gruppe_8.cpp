@@ -15,27 +15,24 @@ Zumo32U4LCD display;
 
 
 Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
-  
+
 }
 
-float Zumo32U4_bibliotek_gruppe_8::getDistance(int16_t encoderCount)
+float Zumo32U4_bibliotek_gruppe_8::getDistance()
 {
-  float rotasjoner = (float)encoderCount / (75.81 * 12.0);
-  float cm = rotasjoner * 12.2522;
-  return cm; 
+  return Zumo32U4_bibliotek_gruppe_8::dist;
 }
 
-float Zumo32U4_bibliotek_gruppe_8::getSpeed(float distance, unsigned long ms)
+float Zumo32U4_bibliotek_gruppe_8::getSpeed()
 {
-  float cmSecond = distance / ((float)ms / 1000);
-  return cmSecond; 
+    return Zumo32U4_bibliotek_gruppe_8::speed;
 }
 
 float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, float currentCapacity)
 {
   if (speed < 0.1)
   {
-    speed = 0;  
+    speed = 0;
   }
 //---------------------------------------------------------------
 
@@ -54,12 +51,12 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, fl
   {
     multiplyer = 1;
   }
-  
+
   if (currentCapacity > 864000)
   {
     SOSmode = false;
   }
-            // TODO: Endre funksjonen slik at hvis farten er positiv skal den ikkke lades ut 
+            // TODO: Endre funksjonen slik at hvis farten er positiv skal den ikkke lades ut
             // ti ganger raskere.
   float currentUsage = 2.0 * multiplyer * speed + 10.0;
   currentCapacity -= currentUsage * (float)ms / 1000.0;
@@ -77,7 +74,7 @@ void Zumo32U4_bibliotek_gruppe_8::timer1OverflowCounter()
       // Her går koden som skal vises på skjermen.
       // Trengs det å starte skjerm, så gjør det
       // før time_now variabelen.
-  } 
+  }
 
   Zumo32U4_bibliotek_gruppe_8::twoToTenCounter = 0;
   Zumo32U4_bibliotek_gruppe_8::tenAchieved = false;
@@ -108,9 +105,9 @@ void Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid(float speed)
         Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerEtter = 0;
     }
 
-    else 
+    else
     {
-        Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerEtter = millis();   
+        Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerEtter = millis();
     }
 
     if (speed > 0.1)
@@ -141,7 +138,7 @@ if (Zumo32U4_bibliotek_gruppe_8::SekstiSekTimer > 60000)
 
 
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        
+
 
         Zumo32U4_bibliotek_gruppe_8::GjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist)/60; // VIKTIG Denne er ikke ferdig!!!
         prevSekstiSekunderDist = sekstiSekunderDist; // sekstiSekunderDist trenger en verdi.
@@ -169,16 +166,22 @@ if (Zumo32U4_bibliotek_gruppe_8::SekstiSekTimer > 60000)
     }
 }
 
-void distance()  // Denne funksjonen erstatter distanse koden. 
+void updateSpeedDist()  // Denne funksjonen erstatter distanse koden.
 {
   int16_t countLeft = encoders.getCountsLeft();
   int16_t countRight = encoders.getCountsRight();
 
   int16_t avgCount = (countLeft + countRight) / 2;
 
-  Zumo32U4_bibliotek_gruppe_8::prevDist = Zumo32U4_bibliotek_gruppe_8::dist;
-  Zumo32U4_bibliotek_gruppe_8::dist = Zumo32U4_bibliotek_gruppe_8::getDistance(avgCount);
+  float rotasjoner = (float)avgCount / (75.81 * 12.0);
+  Zumo32U4_bibliotek_gruppe_8::dist = rotasjoner * 12.2522;
+
+  if( Zumo32U4_bibliotek_gruppe_8::lastTimeGetSpeed > 100){
+    float cmSecond =  / ((float)ms / 1000);
+
+    Zumo32U4_bibliotek_gruppe_8::prevDist = Zumo32U4_bibliotek_gruppe_8::dist;
+    Zumo32U4_bibliotek_gruppe_8::lastTimeGetSpeed = millis();
+    }
 }
 
 /* Disse funksjonene fungerer nok ikke pågrunn av mangel på constructors.*/
-

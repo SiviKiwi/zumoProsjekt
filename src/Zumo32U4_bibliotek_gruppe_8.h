@@ -21,25 +21,27 @@ class Zumo32U4_bibliotek_gruppe_8{
 
     bool getTenAchieved();
 
-    double getDistance(int16_t encoderCount);
-    double getSpeed(float distance, unsigned long ms);
+    double getDistance();
+    double getSpeed();
+    void updateSpeedDist();
     double setCapacity(float speed, unsigned long ms);
     void timer1OverflowCounter();
     void vectorOverflow();
     void oneSecBatState();
     void speedometerEvery60();
     void findSekstiSekTid();
-    void distance();
 
   private:
     int twoToTenCounter = 0;
     bool tenAchieved = false;
+    unsigned long lastTimeGetSpeed;
 
     bool SOSmode = false;
     bool SOSmodeOneTimeOnly = false;
 
     float prevDist = 0;
     float dist = 0;
+    float speed;
 
     unsigned long sekstiSekTimerFor = 0;
     unsigned long sekstiSekTimerEtter = 0;
