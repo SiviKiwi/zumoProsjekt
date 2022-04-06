@@ -13,8 +13,10 @@ Zumo32U4Motors motors;
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
 Zumo32U4ButtonC buttonC;
+Zumo32U4Buzzer buzzer;
 Zumo32U4LCD display;
 Zumo32U4_bibliotek_gruppe_8 egendefinert;
+
 
 unsigned long time;
 float speed;
@@ -131,19 +133,72 @@ void actualCharging()
 
 
 
+ // -------------------------------------------------------------------------
+
+
 
 
 bool batteryLevelState = false;
+unsigned long batteryLevelWarningLedTimer1 = 0;
+unsigned long batteryLevelWarningLedTimer2 = 0;
+unsigned long batteryLevelWarningTimer = 0;
+bool batteryLevelWarningOne = false;
 void batteryLevelWarning()
 {
-  if ((batteryLevel <= 10) && (batteryLevel > 5))
+  if ((batteryLevel <= 10) && (batteryLevel > 5) && batteryLevelWarningOne = false)
   {
+      ledYellow(1);
+      buzzer.playFrequency(200, 300, 11)
+      batteryLevelWarningLedTimer1 = millis();
+      if ((millis() - batteryLevelWarningLedTimer1) > 300)
+      {
+        ledYellow(0);
+        batteryLevelWarningOne = true;
+      }
+
 
   }
 
   else if (batteryLevel <= 5)
   {
 
+    if ((batteryLevelState == false) || ((millis() - batteryLevelWarningTimer) > 15000)) 
+
+     motors.setSpeeds(0,0);
+
+     ledYellow(1);
+      buzzer.playFrequency(1000, 300, 14)
+      batteryLevelWarningLedTimer2 = millis();
+      if ((millis() - batteryLevelWarningLedTimer2) > 300)
+      {
+        ledYellow(0); 
+      }
+
+      batteryLevelWarningLedTimer2 = millis();
+      if ((millis() - batteryLevelWarningLedTimer2) > 100)
+      {
+        
+      }
+
+      ledYellow(1);
+      buzzer.playFrequency(1000, 300, 14)
+      batteryLevelWarningLedTimer2 = millis();
+      if ((millis() - batteryLevelWarningLedTimer2) > 300)
+      {
+        ledYellow(0);
+        batteryLevelState = true;
+      }
+
+      batteryLevelWarningTimer = millis();
+
+
+
+  }
+
+  else
+  {
+      batteryLevelWarningOne = false;
+      batteryLevelState = false;
   }
 }
 
@@ -152,7 +207,7 @@ void batteryLevelWarning()
 
 
 
-
+// -------------------------------------------------------------------------
 
 
 
