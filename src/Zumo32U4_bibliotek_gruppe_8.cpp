@@ -50,7 +50,8 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, bo
   {
     SOSmode = false;
   }
-
+            // TODO: Endre funksjonen slik at hvis farten er positiv skal den ikkke lades ut 
+            // ti ganger raskere.
   float currentUsage = 2.0 * multiplyer * speed + 10.0;
   currentCapacity -= currentUsage * (float)ms / 1000.0;
   return currentCapacity;
@@ -157,6 +158,17 @@ if (Zumo32U4_bibliotek_gruppe_8::SekstiSekTimer > 60000)
     Zumo32U4_bibliotek_gruppe_8::sekstiSekTimer = 0;
 
     }
+}
+
+void distance()  // Denne funksjonen erstatter distanse koden. 
+{
+  int16_t countLeft = encoders.getCountsLeft();
+  int16_t countRight = encoders.getCountsRight();
+
+  int16_t avgCount = (countLeft + countRight) / 2;
+
+  Zumo32U4_bibliotek_gruppe_8::prevDist = Zumo32U4_bibliotek_gruppe_8::dist;
+  Zumo32U4_bibliotek_gruppe_8::dist = Zumo32U4_bibliotek_gruppe_8::getDistance(avgCount);
 }
 
 /* Disse funksjonene fungerer nok ikke pågrunn av mangel på constructors.*/

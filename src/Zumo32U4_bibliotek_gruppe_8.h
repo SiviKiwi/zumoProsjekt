@@ -29,10 +29,14 @@ class Zumo32U4_bibliotek_gruppe_8{
     void oneSecBatState();
     void speedometerEvery60();
     void findSekstiSekTid();
+    void distance();
 
   private:
     int twoToTenCounter = 0;
     bool tenAchieved = false;
+
+    float prevDist = 0;
+    float dist = 0;
 
     unsigned long sekstiSekTimerFor = 0;
     unsigned long sekstiSekTimerEtter = 0;

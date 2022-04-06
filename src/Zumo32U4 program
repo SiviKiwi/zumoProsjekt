@@ -17,26 +17,11 @@ Zumo32U4_bibliotek_gruppe_8 egendefinert;
 
 unsigned long time;
 float speed;
-float prevDist = 0;
-float dist = 0;
+
 float currentCapacity = 1200.0 * 3600;
 
 bool SOSmode = false;
 bool SOSmodeOneTimeOnly = false;
-
-unsigned long sekstiSekTimerFor = 0;
-unsigned long sekstiSekTimerEtter = 0;
-unsigned long sekstiSekTimer = 0;
-
-float sekstiSekMaksHastighet = 0;
-float gjennomsnittsHastighet = 0;
-float sekstiSekunderDist = 0;
-float prevSekstiSekunderDist = 0;
-
-unsigned long tid70 = 0;
-unsigned long tid70Etter = 0;
-unsigned long tid70Differensial = 0;
-const int maksHastiget = 0; // NB: husk å endre denne verdien til faktisk makshastighet.
 
 void setup()
 {
@@ -58,12 +43,7 @@ void loop()
   egendefinert.oneSecBatState(); // Denne funksjonen sjekker om det har gått ti sekunder siden
                                  // den sist. gå til library c++ for å legge til statusfunksjoner.
 
-  int16_t countLeft = encoders.getCountsLeft();             
-  int16_t countRight = encoders.getCountsRight();
-
-  int16_t avgCount = (countLeft + countRight) / 2;
-
-  float dist = egendefinert.getDistance(avgCount);
+ egendefinert.distance();
 
   unsigned long timeNow = millis(); 
 
@@ -87,52 +67,16 @@ void loop()
     display.print(speed);
 
     time = millis();
-    prevDist = dist;
-
   }
     
-    
     /* Under er for sekstisekunders */
-
     egendefinert.findSekstiSekTid(speed);
     egendefinert.speedometerEvery60(speed);
     
 }
-
-
-/* Det går ann å kutte ned på koden jeg har skrevet, men for å få det inn i
-   funksjoner så må man få funksjonene til å levere lister/tupler/arrays og 
-   deretter ha variabler som kan fange opp de ulike delene av lister/tupler/array. */
-
-
-
-
-
-   /* Under her er koden til displayets */
-
 
 ISR(TIMER1_OVF_VECT)
 {  
     TCNT1 = 31250;
     egendefinert.vectorOverflow(); 
 }
-
-
-
-/* Under her kommer funksjoner som jeg skal forkorte hovedprogrammet med*/
-        // Jeg er skeptisk til om disse kommer til å fungere.
-
-
-void distance()  // Denne funksjonen erstatter distanse koden. 
-{
-  int16_t countLeft = encoders.getCountsLeft();
-  int16_t countRight = encoders.getCountsRight();
-
-  int16_t avgCount = (countLeft + countRight) / 2;
-
-  
-  Zumo32U4_bibliotek_gruppe_8::dist = Zumo32U4_bibliotek_gruppe_8::getDistance(avgCount);
-
-  
-}
-
