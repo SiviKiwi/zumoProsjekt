@@ -14,10 +14,17 @@
 
 
 class Zumo32U4_bibliotek_gruppe_8{
-  public:
+  private:
 
     int twoToTenCounter = 0;
     bool tenAchieved = false;
+
+  public:
+
+
+    int getTwoTenCounter();
+
+    bool getTenAchieved();
 
     double getDistance(int16_t encoderCount);
     double getSpeed(float distance, unsigned long ms);
