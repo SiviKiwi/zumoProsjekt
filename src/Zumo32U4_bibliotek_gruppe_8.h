@@ -14,11 +14,6 @@
 
 
 class Zumo32U4_bibliotek_gruppe_8{
-  private:
-
-    int twoToTenCounter = 0;
-    bool tenAchieved = false;
-
   public:
 
 
@@ -36,6 +31,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     void findSekstiSekTid();
 
   private:
+    int twoToTenCounter = 0;
+    bool tenAchieved = false;
 
     unsigned long sekstiSekTimerFor = 0;
     unsigned long sekstiSekTimerEtter = 0;
