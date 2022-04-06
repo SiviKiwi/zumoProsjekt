@@ -90,7 +90,7 @@ void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
     }
 }
 
-void findSekstiSekTid(float speed)
+void Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid(float speed)
 {
 
     if (Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerFor == 0)
@@ -116,7 +116,7 @@ void findSekstiSekTid(float speed)
     }
 }
 
-void speedometerEvery60(float speed)
+void Zumo32U4_bibliotek_gruppe_8::speedometerEvery60(float speed)
 {
 
 if (Zumo32U4_bibliotek_gruppe_8::SekstiSekTimer > 60000)

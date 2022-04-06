@@ -18,6 +18,7 @@ Zumo32U4_bibliotek_gruppe_8 egendefinert;
 unsigned long time;
 float speed;
 float prevDist = 0;
+float dist = 0;
 float currentCapacity = 1200.0 * 3600;
 
 bool SOSmode = false;
@@ -93,69 +94,9 @@ void loop()
     
     /* Under er for sekstisekunders */
 
-
-    if (sekstiSekTimerFor == 0)
-    {
-        sekstiSekTimerEtter = 0;
-    }
-
-    else 
-    {
-        sekstiSekTimerEtter = millis();   
-    }
-
-    if (speed > 0.1)
-    {
-        sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
-        sekstiSekTimerFor = millis();
-    }
-
-    else if (speed < 0.1)
-    {
-        sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
-        sekstiSekTimerFor = 0;
-    }
-
-
-
-    if (sekstiSekTimer > 60000)
-    {
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-
-        if (speed > sekstiSekMaksHastighet)
-        {                 // Her henter jeg inn makshastigheten som skal vises etter seksti sekunder.
-            sekstiSekMaksHastighet = speed; // VIKTIG
-        }
-
-
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-        
-
-        GjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist)/60; // VIKTIG
-        prevSekstiSekunderDist = sekstiSekunderDist;
-
-
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-
-        if (speed > maksHastiget)
-        {
-            tid70 = millis();
-        }
-
-        if (speed < maksHastiget)
-        {
-            tid70Etter = millis();
-            tid70Differensial = tid70Etter - tid70; // VIKTIG
-        }
-
-
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-    sekstiSekTimer = 0;
-
-    }
+    egendefinert.findSekstiSekTid(speed);
+    egendefinert.speedometerEvery60(speed);
+    
 }
 
 
@@ -182,15 +123,16 @@ ISR(TIMER1_OVF_VECT)
         // Jeg er skeptisk til om disse kommer til å fungere.
 
 
-float distance()  // Denne funksjonen erstatter distanse koden. 
+void distance()  // Denne funksjonen erstatter distanse koden. 
 {
   int16_t countLeft = encoders.getCountsLeft();
   int16_t countRight = encoders.getCountsRight();
 
   int16_t avgCount = (countLeft + countRight) / 2;
 
-  float dist = Zumo32U4_bibliotek_gruppe_8::getDistance(avgCount);
+  
+  Zumo32U4_bibliotek_gruppe_8::dist = Zumo32U4_bibliotek_gruppe_8::getDistance(avgCount);
 
-  return dist;
+  
 }
 
