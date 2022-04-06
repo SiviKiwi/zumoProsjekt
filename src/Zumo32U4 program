@@ -299,3 +299,8 @@ if (Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid > 60000)
 
     return resultArray;
 }
+
+
+
+
+// Dette er en test for pull
