@@ -54,6 +54,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     unsigned long tid70Etter = 0;
     unsigned long tid70Differensial = 0;
     const int maksHastiget = 0; // NB: husk å endre denne verdien til faktisk makshastighet.
+
+    int chargingCycles = 0;
 };
 
 #endif
