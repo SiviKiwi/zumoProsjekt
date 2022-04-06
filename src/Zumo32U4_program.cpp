@@ -40,7 +40,7 @@ void loop()
   egendefinert.oneSecBatState(); // Denne funksjonen sjekker om det har gått ti sekunder siden
                                  // den sist. gå til library c++ for å legge til statusfunksjoner.
 
- egendefinert.distance();
+ egendefinert.updateSpeedDist(/* Må ta inn tiden siden programfilen startet.*/);
 
   unsigned long timeNow = millis(); 
   if (timeNow - time > 100)
