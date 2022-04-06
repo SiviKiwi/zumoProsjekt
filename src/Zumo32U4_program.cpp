@@ -43,7 +43,6 @@ void loop()
  egendefinert.distance();
 
   unsigned long timeNow = millis(); 
-
   if (timeNow - time > 100)
   {
     unsigned long elapsedTime = timeNow - time;
