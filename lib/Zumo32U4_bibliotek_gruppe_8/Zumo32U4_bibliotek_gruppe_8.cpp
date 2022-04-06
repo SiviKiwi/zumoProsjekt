@@ -87,6 +87,7 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, fl
             // ti ganger raskere.
   float currentUsage = 2.0 * multiplyer * speed + 10.0;
   currentCapacity -= currentUsage * (float)ms / 1000.0;
+
   return currentCapacity;
 }
 
@@ -211,4 +212,3 @@ void updateSpeedDist()  // Denne funksjonen erstatter distanse koden.
     }
 }
 
-/* Disse funksjonene fungerer nok ikke pågrunn av mangel på constructors.*/
