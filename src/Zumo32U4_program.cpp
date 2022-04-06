@@ -20,9 +20,6 @@ float speed;
 
 float currentCapacity = 1200.0 * 3600;
 
-bool SOSmode = false;
-bool SOSmodeOneTimeOnly = false;
-
 void setup()
 {
   display.init();
@@ -50,15 +47,9 @@ void loop()
   if (timeNow - time > 100)
   {
     unsigned long elapsedTime = timeNow - time;
-    speed = egendefinert.getSpeed(dist - prevDist, elapsedTime);
+    speed = egendefinert.getSpeed(egendefinert.dist - egendefinert.prevDist, elapsedTime);
 
-    if((buttonB == true) && (SOSmodeOneTimeOnly == false))
-    {
-        SOSmode = true;
-        SOSmodeOneTimeOnly = true;
-    }
-
-    egendefinert.setCapacity(speed, elapsedTime, SOSmode, currentCapacity);
+    egendefinert.setCapacity(speed, elapsedTime, currentCapacity);
 
     display.clear();
     display.gotoXY(0, 0);

@@ -35,6 +35,9 @@ class Zumo32U4_bibliotek_gruppe_8{
     int twoToTenCounter = 0;
     bool tenAchieved = false;
 
+    bool SOSmode = false;
+    bool SOSmodeOneTimeOnly = false;
+
     float prevDist = 0;
     float dist = 0;
 

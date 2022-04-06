@@ -10,6 +10,7 @@
 Zumo32U4Encoders encoders;
 Zumo32U4Motors motors;
 Zumo32U4ButtonA buttonA;
+Zumo32U4ButtonB buttonB;
 Zumo32U4LCD display;
 
 
@@ -30,13 +31,21 @@ float Zumo32U4_bibliotek_gruppe_8::getSpeed(float distance, unsigned long ms)
   return cmSecond; 
 }
 
-float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, bool SOSmode, float currentCapacity)
+float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, float currentCapacity)
 {
   if (speed < 0.1)
   {
     speed = 0;  
   }
+//---------------------------------------------------------------
 
+  if((buttonB == true) && (SOSmodeOneTimeOnly == false))
+    {
+      SOSmode = true;
+      SOSmodeOneTimeOnly = true;
+    }
+
+//---------------------------------------------------------------
   if ((SOSmode == true) && (currentCapacity < 864000))
   {
     int multiplyer = 10;
