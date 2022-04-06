@@ -30,9 +30,9 @@ float Zumo32U4_bibliotek_gruppe_8::getSpeed()
 
 float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, float currentCapacity)
 {
-  if (speed < 0.1)
+  if (speed < 0)
   {
-    speed = 0;
+    Zumo32U4_bibliotek_gruppe_8::chargingCycles++;
   }
 //---------------------------------------------------------------
 

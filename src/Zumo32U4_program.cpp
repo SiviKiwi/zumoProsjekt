@@ -60,13 +60,19 @@ void loop()
   }
     
     /* Under er for sekstisekunders */
-    egendefinert.findSekstiSekTid(speed);
-    egendefinert.speedometerEvery60(speed);
+    egendefinert.findSekstiSekTid(speed); // Denne funksjonen setter variabelen speedometerEvery60 trenger for agere.
+    egendefinert.speedometerEvery60(speed); // Setter variablene som vil brukes i battery_health
     
 }
 
 ISR(TIMER1_OVF_VECT)
 {  
     TCNT1 = 31250;
-    egendefinert.vectorOverflow(); 
+    egendefinert.vectorOverflow(); // Denne funksjonen forteller oneSecBatState om den skal agere.
 }
+
+
+
+int batteryLevel = ((int)currentCapacity / (1200.0 * 3600)) * 100;
+int chargingCycles = 0;// når farten er negativ, når vi trykker på knapper, når bilen er i ladestasjon.
+
