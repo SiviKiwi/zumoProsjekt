@@ -144,7 +144,7 @@ void actualCharging()
 
  // -------------------------------------------------------------------------
 
-
+  // Batteriadvarselsfunksjonen
 
 
 bool batteryLevelState = false;
@@ -217,11 +217,6 @@ void batteryLevelWarning()
 
 
 // -------------------------------------------------------------------------
-
-
-
-
-
 
 
 
