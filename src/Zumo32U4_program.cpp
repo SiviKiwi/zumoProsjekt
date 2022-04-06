@@ -3,7 +3,7 @@
 * Laget av gruppe 8 BIELEKTRO V22. Alvar, Sivert og Iver.
 */
 
-#include <arduino.h>
+#include <Arduino.h>
 #include "Zumo32U4_bibliotek_gruppe_8.h"
 #include <Wire.h>
 #include <Zumo32U4.h>
@@ -46,7 +46,7 @@ void loop()
   if (timeNow - time > 100)
   {
     unsigned long elapsedTime = timeNow - time;
-    speed = egendefinert.getSpeed(egendefinert.dist - egendefinert.prevDist, elapsedTime);
+    speed = egendefinert.getSpeed();
 
     egendefinert.setCapacity(speed, elapsedTime, currentCapacity);
 
