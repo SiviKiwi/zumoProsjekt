@@ -25,6 +25,24 @@ class Zumo32U4_bibliotek_gruppe_8{
     void timer1OverflowCounter();
     void vectorOverflow();
     void oneSecBatState();
+    void speedometerEvery60();
+    void findSekstiSekTid();
+
+  private:
+
+    unsigned long sekstiSekTimerFor = 0;
+    unsigned long sekstiSekTimerEtter = 0;
+    unsigned long sekstiSekTimer = 0;
+
+    float sekstiSekMaksHastighet = 0;
+    float gjennomsnittsHastighet = 0;
+    float sekstiSekunderDist = 0;
+    float prevSekstiSekunderDist = 0;
+
+    unsigned long tid70 = 0;
+    unsigned long tid70Etter = 0;
+    unsigned long tid70Differensial = 0;
+    const int maksHastiget = 0; // NB: husk å endre denne verdien til faktisk makshastighet.
 };
 
 #endif

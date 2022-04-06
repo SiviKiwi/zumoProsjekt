@@ -12,9 +12,6 @@ Zumo32U4Motors motors;
 Zumo32U4ButtonA buttonA;
 Zumo32U4LCD display;
 
-int twoToTenCounter = 0;
-bool tenAchieved = false;
-
 
 Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   
@@ -72,27 +69,95 @@ void Zumo32U4_bibliotek_gruppe_8::timer1OverflowCounter()
       // før time_now variabelen.
   } 
 
-  twoToTenCounter = 0;
-  tenAchieved = false;
+  Zumo32U4_bibliotek_gruppe_8::twoToTenCounter = 0;
+  Zumo32U4_bibliotek_gruppe_8::tenAchieved = false;
 }
 
 void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
 {
-    twoToTenCounter = twoToTenCounter + 1;
-    if (twoToTenCounter >= 5)
+    Zumo32U4_bibliotek_gruppe_8::twoToTenCounter = Zumo32U4_bibliotek_gruppe_8::twoToTenCounter + 1;
+    if (Zumo32U4_bibliotek_gruppe_8::twoToTenCounter >= 5)
     {
-        tenAchieved = true;
+        Zumo32U4_bibliotek_gruppe_8::tenAchieved = true;
     }
 }
 
 void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
 {
-    if (tenAchieved = true)
+    if (Zumo32U4_bibliotek_gruppe_8::tenAchieved = true)
     {
         Zumo32U4_bibliotek_gruppe_8::timer1OverflowCounter();
     }
 }
 
+void findSekstiSekTid(float speed)
+{
+
+    if (Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerFor == 0)
+    {
+        Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerEtter = 0;
+    }
+
+    else 
+    {
+        Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerEtter = millis();   
+    }
+
+    if (speed > 0.1)
+    {
+        Zumo32U4_bibliotek_gruppe_8::sekstiSekTimer = Zumo32U4_bibliotek_gruppe_8::sekstiSekTimer + (Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerEtter - Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerFor);
+        Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerFor = millis();
+    }
+
+    else if (speed < 0.1)
+    {
+        Zumo32U4_bibliotek_gruppe_8::sekstiSekTimer = Zumo32U4_bibliotek_gruppe_8::sekstiSekTimer + (Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerEtter - Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerFor);
+        Zumo32U4_bibliotek_gruppe_8::sekstiSekTimerFor = 0;
+    }
+}
+
+void speedometerEvery60(float speed)
+{
+
+if (Zumo32U4_bibliotek_gruppe_8::SekstiSekTimer > 60000)
+    {
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+        if (speed > Zumo32U4_bibliotek_gruppe_8::sekstiSekMaksHastighet)
+        {                 // Her henter jeg inn makshastigheten som skal vises etter seksti sekunder.
+            Zumo32U4_bibliotek_gruppe_8::sekstiSekMaksHastighet = speed; // VIKTIG
+        }
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+        
+
+        Zumo32U4_bibliotek_gruppe_8::GjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist)/60; // VIKTIG Denne er ikke ferdig!!!
+        prevSekstiSekunderDist = sekstiSekunderDist; // sekstiSekunderDist trenger en verdi.
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+        if (speed > Zumo32U4_bibliotek_gruppe_8::maksHastiget)
+        {
+            Zumo32U4_bibliotek_gruppe_8::tid70 = millis();
+        }
+
+        if (speed < Zumo32U4_bibliotek_gruppe_8::maksHastiget)
+        {
+            Zumo32U4_bibliotek_gruppe_8::tid70Etter = millis();
+            Zumo32U4_bibliotek_gruppe_8::tid70Differensial = tid70Etter - tid70; // VIKTIG
+        }
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    Zumo32U4_bibliotek_gruppe_8::sekstiSekTimer = 0;
+
+    }
+}
 
 /* Disse funksjonene fungerer nok ikke pågrunn av mangel på constructors.*/
 
