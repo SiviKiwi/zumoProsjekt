@@ -44,9 +44,35 @@ void setup()
   }
 }
 
-
+ 
 void loop()
 {
+
+  // Funksjonen askForCharging må kjøres for å sjekke om case skal byttes.
+
+  switch(/* Hva skal variabelen være? */)
+  {
+    case 0:
+
+      // Antageligvis linjefølger.
+
+      break;
+
+    case 1: 
+
+      egendefinert.actualCharging();
+
+      break;
+
+    case 2:
+
+    // evt. egendefinert.batteryReplacement(); Husk da å trekke ut den som sjekker tilstanden 
+    // inne i funksjonen.
+
+      break;
+  }
+
+
 
   egendefinert.oneSecBatState(); // Denne funksjonen sjekker om det har gått ti sekunder siden
   // den sist. gå til library c++ for å legge til statusfunksjoner.
@@ -67,6 +93,8 @@ void loop()
     display.print(dist);
     display.print(speed);
 
+    egendefinert.displayFunctions(); // Denne skal erstatte alle med display ovenfor.
+
     time = millis();
   }
 
@@ -74,6 +102,14 @@ void loop()
   egendefinert.findSekstiSekTid(speed); // Denne funksjonen setter variabelen speedometerEvery60 trenger for agere.
   egendefinert.speedometerEvery60(speed); // Setter variablene som vil brukes i battery_health
 
+  egendefinert.batteryLevelWarning();
+
+  egendefinert.batteryHealth();
+  egendefinert.checkForBatteryStatus();
+
+  egendefinert.batteryService();
+
+  // evt. egendefinert.batteryReplacement();
 }
 
 ISR(TIMER1_OVF_VECT)

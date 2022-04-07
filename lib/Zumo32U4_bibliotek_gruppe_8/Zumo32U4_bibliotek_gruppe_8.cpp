@@ -460,6 +460,8 @@ void displayFunctions()
 void batteryHealth()
 {
 
+  batteryHealthAlgorithm();
+
   //if (batteryHealth != last_EEPROM_batteryHealth)
   //{
     unsigned long time_now_batteryHealth = millis();
@@ -486,7 +488,7 @@ void batteryHealth()
   // jeg tenker at utladningshastighet, altså fart må ha mye å si
   // jeg tenker også at antall ladesykluser må ha mye og si.
 
- batteryHealthAlgorithm();
+ void checkForBatteryStatus();
 
   if( (batteryHealth < 15) && batteryHealth > 3 )
   {
@@ -522,7 +524,7 @@ void batteryReplacement()
     {
       batteryHealth = 100;
       level_0 = false;
-      // Husk også kostnad for batteribytte.
+      // Husk også kostnad for batteribytte. Jeg tror akkurat denne kan inn i switch-casen.
     }
   }
 }

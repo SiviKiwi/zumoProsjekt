@@ -32,6 +32,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     void speedometerEvery60();
     void findSekstiSekTid();
     void askForCharging();
+    void checkForBatteryStatus();
     
 
   private:
