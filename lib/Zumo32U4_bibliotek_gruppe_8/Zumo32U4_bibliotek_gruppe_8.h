@@ -27,7 +27,6 @@ class Zumo32U4_bibliotek_gruppe_8{
     double getSpeed();
     void updateSpeedDist();
     double setCapacity(float speed, unsigned long ms);
-    void timer1OverflowCounter();
     void vectorOverflow();
     void oneSecBatState();
     void speedometerEvery60();
@@ -70,6 +69,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     int batteryLevel;
     bool continueChargingDisplay;
     bool absContinueChargingDisplay;
+    bool everyTenSecondsDisplayState;
     bool batteryLevelState;
     unsigned long batteryLevelWarningLedTimer1;
     unsigned long batteryLevelWarningLedTimer2;

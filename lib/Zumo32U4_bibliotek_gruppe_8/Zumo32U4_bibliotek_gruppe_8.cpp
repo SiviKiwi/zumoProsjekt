@@ -56,6 +56,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   this->batteryLevel = 100;
   this->continueChargingDisplay = false;
   this->absContinueChargingDisplay = false;
+  this->everyTenSecondsDisplayState = false;
   this->batteryLevelState = false;
   this->batteryLevelWarningLedTimer1 = 0;
   this->batteryLevelWarningLedTimer2 = 0;
@@ -142,19 +143,8 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, fl
 
 
 
-void Zumo32U4_bibliotek_gruppe_8::timer1OverflowCounter()
-{
-  unsigned long time_now = millis();
-  while (millis() < time_now + 1000)
-  {
-      // Her går koden som skal vises på skjermen.
-      // Trengs det å starte skjerm, så gjør det
-      // før time_now variabelen.
-  }
 
-  twoToTenCounter = 0;
-  tenAchieved = false;
-}
+
 
 void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
 {
@@ -169,9 +159,26 @@ void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
 {
     if (tenAchieved = true)
     {
-        Zumo32U4_bibliotek_gruppe_8::timer1OverflowCounter();
+        everyTenSecondsDisplay();
+
+        if (everyTenSecondsDisplayState == false)
+        {
+          unsigned long time_now = millis();
+          everyTenSecondsDisplayState = true;
+        }
+
+        if (millis() - time_now> + 1000)
+        {
+          twoToTenCounter = 0;
+          tenAchieved = false;
+        }
     }
 }
+
+
+
+
+
 
 void Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid(float speed)
 {
@@ -387,6 +394,12 @@ void batteryLevelWarning()
 }
 
 
+
+
+
+
+
+
 chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
 {
   
@@ -434,6 +447,14 @@ void displayFunctions()
 // Hvis det trengs flere displaytyper, legg gjerne til.
 
 }
+
+
+
+
+
+
+
+
 
 
 void batteryHealth()
