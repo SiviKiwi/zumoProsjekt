@@ -525,6 +525,8 @@ void batteryReplacement()
       batteryHealth = 100;
       level_0 = false;
       // Husk også kostnad for batteribytte. Jeg tror akkurat denne kan inn i switch-casen.
+      // Den forstyrrer jo tross alt ikke noe av det andre. Hvilke biler er det som 
+      // skifter batteri i fart, eller mens noen av de andre funksjonene fungerer samtidig?
     }
   }
 }
