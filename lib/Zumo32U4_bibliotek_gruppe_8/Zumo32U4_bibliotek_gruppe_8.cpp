@@ -539,6 +539,8 @@ void batteryHealthAlgorithm()
   const int K2 = 1;
   const int K3 = 1;
 
+  // her kan vi forandre på koeffisientene slik at vi får et passende resultat.
+  
   const int Ka = 1;
   const int Kb = 1;
   const int Kc = 1;
