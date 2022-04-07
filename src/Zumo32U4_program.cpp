@@ -8,6 +8,7 @@
 #include <Wire.h>
 #include <Zumo32U4.h>
 #include <cmath>
+#include <EEPROM.h>
 
 Zumo32U4Encoders encoders;
 Zumo32U4Motors motors;
@@ -35,6 +36,11 @@ void setup()
   TCCR1B |= 0b00000101;
   TIMSK1 |= 0b00000001;
   interrupts();
+
+  if (EEPROM.read(1) == 1)
+  {
+    batteryHealth = EEPROM.read(0);
+  }
 }
 
 
@@ -275,8 +281,35 @@ void displayFunctions()
 
 
 
+
+
+
+
+int batteryHealth = 100; // Hva variabelen skal starte med
+bool level_1 = false;
+bool level_0 = false;
+
+unsigned long tid70DifferensialPrev = 0;
+int SOC<5%Prev = 0;
+int chargingCyclesPrev = 0;
+float sekstiSekMaksHastighetPrev = 0;
+float gjennomsnittsHastighetPrev = 0; 
+//int last_EEPROM_batteryHealth = 0;
+
 void batteryHealth()
 {
+
+  //if (batteryHealth != last_EEPROM_batteryHealth)
+  //{
+    unsigned long time_now_batteryHealth = millis();
+    if ((millis() - time_now_batteryHealth) > 1000)
+    {
+        //EEPROM.write(0, batteryHealth)
+        EEPROM.put(0, batteryHealth);
+        EEPROM.put(1,1);
+        //last_EEPROM_batteryHealth = batteryHealth;
+    }
+  //}
   // chargingCycles
   // SOC<5%
   // gjennomsnittsHastighet
@@ -292,12 +325,67 @@ void batteryHealth()
   // jeg tenker at utladningshastighet, altså fart må ha mye å si
   // jeg tenker også at antall ladesykluser må ha mye og si.
 
+ batteryHealthAlgorithm();
+
+  if( (batteryHealth < 15) && batteryHealth > 3 )
+  {
+    level_1 = true; 
+  }
+  else if(batteryHealth <= 3)
+  {
+    level_0 = true;
+  }
+
+}
+
+
+
+
+
+
+void batteryServive()
+{
+  if (level_1 = true);  // Disse kan vel settes rett i loopen?
+  {
+    if (buttonA.isPressed())
+    {
+      batteryHealth = batteryHealth + 30;
+      level_1 = false;
+      // Husk også kostnad for batteriservice
+    }
+  }
+}
+
+void batteryReplacement()
+{
+  if (level_0 = true)
+  {
+    if (buttonA.isPressed())
+    {
+      batteryHealth = 100;
+      level_0 = false;
+      // Husk også kostnad for batteribytte.
+    }
+  }
+}
+
+
+
+
+void batteryHealthAlgorithm()
+{
+
   const int K1 = 1; 
   const int K2 = 1;
   const int K3 = 1;
 
-  bool level_1 = false;
-  bool level_0 = false;
+  const int Ka = 1;
+  const int Kb = 1;
+  const int Kc = 1;
+  const int Kd = 1;
+  const int Ke = 1;
+
+ 
 
   randomFactor = random(1,10);
 
@@ -310,45 +398,49 @@ void batteryHealth()
     randomFactorExecuted = 1;
   }
 
-  int batteryHealth == 100; // Hva variabelen skal starte med
-  int batteryHealth = randomFactorExecuted * (batteryHealth - (K1 * pow((tid70Differensial * SOC<5%),2) + K2*(chargingCycles) + K3 * (sekstiSekMaksHastighet - gjennomsnittsHastighet) ));
+
+
+
+  if ((tid70Differensial != tid70DifferensialPrev) || (SOC<5% != SOC<5%Prev) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
+  {
+    if(tid70Differensial == tid70DifferensialPrev)
+    {
+      Ka = 0;
+    }
+    if(SOC<5% == SOC<5%Prev)
+    {
+      ke = 0;
+    }
+
+    if(chargingCycles == chargingCyclesPrev)
+    {
+      Kb = 0;
+    }
+
+    if(sekstiSekMaksHastighet == sekstiSekMaksHastighetPrev)
+    {
+      Kc = 0;
+    }
+
+    if(gjennomsnittsHastighet == gjennomsnittsHastighetPrev) 
+    {
+      Kd = 0;
+    }
+
+    int batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((SOC<5%),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
+
+unsigned long tid70DifferensialPrev = tid70Differensial;
+int SOC<5%Prev = SOC<5%;
+int chargingCyclesPrev = chargingCycles;
+float sekstiSekMaksHastighetPrev = sekstiSekMaksHastighet;
+float gjennomsnittsHastighetPrev = gjennomsnittsHastighet; 
+
+// dette her er nok litt rotete. Hvis dere har en annen løsning, så kan dere godt endre på det.
+// Poenget med å gjøre det sånn er at vi ikke endrer på variabelen unødvendig, fordi den er satt
+// opp slik at for hver gang den blir kalkulert så vil batteryHealth synke.
+
+  }
 
  // Når det gjelder utregningen av batteryhealthfunksjonen så må vi nesten bare tilpasse konstantene når det blir nødving.
 
-
-  if( (batteryHealth < 15) && batteryHealth > 3 )
-  {
-    level_1 = true;
-  }
-  else if(batteryHealth <= 3)
-  {
-    level_0 = true;
-  }
-
-}
-
-void batteryServive()
-{
-  if (level_1 = true);
-  {
-    if (buttonA.isPressed())
-    {
-      batteryHealth = batteryHealth + 30;
-      level_1 = false;
-      // Husk også kostnad for batteriservice
-    }
-  }
-}
-
-void battteryReplacement()
-{
-  if (level_0 = true)
-  {
-    if (buttonA.isPressed())
-    {
-      batteryHealth = 100;
-      level_0 = false;
-      // Husk også kostnad for batteribytte.
-    }
-  }
 }
