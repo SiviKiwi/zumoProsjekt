@@ -16,6 +16,8 @@ Zumo32U4LCD display;
 
 Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
 
+  this->currentCapacity = 1200.0 * 3600;
+
   this->twoToTenCounter = 0;
   this->tenAchieved;
   this->lastTimeGetSpeed = 0;
@@ -42,6 +44,8 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   this->maksHastiget = 400; // NB: husk å endre denne verdien til faktisk makshastighet.
 
   this->chargingCycles = 0;
+  this-> SOC<5% = 0;
+  
 
 }
 
@@ -61,6 +65,7 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, fl
   {
     charcgingCycles++;
   }
+  
 //---------------------------------------------------------------
 
   if((buttonB == true) && (SOSmodeOneTimeOnly == false))
@@ -83,10 +88,17 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, fl
   {
     SOSmode = false;
   }
+
+
             // TODO: Endre funksjonen slik at hvis farten er positiv skal den ikkke lades ut
             // ti ganger raskere.
   float currentUsage = 2.0 * multiplyer * speed + 10.0;
   currentCapacity -= currentUsage * (float)ms / 1000.0;
+
+  if (currentCapacity < 216000)
+  {
+    SOC<5%++;
+  }
 
   return currentCapacity;
 }

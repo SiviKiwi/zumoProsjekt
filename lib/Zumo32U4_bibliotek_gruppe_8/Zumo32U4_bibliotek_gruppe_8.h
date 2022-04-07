@@ -29,6 +29,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     void findSekstiSekTid();
 
   private:
+
+    int currentCapacity;
   
     int twoToTenCounter;
     bool tenAchieved;
@@ -56,6 +58,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     int maksHastighet; // NB: husk å endre denne verdien til faktisk makshastighet.
 
     int chargingCycles;
+    int SOC<5%;
 };
 
 #endif

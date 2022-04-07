@@ -88,22 +88,8 @@ ISR(TIMER1_OVF_VECT)
 
 
 
- // ---------------------------------------------------------------
-      // Her er ulike batterivariabler og funksjoner som må
-      // integreres videre. De er f. eks avhengige av currentCapacity
-      // som det er usikkert hvordan vi skal deale med videre.
-      // BATTERYLEVEL SKAL OPPDATERES I SANNTID VED LADING.
 
 
-int batteryLevel = ((int)currentCapacity / (1200.0 * 3600)) * 100;
-int chargingCycles = 0;// når farten er negativ, når vi trykker på knapper, når bilen er i ladestasjon.
-if (batteryLevel < 5)
-  {
-    int SOC<5%++;
-  }
-
-
-  // ---------------------------------------------------------------
 
 
 
@@ -238,6 +224,9 @@ continueChargingDisplayPrev = false;
 
 chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
 {
+  int batteryLevel = ((int)currentCapacity / (1200.0 * 3600)) * 100;
+
+
   // Her må vi displaye de rette variablene.
   if ((continueChargingDisplay == true) && (continueChargingDisplayPrev == false))
   {
@@ -259,7 +248,7 @@ void runningDisplay()  // Den som skal kjøres til vanlig
 
 void everyTenSecondsDisplay()  // Den som skal kjøres hvert tiende sekund på interrupt
 {
-
+    int batteryLevel = ((int)currentCapacity / (1200.0 * 3600)) * 100;
 }
 
 void displayFunctions()
