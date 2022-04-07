@@ -7,6 +7,7 @@
 #include "Zumo32U4_bibliotek_gruppe_8.h"
 #include <Wire.h>
 #include <Zumo32U4.h>
+#include <cmath>
 
 Zumo32U4Encoders encoders;
 Zumo32U4Motors motors;
@@ -106,7 +107,7 @@ if (batteryLevel < 5)
 bool askForChargingState = false;
 void askForCharging()
 {
-  if ((buttonA == true && buttonC == true) || askForChargingState == true)
+  if ((buttonA.isPressed() == true && buttonC.isPressed() == true) || askForChargingState == true)
   {
     // sett swith variabel til casen med funksjonen actualCharging() i.
     askForChargingState = true;
@@ -120,7 +121,7 @@ bool absContinueChargingDisplay = false;
 void actualCharging()
 {
  
-  if (buttonC == true)
+  if (buttonC.isPressed() == true)
   {
     batteryLevel = batteryLevel + 10;
     if (batteryLevel > 100)
@@ -133,7 +134,7 @@ void actualCharging()
 
   }
 
-  if ((buttonA == true) && (buttonC == true)) // Jeg har gjort det slik at
+  if ((buttonA.isPressed() == true) && (buttonC.isPressed() == true)) // Jeg har gjort det slik at
   {
     askForChargingState = false;
     continueChargingDisplay = true;
@@ -268,5 +269,86 @@ void displayFunctions()
   else if (absContinueChargingDisplay == true)
   {
     chargingDisplay();
+  }
+}
+
+
+
+
+void batteryHealth()
+{
+  // chargingCycles
+  // SOC<5%
+  // gjennomsnittsHastighet
+  // sekstiSekMaksHastighet
+  // tid70Differensial
+  // random faktor
+  
+  // level_1 for service
+  // level_0 for batteribytt
+  // batteriservice forbedrer batteryHealth poengsummen
+  // batteribytte starter batteryHealth med ny verdi.
+
+  // jeg tenker at utladningshastighet, altså fart må ha mye å si
+  // jeg tenker også at antall ladesykluser må ha mye og si.
+
+  const int K1 = 1; 
+  const int K2 = 1;
+  const int K3 = 1;
+
+  bool level_1 = false;
+  bool level_0 = false;
+
+  randomFactor = random(1,10);
+
+  if (randomFactor > 8)
+  {
+    randomFactorExecuted = 0.5;
+  }
+  else
+  {
+    randomFactorExecuted = 1;
+  }
+
+  int batteryHealth == 100; // Hva variabelen skal starte med
+  int batteryHealth = randomFactorExecuted * (batteryHealth - (K1 * pow((tid70Differensial * SOC<5%),2) + K2*(chargingCycles) + K3 * (sekstiSekMaksHastighet - gjennomsnittsHastighet) ));
+
+ // Når det gjelder utregningen av batteryhealthfunksjonen så må vi nesten bare tilpasse konstantene når det blir nødving.
+
+
+  if( (batteryHealth < 15) && batteryHealth > 3 )
+  {
+    level_1 = true;
+  }
+  else if(batteryHealth <= 3)
+  {
+    level_0 = true;
+  }
+
+}
+
+void batteryServive()
+{
+  if (level_1 = true);
+  {
+    if (buttonA.isPressed())
+    {
+      batteryHealth = batteryHealth + 30;
+      level_1 = false;
+      // Husk også kostnad for batteriservice
+    }
+  }
+}
+
+void battteryReplacement()
+{
+  if (level_0 = true)
+  {
+    if (buttonA.isPressed())
+    {
+      batteryHealth = 100;
+      level_0 = false;
+      // Husk også kostnad for batteribytte.
+    }
   }
 }
