@@ -91,50 +91,6 @@ ISR(TIMER1_OVF_VECT)
 
 
 
-
-
-
-// ladefunksjon
-
-bool askForChargingState = false;
-void askForCharging()
-{
-  if ((buttonA.isPressed() == true && buttonC.isPressed() == true) || askForChargingState == true)
-  {
-    // sett swith variabel til casen med funksjonen actualCharging() i.
-    askForChargingState = true;
-    absContinueChargingDisplay = true; // Denne gjør det mulig å endre hva som vises på displayet.
-  }
-}
-
-
-bool continueChargingDisplay = false;
-bool absContinueChargingDisplay = false;
-void actualCharging()
-{
- 
-  if (buttonC.isPressed() == true)
-  {
-    batteryLevel = batteryLevel + 10;
-    if (batteryLevel > 100)
-    {
-      batteryLevel = 100;
-    }
-
-    // husk å også trekke kostnad fra konto
-    // hvis kontoen er tom, så må ladingen avsluttes(askForChargingState)
-
-  }
-
-  if ((buttonA.isPressed() == true) && (buttonC.isPressed() == true)) // Jeg har gjort det slik at
-  {
-    askForChargingState = false;
-    continueChargingDisplay = true;
-  }
-}
-
-
-
  // -------------------------------------------------------------------------
 
   // Batteriadvarselsfunksjonen

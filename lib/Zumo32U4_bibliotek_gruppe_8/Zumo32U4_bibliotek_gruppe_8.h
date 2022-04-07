@@ -27,6 +27,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     void oneSecBatState();
     void speedometerEvery60();
     void findSekstiSekTid();
+    void askForCharging();
+    
 
   private:
 
@@ -59,6 +61,23 @@ class Zumo32U4_bibliotek_gruppe_8{
 
     int chargingCycles;
     int SOC<5%;
+    bool askForChargingState;
+    int batteryLevel;
+    bool continueChargingDisplay;
+    bool absContinueChargingDisplay;
+    bool batteryLevelState;
+    unsigned long batteryLevelWarningLedTimer1;
+    unsigned long batteryLevelWarningLedTimer2;
+    unsigned long batteryLevelWarningTimer;
+    bool batteryLevelWarningOne;
+
+    bool ledYellow1State1;
+    bool ledYellow1State2;
+    bool ledYellow0State2;
+    bool ledYellow1Nr2State2;
+    bool ledYellow0Nr2State2;
+
+    
 };
 
 #endif
