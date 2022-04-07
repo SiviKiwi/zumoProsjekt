@@ -76,6 +76,18 @@ class Zumo32U4_bibliotek_gruppe_8{
     bool ledYellow0State2;
     bool ledYellow1Nr2State2;
     bool ledYellow0Nr2State2;
+    
+    unsigned long chargingDisplayTimer;
+    bool continueChargingDisplayPrev;
+
+    bool level_1;
+    bool level_0;
+
+    unsigned long tid70DifferensialPrev;
+    int SOC5%;
+    int chargingCyclesPrev;
+    float sekstiSekMaksHastighetPrev;
+    float gjennomsnittsHastighetPrev;
 
     
 };

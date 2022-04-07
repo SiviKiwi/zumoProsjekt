@@ -61,6 +61,20 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   this->ledYellow1Nr2State2 = false;
   this->ledYellow0Nr2State2 = false;
 
+  this->chargingDisplayTimer = 0;
+  this->continueChargingDisplayPrev = false;
+
+  this->batteryHealth = 100;
+  this->level_1 = false;
+  this->level_0 = false;
+
+  this->tid70DifferensialPrev = 0;
+  this->SOC<5% = 0; // Dette variabelnavnet burde byttes. Det oppfører seg merkelig.
+  this->chargingCyclesPrev = 0;
+  this->sekstiSekMaksHastighetPrev = 0;
+  this->gjennomsnittsHastighetPrev = 0;
+
+
 
 
   
@@ -280,19 +294,6 @@ void actualCharging()
 }
 
 
-
-
-
-
-bool ledYellow1State1 = false;
-bool ledYellow1State2 = false;
-bool ledYellow0State2 = false;
-bool ledYellow1Nr2State2 = false;
-bool ledYellow0Nr2State2 = false;
-
-
-
-
 void batteryLevelWarning()
 {
   if ((batteryLevel <= 10) && (batteryLevel > 5) && batteryLevelWarningOne = false)
@@ -382,3 +383,199 @@ void batteryLevelWarning()
       batteryLevelState = false;
   }
 }
+
+
+chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
+{
+  
+  // Her må vi displaye de rette variablene.
+  if ((continueChargingDisplay == true) && (continueChargingDisplayPrev == false))
+  {
+    chargingDisplayTimer = millis();
+  }
+  continueChargingDisplayPrev = continueChargingDisplay;
+  if ((millis() - chargingDisplayTimer > 15000) && (continueChargingDisplay == true))
+  {
+    absContinueChargingDisplay = false;
+    continueChargingDisplay = false;
+  }
+}
+
+
+void runningDisplay()  // Den som skal kjøres til vanlig
+{
+
+}
+
+
+void everyTenSecondsDisplay()  // Den som skal kjøres hvert tiende sekund på interrupt
+{
+    
+}
+
+
+void displayFunctions()
+{
+  if ()
+  {
+    runningDisplay();
+  }
+  else if ()
+  {
+    everyTenSecondsDisplay();
+  }
+  else if (absContinueChargingDisplay == true)
+  {
+    chargingDisplay();
+  }
+
+// Hvis det trengs flere displaytyper, legg gjerne til.
+
+}
+
+
+void batteryHealth()
+{
+
+  //if (batteryHealth != last_EEPROM_batteryHealth)
+  //{
+    unsigned long time_now_batteryHealth = millis();
+    if ((millis() - time_now_batteryHealth) > 1000)
+    {
+        //EEPROM.write(0, batteryHealth)
+        EEPROM.put(0, batteryHealth);
+        EEPROM.put(1,1);
+        //last_EEPROM_batteryHealth = batteryHealth;
+    }
+  //}
+  // chargingCycles
+  // SOC<5%
+  // gjennomsnittsHastighet
+  // sekstiSekMaksHastighet
+  // tid70Differensial
+  // random faktor
+  
+  // level_1 for service
+  // level_0 for batteribytt
+  // batteriservice forbedrer batteryHealth poengsummen
+  // batteribytte starter batteryHealth med ny verdi.
+
+  // jeg tenker at utladningshastighet, altså fart må ha mye å si
+  // jeg tenker også at antall ladesykluser må ha mye og si.
+
+ batteryHealthAlgorithm();
+
+  if( (batteryHealth < 15) && batteryHealth > 3 )
+  {
+    level_1 = true; 
+  }
+  else if(batteryHealth <= 3)
+  {
+    level_0 = true;
+  }
+
+}
+
+
+void batteryServive()
+{
+  if (level_1 = true);  // Disse kan vel settes rett i loopen?
+  {
+    if (buttonA.isPressed())
+    {
+      batteryHealth = batteryHealth + 30;
+      level_1 = false;
+      // Husk også kostnad for batteriservice
+    }
+  }
+}
+
+
+void batteryReplacement()
+{
+  if (level_0 = true)
+  {
+    if (buttonA.isPressed())
+    {
+      batteryHealth = 100;
+      level_0 = false;
+      // Husk også kostnad for batteribytte.
+    }
+  }
+}
+
+
+void batteryHealthAlgorithm()
+{
+
+  const int K1 = 1; 
+  const int K2 = 1;
+  const int K3 = 1;
+
+  const int Ka = 1;
+  const int Kb = 1;
+  const int Kc = 1;
+  const int Kd = 1;
+  const int Ke = 1;
+
+ 
+
+  randomFactor = random(1,10);
+
+  if (randomFactor > 8)
+  {
+    randomFactorExecuted = 0.5;
+  }
+  else
+  {
+    randomFactorExecuted = 1;
+  }
+
+
+
+
+  if ((tid70Differensial != tid70DifferensialPrev) || (SOC<5% != SOC<5%Prev) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
+  {
+    if(tid70Differensial == tid70DifferensialPrev)
+    {
+      Ka = 0;
+    }
+    if(SOC<5% == SOC<5%Prev)
+    {
+      ke = 0;
+    }
+
+    if(chargingCycles == chargingCyclesPrev)
+    {
+      Kb = 0;
+    }
+
+    if(sekstiSekMaksHastighet == sekstiSekMaksHastighetPrev)
+    {
+      Kc = 0;
+    }
+
+    if(gjennomsnittsHastighet == gjennomsnittsHastighetPrev) 
+    {
+      Kd = 0;
+    }
+
+    int batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((SOC<5%),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
+
+unsigned long tid70DifferensialPrev = tid70Differensial;
+int SOC<5%Prev = SOC<5%;
+int chargingCyclesPrev = chargingCycles;
+float sekstiSekMaksHastighetPrev = sekstiSekMaksHastighet;
+float gjennomsnittsHastighetPrev = gjennomsnittsHastighet; 
+
+// dette her er nok litt rotete. Hvis dere har en annen løsning, så kan dere godt endre på det.
+// Poenget med å gjøre det sånn er at vi ikke endrer på variabelen unødvendig, fordi den er satt
+// opp slik at for hver gang den blir kalkulert så vil batteryHealth synke.
+
+  }
+
+ // Når det gjelder utregningen av batteryhealthfunksjonen så må vi nesten bare tilpasse konstantene når det blir nødving.
+
+}
+
+
