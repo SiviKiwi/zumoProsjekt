@@ -65,7 +65,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     int maksHastighet; // NB: husk å endre denne verdien til faktisk makshastighet.
 
     int chargingCycles;
-    int SOC<5%;
+    int StateOfChargeBelow5;
     bool askForChargingState;
     int batteryLevel;
     bool continueChargingDisplay;
@@ -90,10 +90,10 @@ class Zumo32U4_bibliotek_gruppe_8{
     bool level_0;
 
     unsigned long tid70DifferensialPrev;
-    int SOC5%;
     int chargingCyclesPrev;
     float sekstiSekMaksHastighetPrev;
     float gjennomsnittsHastighetPrev;
+    int StateOfChargeBelow5Prev;
 
     
 };

@@ -51,7 +51,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   this->maksHastiget = 400; // NB: husk å endre denne verdien til faktisk makshastighet.
 
   this->chargingCycles = 0;
-  this->SOC<5% = 0;
+  this->StateOfChargeBelow5 = 0;
   this->askForChargingState = false;
   this->batteryLevel = 100;
   this->continueChargingDisplay = false;
@@ -77,10 +77,10 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   this->level_0 = false;
 
   this->tid70DifferensialPrev = 0;
-  this->SOC<5% = 0; // Dette variabelnavnet burde byttes. Det oppfører seg merkelig.
   this->chargingCyclesPrev = 0;
   this->sekstiSekMaksHastighetPrev = 0;
   this->gjennomsnittsHastighetPrev = 0;
+  this->StateOfChargeBelow5Prev = 0;
 
 }
 
@@ -134,7 +134,7 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, fl
 
   if (currentCapacity < 216000)
   {
-    SOC<5%++;
+    StateOfChargeBelow5++;
   }
 
   return currentCapacity;
@@ -474,7 +474,7 @@ void batteryHealth()
     }
   //}
   // chargingCycles
-  // SOC<5%
+  // StateOfChargeBelow5
   // gjennomsnittsHastighet
   // sekstiSekMaksHastighet
   // tid70Differensial
@@ -563,13 +563,13 @@ void batteryHealthAlgorithm()
 
 
 
-  if ((tid70Differensial != tid70DifferensialPrev) || (SOC<5% != SOC<5%Prev) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
+  if ((tid70Differensial != tid70DifferensialPrev) || (StateOfChargeBelow5 != StateOfChargeBelow5) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
   {
     if(tid70Differensial == tid70DifferensialPrev)
     {
       Ka = 0;
     }
-    if(SOC<5% == SOC<5%Prev)
+    if(StateOfChargeBelow5 == StateOfChargeBelow5Prev)
     {
       ke = 0;
     }
@@ -589,10 +589,10 @@ void batteryHealthAlgorithm()
       Kd = 0;
     }
 
-    int batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((SOC<5%),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
+    int batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((StateOfChargeBelow5),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
 
 unsigned long tid70DifferensialPrev = tid70Differensial;
-int SOC<5%Prev = SOC<5%;
+int StateOfChargeBelow5Prev = StateOfChargeBelow5;
 int chargingCyclesPrev = chargingCycles;
 float sekstiSekMaksHastighetPrev = sekstiSekMaksHastighet;
 float gjennomsnittsHastighetPrev = gjennomsnittsHastighet; 
