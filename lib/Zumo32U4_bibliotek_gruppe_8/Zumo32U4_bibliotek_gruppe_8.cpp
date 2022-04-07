@@ -1,17 +1,24 @@
 /*
  * Zumo32U4_bibliotek_gruppe_8.cpp - Bibliotek for funksjoner laget spesielt for Zumo32U4.
- * Laget av gruppe 8 BIELEKTRO V22. Alvar, Sivert og Iver.
+ * Laget av gruppe 8 BIELEKTRO V22. Alvar(Executive Cloud Computing and Database Wizard⭐),
+ * Sivert(Lord Prime Minister and Supreme Archive Overseer) og Iver(Senior Integrated Circuit Developer God).
  */
 
 #include <Arduino.h>
 #include <Wire.h>
 #include <Zumo32U4.h>
+#include <cmath>
+#include <EEPROM.h>
 
 Zumo32U4Encoders encoders;
 Zumo32U4Motors motors;
 Zumo32U4ButtonA buttonA;
 Zumo32U4ButtonB buttonB;
+Zumo32U4ButtonC buttonC;
+Zumo32U4Buzzer buzzer;
 Zumo32U4LCD display;
+
+
 
 
 Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
@@ -73,11 +80,6 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   this->chargingCyclesPrev = 0;
   this->sekstiSekMaksHastighetPrev = 0;
   this->gjennomsnittsHastighetPrev = 0;
-
-
-
-
-  
 
 }
 

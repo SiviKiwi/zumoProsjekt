@@ -1,7 +1,8 @@
 /*
-  Dette er kjorefila til Zumobilen. Den benytter seg av biblioteket gruppen har laget.
-  Laget av gruppe 8 BIELEKTRO V22. Alvar, Sivert og Iver.
-*/
+ * Dette er kjorefila til Zumobilen. Den benytter seg av biblioteket gruppen har laget.
+ * Laget av gruppe 8 BIELEKTRO V22. Alvar(Executive Cloud Computing and Database Wizard⭐),
+ * Sivert(Lord Prime Minister and Supreme Archive Overseer) og Iver(Senior Integrated Circuit Developer God).
+ */
 
 #include <Arduino.h>
 #include "Zumo32U4_bibliotek_gruppe_8.h"

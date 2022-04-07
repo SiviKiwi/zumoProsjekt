@@ -1,15 +1,20 @@
 /*
 
 * Zumo32U4_bibliotek_gruppe_8.h - Bibliotek for funksjoner laget spesielt for Zumo32U4.
- * Laget av gruppe 8 BIELEKTRO V22. Alvar, Sivert og Iver.
+ * Laget av gruppe 8 BIELEKTRO V22. Alvar(Executive Cloud Computing and Database Wizard⭐),
+ * Sivert(Lord Prime Minister and Supreme Archive Overseer) og Iver(Senior Integrated Circuit Developer God).
  */
 
 #pragma once
 
 #ifndef Zumo32U4_bibliotek_gruppe_8
 
+#include <Arduino.h>
 #include <Wire.h>
 #include <Zumo32U4.h>
+#include <cmath>
+#include <EEPROM.h>
+
 
 
 class Zumo32U4_bibliotek_gruppe_8{
