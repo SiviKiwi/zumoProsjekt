@@ -93,6 +93,16 @@ float Zumo32U4_bibliotek_gruppe_8::getSpeed()
     return speed;
 }
 
+int Zumo32U4_bibliotek_gruppe_8::getBatteryHealth()
+{
+  return batteryHealth;
+}
+
+void Zumo32U4_bibliotek_gruppe_8::setBatteryHealth(int batteryHealth)
+{
+  this->batteryHealth = battteryHealth;
+}
+
 float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, float currentCapacity)
 {
   if (speed < 0)
@@ -205,7 +215,7 @@ void Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid(float speed)
     }
 }
 
-void speedometerEvery60(float speed)
+void Zumo32U4_bibliotek_gruppe_8::speedometerEvery60(float speed)
 {
 
 if (sekstiSekTimer > 60000)
@@ -248,7 +258,7 @@ if (sekstiSekTimer > 60000)
     }
 }
 
-void updateSpeedDist()  // Denne funksjonen erstatter distanse koden.
+void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist()  // Denne funksjonen erstatter distanse koden.
 {
   int16_t countLeft = encoders.getCountsLeft();
   int16_t countRight = encoders.getCountsRight();
@@ -267,7 +277,7 @@ void updateSpeedDist()  // Denne funksjonen erstatter distanse koden.
 }
 
 
-void askForCharging()
+void Zumo32U4_bibliotek_gruppe_8::askForCharging()
 {
   if ((buttonA.isPressed() == true && buttonC.isPressed() == true) || askForChargingState == true)
   {
@@ -278,7 +288,7 @@ void askForCharging()
 }
 
 
-void actualCharging()
+void Zumo32U4_bibliotek_gruppe_8::actualCharging()
 {
  
   if (buttonC.isPressed() == true)
@@ -302,7 +312,7 @@ void actualCharging()
 }
 
 
-void batteryLevelWarning()
+void Zumo32U4_bibliotek_gruppe_8::batteryLevelWarning()
 {
   if ((batteryLevel <= 10) && (batteryLevel > 5) && batteryLevelWarningOne = false)
   {
@@ -399,7 +409,7 @@ void batteryLevelWarning()
 
 
 
-chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
+void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
 {
   
   // Her må vi displaye de rette variablene.
@@ -416,19 +426,19 @@ chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
 }
 
 
-void runningDisplay()  // Den som skal kjøres til vanlig
+void Zumo32U4_bibliotek_gruppe_8::runningDisplay()  // Den som skal kjøres til vanlig
 {
 
 }
 
 
-void everyTenSecondsDisplay()  // Den som skal kjøres hvert tiende sekund på interrupt
+void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay()  // Den som skal kjøres hvert tiende sekund på interrupt
 {
     
 }
 
 
-void displayFunctions()
+void Zumo32U4_bibliotek_gruppe_8::displayFunctions()
 {
   if ()
   {
@@ -456,7 +466,7 @@ void displayFunctions()
 
 
 
-void batteryHealth()
+void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
 {
 
   batteryHealthAlgorithm();
@@ -487,7 +497,8 @@ void batteryHealth()
   // jeg tenker at utladningshastighet, altså fart må ha mye å si
   // jeg tenker også at antall ladesykluser må ha mye og si.
 
- void checkForBatteryStatus();
+ void Zumo32U4_bibliotek_gruppe_8::checkForBatteryStatus()
+ {
 
   if( (batteryHealth < 15) && batteryHealth > 3 )
   {
@@ -501,7 +512,7 @@ void batteryHealth()
 }
 
 
-void batteryServive()
+void Zumo32U4_bibliotek_gruppe_8::batteryServive()
 {
   if (level_1 = true);  // Disse kan vel settes rett i loopen?
   {
@@ -515,7 +526,7 @@ void batteryServive()
 }
 
 
-void batteryReplacement()
+void Zumo32U4_bibliotek_gruppe_8::batteryReplacement()
 {
   if (level_0 = true)
   {
@@ -531,7 +542,7 @@ void batteryReplacement()
 }
 
 
-void batteryHealthAlgorithm()
+void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
 {
 
   const int K1 = 1; 
@@ -605,5 +616,3 @@ float gjennomsnittsHastighetPrev = gjennomsnittsHastighet;
  // Når det gjelder utregningen av batteryhealthfunksjonen så må vi nesten bare tilpasse konstantene når det blir nødving.
 
 }
-
-

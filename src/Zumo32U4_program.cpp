@@ -40,7 +40,7 @@ void setup()
 
   if (EEPROM.read(1) == 1)
   {
-    batteryHealth = EEPROM.read(0);
+    egendefinert.setBatteryHealth(EEPROM.read(0));
   }
 }
 
@@ -105,7 +105,7 @@ void loop()
 
   egendefinert.batteryLevelWarning();
 
-  egendefinert.batteryHealth();
+  egendefinert.updateBatteryHealth();
   egendefinert.checkForBatteryStatus();
 
   egendefinert.batteryService();
