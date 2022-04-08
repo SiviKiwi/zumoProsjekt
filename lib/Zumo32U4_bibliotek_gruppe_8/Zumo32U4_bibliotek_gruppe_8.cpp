@@ -399,7 +399,7 @@ void batteryLevelWarning()
 
 
 
-chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
+void chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
 {
   
   // Her må vi displaye de rette variablene.
