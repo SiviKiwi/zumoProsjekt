@@ -22,6 +22,7 @@ Zumo32U4_bibliotek_gruppe_8 egendefinert;
 
 unsigned long time;
 float speed;
+float dist;
 
 float currentCapacity = 1200.0 * 3600;
 
@@ -83,6 +84,7 @@ void loop()
   {
     unsigned long elapsedTime = timeNow - time;
     speed = egendefinert.getSpeed();
+    dist = egendefinert.getDistance();
 
     egendefinert.setCapacity(speed, elapsedTime, currentCapacity);
 

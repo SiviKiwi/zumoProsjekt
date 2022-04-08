@@ -25,13 +25,22 @@ class Zumo32U4_bibliotek_gruppe_8{
     double getDistance();
     double getSpeed();
     void updateSpeedDist();
-    double setCapacity(float speed, unsigned long ms);
+    float setCapacity(float speed, unsigned long ms, float currentCapacity);
     void vectorOverflow();
     void oneSecBatState();
     void speedometerEvery60();
     void findSekstiSekTid();
     void askForCharging();
+    void actualCharging();
     void checkForBatteryStatus();
+    void displayFunctions();
+    void chargingDisplay();
+    void runningDisplay();
+    void everyTenSecondsDisplay();
+    void speedometerEvery60();
+    void batteryLevelWarning();
+    void batteryService();
+    void batteryHealth();
     
 
   private:

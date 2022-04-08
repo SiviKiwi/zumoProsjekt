@@ -25,11 +25,11 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   this->currentCapacity = 1200.0 * 3600;
 
   this->twoToTenCounter = 0;
-  this->tenAchieved;
+  this->tenAchieved = false;
   this->lastTimeGetSpeed = 0;
 
-  this->SOSmode;
-  this->SOSmodeOneTimeOnly;
+  this->SOSmode = false;
+  this->SOSmodeOneTimeOnly = false;
 
   this->prevDist = 0;
   this->dist = 0;
