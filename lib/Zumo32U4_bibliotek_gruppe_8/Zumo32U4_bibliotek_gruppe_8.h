@@ -28,8 +28,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     float setCapacity(float speed, unsigned long ms, float currentCapacity);
     void vectorOverflow();
     void oneSecBatState();
-    void speedometerEvery60();
-    void findSekstiSekTid();
+    void speedometerEvery60(float speed);
+    void findSekstiSekTid(float speed);
     void askForCharging();
     void actualCharging();
     void checkForBatteryStatus();
@@ -37,7 +37,6 @@ class Zumo32U4_bibliotek_gruppe_8{
     void chargingDisplay();
     void runningDisplay();
     void everyTenSecondsDisplay();
-    void speedometerEvery60();
     void batteryLevelWarning();
     void batteryService();
     void batteryHealth();
