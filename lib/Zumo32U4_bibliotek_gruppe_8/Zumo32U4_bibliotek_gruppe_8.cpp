@@ -429,6 +429,8 @@ void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man 
 void Zumo32U4_bibliotek_gruppe_8::runningDisplay()  // Den som skal kjøres til vanlig
 {
 
+
+
 }
 
 
