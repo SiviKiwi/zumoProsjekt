@@ -7,7 +7,6 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <Zumo32U4.h>
-#include <cmath>
 #include <EEPROM.h>
 
 Zumo32U4Encoders encoders;
