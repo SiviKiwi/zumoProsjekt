@@ -168,7 +168,7 @@ void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
 {
     if (tenAchieved = true)
     {
-        everyTenSecondsDisplay();
+        //everyTenSecondsDisplay(); Ikke nødvendig siden den er flyttet til egen skjermvelger
 
         if (everyTenSecondsDisplayState == false)
         {
@@ -429,24 +429,35 @@ void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man 
 void Zumo32U4_bibliotek_gruppe_8::runningDisplay()  // Den som skal kjøres til vanlig
 {
 
+display.clear();
 
+display.print("Spd:");
+display.print(getSpeed(););
+display.print("m/s");
+
+display.gotoXY(0, 1);
+display.print("Dist:");
+display.print(getDistance(););
+display.print("cm");
 
 }
 
 
 void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay()  // Den som skal kjøres hvert tiende sekund på interrupt
 {
-    
+
+
+
 }
 
 
 void Zumo32U4_bibliotek_gruppe_8::displayFunctions()
 {
-  if ()
+  if () //TODO
   {
     runningDisplay();
   }
-  else if ()
+  else if (tenAchieved == true) //TODO
   {
     everyTenSecondsDisplay();
   }
