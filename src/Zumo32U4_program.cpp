@@ -63,6 +63,8 @@ void loop()
 {
 
   // Funksjonen askForCharging må kjøres for å sjekke om case skal byttes.
+  // Det er også relevant å se på løsninger for å kunne lade over IoT,
+  // foreløpig er det kun over zumoens knapper.
 
   switch(/* Hva skal variabelen være? */)
   {

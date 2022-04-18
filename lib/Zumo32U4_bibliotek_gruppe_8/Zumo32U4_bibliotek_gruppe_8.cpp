@@ -714,15 +714,65 @@ void avslaattLinjefolger();
   // komplisert ved at den skal kunne være avslått på ulike
   // plasser.
 
+  motors.setSpeeds(0,0);
+
 }
 
 void besteTidLinjefolger();
 {
-
+  // TODO Jeg vet ikke helt hvordan vi skal løse den annet enn å bare si at den beste runden
+  // gir poeng eller noe sånt. å begynne å påvirke reguleringen for å få enda bedre tid
+  // er svært vanskelig og jeg tenker at vi ikke har tid til det. Skal vi begynne å legge 
+  // til integralledd liksom. denne funksjonen kan egt være en poenggivende funksjon.
 }
 
 void idealTidLinjefolger();
 {
+
+  int idealtid;
+  bool nyRunde
+
+  if(nyRunde == true)
+  {
+
+    // Her skal den endre på pådragene slik at man kan oppnå en tid nærmere idealtid
+    
+    int idealtidAvvik = tid - idealtid;
+
+    int idealtidKonstantP = 1;  // Disse er konstantene til PD-reguleringen.
+    int idealtidKonstantD = 10; // De er viktige for dens egenskaper.
+
+    int idealtidPD = idealtidKonstantP * idealtidAvvik + idealtidKonstantD * (idealtidAvvik - forrigeAvvik);
+
+    idealtidForrigeAvvik = idealtidAvvik;
+
+    nyRunde = false;
+  }
+
+  int position = lineSensors.readLine(lineSensorValues);
+  // Her ser man at man leser av disse sensorene.
+  int avvik = position - 2000;
+  // Her ser man avviket. Avviket forteller oss om målet.
+  // Når avviket er null, kreves det ingen regulering.
+  int konstantP = 1;  // Disse er konstantene til PD-reguleringen.
+  int konstantD = 10; // De er viktige for dens egenskaper.
+
+  int PD = konstantP * avvik + konstantD * (avvik - forrigeAvvik);
+  // Her får vi pådraget. Det er selve reguleringen.
+  // Den bestemmer hvilke forandringer vi skal
+  // gjøre på hastigheten til motorene.
+
+  forrigeAvvik = avvik;
+
+  int venstrePaadrag = 400 + PD + idealtidPD;
+  int hoyrePaadrag = 400 - PD - idealtidPD;
+
+  venstrePaadrag = constrain(venstrePaadrag, 0, 400);
+  hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);   // Vi ønsker ikke
+  // mer enn 400 til
+  // motorene.
+
+  motors.setSpeeds(venstrePaadrag, hoyrePaadrag);
 
 }
 
@@ -749,4 +799,19 @@ void linjefolgerFunctions();
   {
     idealTidLinjefolger();
   }
+}
+
+
+
+
+
+
+
+bool nyRunde = false;
+void nyRunde();
+{
+  // TODO Dette er en funksjon som skal gjøre en boolsk variabel sann når 
+  //      zumoen har kjørt en runde. Dette skal brukes i 
+  //      kunkurranselinjefølgerfunksjonene. Sensorer er bestilt og på vei.
+  //      
 }
