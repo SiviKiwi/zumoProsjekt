@@ -718,12 +718,35 @@ void avslaattLinjefolger();
 
 }
 
+unsigned long rundetid = 0;
+unsigned long rundetidStart = 0;
+unsigned long rundetidSlutt = 0;
+unsigned long best_rundetid = 0;
+int antall_runder_counter = 0;
 void besteTidLinjefolger();
 {
   // TODO Jeg vet ikke helt hvordan vi skal løse den annet enn å bare si at den beste runden
   // gir poeng eller noe sånt. å begynne å påvirke reguleringen for å få enda bedre tid
   // er svært vanskelig og jeg tenker at vi ikke har tid til det. Skal vi begynne å legge 
   // til integralledd liksom. denne funksjonen kan egt være en poenggivende funksjon.
+
+  if (nyRunde == true)
+  {
+    int antall_runder_counter++;
+    unsigned long rundetidSlutt = millis();
+    unsigned long rundetid = rundetidSlutt - rundetidStart;
+    unsigned long rundetidStart = millis();
+
+    nyRunde = false;
+
+  }
+
+  if(rundetid > best_rundetid)
+  {
+    best_rundetid = rundetid;
+
+    // TODO her må det gis poeng siden man har klart å slå forrige rundetid.
+  }
 }
 
 void idealTidLinjefolger();
@@ -731,18 +754,35 @@ void idealTidLinjefolger();
 
   int idealtid;
   bool nyRunde
+  unsigned long besteRundetid;
 
   if(nyRunde == true)
   {
 
     // Her skal den endre på pådragene slik at man kan oppnå en tid nærmere idealtid
+
+    unsigned long rundetidSlutt = millis();
+    unsigned long rundetid = rundetidSlutt - rundetidStart;
+    unsigned long rundetidStart = millis();
     
-    int idealtidAvvik = tid - idealtid;
+    int idealtidAvvik = rundetid - idealtid;
 
     int idealtidKonstantP = 1;  // Disse er konstantene til PD-reguleringen.
     int idealtidKonstantD = 10; // De er viktige for dens egenskaper.
 
     int idealtidPD = idealtidKonstantP * idealtidAvvik + idealtidKonstantD * (idealtidAvvik - forrigeAvvik);
+
+
+    if(abs(idealtidAvvik) > abs(idealtidForrigeAvvik))
+    {
+      besteRundetid = rundetid;
+
+      // TODO her må det gis poeng siden det har blitt
+      //  oppnådd det minste avviket fra idealtiden.
+
+
+
+    }
 
     idealtidForrigeAvvik = idealtidAvvik;
 
@@ -780,12 +820,8 @@ void idealTidLinjefolger();
 void linjefolgerFunctions();
 {                     // Det som bestemmer denne valgfunksjonen kan være
                       // IoT avhengig
+ 
   if()
-  {
-    normalLinjefolger();
-  }
-
-  else if()
   {
     avslaattLinjefolger();
   }
@@ -799,9 +835,12 @@ void linjefolgerFunctions();
   {
     idealTidLinjefolger();
   }
+
+  else
+  {
+    normalLinjefolger();
+  }
 }
-
-
 
 
 
