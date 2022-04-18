@@ -98,6 +98,11 @@ int Zumo32U4_bibliotek_gruppe_8::getBatteryHealth()
   return batteryHealth;
 }
 
+int Zumo32U4_bibliotek_gruppe_8::getBatteryLevel()
+{
+  return batteryLevel;
+}
+
 void Zumo32U4_bibliotek_gruppe_8::setBatteryHealth(int batteryHealth)
 {
   this->batteryHealth = battteryHealth;
@@ -411,8 +416,27 @@ void Zumo32U4_bibliotek_gruppe_8::batteryLevelWarning()
 
 void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
 {
-  
   // Her må vi displaye de rette variablene.
+
+  display.scrollDisplayLeft();
+
+  display.gotoXY(0, 0);
+  display.print("Bat: ");
+  display.print(getBatteryLevel();); //TODO trenger vi getBatteryLevel sivert?
+  display.print("%");
+
+  display.gotoXY(0, 1);
+  display.print("Char_$: ");
+  display.print();  // TODO legge til IoT for ladekostnader.
+  display.print();
+
+  display.gotoXY(6, 1);
+  display.print("acc_bal: ");
+  display.print();  //TODO legge til IoT for kontobalanse.
+  display.print();
+
+
+
   if ((continueChargingDisplay == true) && (continueChargingDisplayPrev == false))
   {
     chargingDisplayTimer = millis();
@@ -446,7 +470,21 @@ display.print("cm");
 void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay()  // Den som skal kjøres hvert tiende sekund på interrupt
 {
 
+  display.scrollDisplayLeft();
 
+  display.gotoXY(0,0);
+  display.print("Bat:");
+  display.print("100");
+  display.print("%");
+
+  display.gotoXY(0,1);
+  display.print("cc:");
+  display.print("10");
+
+  display.gotoXY(6,1);
+  display.print("bh:");
+  display.print("100");
+  display.print("p");
 
 }
 
@@ -457,7 +495,7 @@ void Zumo32U4_bibliotek_gruppe_8::displayFunctions()
   {
     runningDisplay();
   }
-  else if (tenAchieved == true) //TODO
+  else if (tenAchieved == true) //TODO Trenger vi getTenAchieved Sivert?
   {
     everyTenSecondsDisplay();
   }
