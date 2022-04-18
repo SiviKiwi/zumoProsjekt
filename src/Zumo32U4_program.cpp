@@ -42,9 +42,23 @@ void setup()
   {
     egendefinert.setBatteryHealth(EEPROM.read(0));
   }
+
+  unsigned long time_now = millis();
+  while (millis() < time_now + 5000)
+  {
+
+    lineSensors.calibrate();
+    motors.setSpeeds(200, -200);
+
+  }
+
+  motors.setSpeeds(0, 0);
+
 }
 
  
+
+
 void loop()
 {
 
@@ -54,7 +68,7 @@ void loop()
   {
     case 0:
 
-      // Antageligvis linjefølger.
+      egendefinert.linjefolgerFunctions();
 
       break;
 

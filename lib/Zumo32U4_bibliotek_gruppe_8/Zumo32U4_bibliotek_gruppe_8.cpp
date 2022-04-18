@@ -667,3 +667,86 @@ float gjennomsnittsHastighetPrev = gjennomsnittsHastighet;
  // Når det gjelder utregningen av batteryhealthfunksjonen så må vi nesten bare tilpasse konstantene når det blir nødving.
 
 }
+
+
+
+
+
+
+void normalLinjefolger();
+{
+
+  int position = lineSensors.readLine(lineSensorValues);
+  // Her ser man at man leser av disse sensorene.
+
+      // TODO Vi må legge inn funkjsonen som gjør at den skal kunne returnere 
+      // fra en blindvei.
+
+  int avvik = position - 2000;
+  // Her ser man avviket. Avviket forteller oss om målet.
+  // Når avviket er null, kreves det ingen regulering.
+  int konstantP = 1;  // Disse er konstantene til PD-reguleringen.
+  int konstantD = 10; // De er viktige for dens egenskaper.
+
+  int PD = konstantP * avvik + konstantD * (avvik - forrigeAvvik);
+  // Her får vi pådraget. Det er selve reguleringen.
+  // Den bestemmer hvilke forandringer vi skal
+  // gjøre på hastigheten til motorene.
+
+  forrigeAvvik = avvik;
+
+  int venstrePaadrag = 400 + PD;
+  int hoyrePaadrag = 400 - PD;
+
+  venstrePaadrag = constrain(venstrePaadrag, 0, 400);
+  hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);   // Vi ønsker ikke
+  // mer enn 400 til
+  // motorene.
+
+  motors.setSpeeds(venstrePaadrag, hoyrePaadrag); 
+
+}
+
+void avslaattLinjefolger();
+{
+
+  // TODO Her må vi bestemme om denne funksjonen skal være litt
+  // komplisert ved at den skal kunne være avslått på ulike
+  // plasser.
+
+}
+
+void besteTidLinjefolger();
+{
+
+}
+
+void idealTidLinjefolger();
+{
+
+}
+
+
+void linjefolgerFunctions();
+{                     // Det som bestemmer denne valgfunksjonen kan være
+                      // IoT avhengig
+  if()
+  {
+    normalLinjefolger();
+  }
+
+  else if()
+  {
+    avslaattLinjefolger();
+  }
+
+  else if()
+  {
+    besteTidLinjefolger();
+  }
+
+  else if()
+  {
+    idealTidLinjefolger();
+  }
+}
