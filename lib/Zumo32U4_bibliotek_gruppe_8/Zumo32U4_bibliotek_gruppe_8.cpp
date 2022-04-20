@@ -5,6 +5,7 @@
  */
 
 #include <Arduino.h>
+#include <Zumo32U4_bibliotek_gruppe_8.h>
 #include <Wire.h>
 #include <Zumo32U4.h>
 #include <EEPROM.h>
@@ -532,7 +533,7 @@ void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
         EEPROM.put(1,1);
         //last_EEPROM_batteryHealth = batteryHealth;
     }
-  //}
+}
   // chargingCycles
   // StateOfChargeBelow5
   // gjennomsnittsHastighet
@@ -549,7 +550,7 @@ void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
   // jeg tenker også at antall ladesykluser må ha mye og si.
 
  void Zumo32U4_bibliotek_gruppe_8::checkForBatteryStatus()
- {
+{
 
   if( (batteryHealth < 15) && batteryHealth > 3 )
   {
@@ -670,7 +671,7 @@ float gjennomsnittsHastighetPrev = gjennomsnittsHastighet;
 
 
 
-
+/*
 
 
 void normalLinjefolger();
@@ -679,7 +680,7 @@ void normalLinjefolger();
   int position = lineSensors.readLine(lineSensorValues);
   // Her ser man at man leser av disse sensorene.
 
-      // TODO Vi må legge inn funkjsonen som gjør at den skal kunne returnere 
+      // TODO Vi må legge inn funkjsonen som gjør at den skal kunne returnere
       // fra en blindvei.
 
   int avvik = position - 2000;
@@ -850,5 +851,6 @@ void nyRunde();
   // TODO Dette er en funksjon som skal gjøre en boolsk variabel sann når 
   //      zumoen har kjørt en runde. Dette skal brukes i 
   //      kunkurranselinjefølgerfunksjonene. Sensorer er bestilt og på vei.
-  //      
+  //
 }
+*/

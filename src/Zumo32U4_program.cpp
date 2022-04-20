@@ -5,7 +5,7 @@
  */
 
 #include <Arduino.h>
-#include "Zumo32U4_bibliotek_gruppe_8.h"
+#include <Zumo32U4_bibliotek_gruppe_8.h>
 #include <Wire.h>
 #include <Zumo32U4.h>
 #include <EEPROM.h>
@@ -91,7 +91,7 @@ void loop()
 
       break;
 
-    case State::CALIBRATE_LINE_SENSORS:
+    case State::CALIBRATE_LINESENSORS:
 
     // evt. egendefinert.batteryReplacement(); Husk da å trekke ut den som sjekker tilstanden 
     // inne i funksjonen.
