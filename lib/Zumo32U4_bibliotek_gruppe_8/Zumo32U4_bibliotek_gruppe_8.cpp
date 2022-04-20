@@ -125,14 +125,12 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, fl
     }
 
 //---------------------------------------------------------------
+  int multiplier = 1;
   if ((SOSmode == true) && (currentCapacity < 864000))
   {
-    int multiplyer = 10;
+    multiplier = 10;
   }
-  else
-  {
-    multiplyer = 1;
-  }
+
 
   if (currentCapacity > 864000)
   {
@@ -142,7 +140,7 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, fl
 
             // TODO: Endre funksjonen slik at hvis farten er positiv skal den ikkke lades ut
             // ti ganger raskere.
-  float currentUsage = 2.0 * multiplyer * speed + 10.0;
+  float currentUsage = 2.0 * multiplier * speed + 10.0;
   currentCapacity -= currentUsage * (float)ms / 1000.0;
 
   batteryLevel = (currentCapacity / (3600 * 1200)) * 100;
