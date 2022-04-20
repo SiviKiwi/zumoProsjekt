@@ -423,18 +423,18 @@ void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man 
 
   display.gotoXY(0, 0);
   display.print("Bat: ");
-  display.print(getBatteryLevel();); //TODO trenger vi getBatteryLevel sivert?
+  display.print(getBatteryLevel()); //TODO trenger vi getBatteryLevel sivert?
   display.print("%");
 
   display.gotoXY(0, 1);
   display.print("Char_$: ");
-  display.print();  // TODO legge til IoT for ladekostnader.
-  display.print();
+  display.print("\n");  // TODO legge til IoT for ladekostnader.
+  display.print("\n");
 
   display.gotoXY(6, 1);
   display.print("acc_bal: ");
-  display.print();  //TODO legge til IoT for kontobalanse.
-  display.print();
+  display.print("\n");  // TODO legge til IoT for ladekostnader.
+  display.print("\n");
 
 
 
