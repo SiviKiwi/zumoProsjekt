@@ -24,8 +24,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     Zumo32U4_bibliotek_gruppe_8();
     int getTwoTenCounter();
     bool getTenAchieved();
-    double getDistance();
-    double getSpeed();
+    float getDistance();
+    float getSpeed();
     void updateSpeedDist();
     float setCapacity(float speed, unsigned long ms, float currentCapacity);
     void vectorOverflow();
@@ -48,7 +48,7 @@ class Zumo32U4_bibliotek_gruppe_8{
 
   private:
 
-    int currentCapacity;
+    float currentCapacity;
   
     int twoToTenCounter;
     bool tenAchieved;
