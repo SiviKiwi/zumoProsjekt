@@ -181,11 +181,7 @@ void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
           everyTenSecondsDisplayState = true;
         }
 
-<<<<<<< HEAD
         if (millis() - start_time_one_sec_display > 1000)
-=======
-        if (millis() - time_now > + 1000)
->>>>>>> e205dd5ed0b0b62afe70d171306e5c158bba4da4
         {
           twoToTenCounter = 0;
           tenAchieved = false;
@@ -278,8 +274,8 @@ void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist()  // Denne funksjonen erstatt
   float rotasjoner = (float)avgCount / (75.81 * 12.0);
   dist = rotasjoner * 12.2522;
 
-  if( lastTimeGetSpeed > 100){
-    float cmSecond =  / ((float)ms / 1000);
+  if(millis() - lastTimeGetSpeed > 100){
+    float cmSecond = (dist - prevDist) / ((float)(millis() - lastTimeGetSpeed) / 1000);
 
     prevDist = dist;
     lastTimeGetSpeed = millis();
