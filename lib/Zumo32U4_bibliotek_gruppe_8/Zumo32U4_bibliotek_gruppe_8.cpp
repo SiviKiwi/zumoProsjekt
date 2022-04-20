@@ -770,7 +770,7 @@ void idealTidLinjefolger();
     int idealtidKonstantP = 1;  // Disse er konstantene til PD-reguleringen.
     int idealtidKonstantD = 10; // De er viktige for dens egenskaper.
 
-    int idealtidPD = idealtidKonstantP * idealtidAvvik + idealtidKonstantD * (idealtidAvvik - forrigeAvvik);
+    int idealtidPD = idealtidKonstantP * idealtidAvvik + idealtidKonstantD * (idealtidAvvik - idealtidForrigeAvvik);
 
 
     if(abs(idealtidAvvik) > abs(idealtidForrigeAvvik))
@@ -779,8 +779,6 @@ void idealTidLinjefolger();
 
       // TODO her må det gis poeng siden det har blitt
       //  oppnådd det minste avviket fra idealtiden.
-
-
 
     }
 
