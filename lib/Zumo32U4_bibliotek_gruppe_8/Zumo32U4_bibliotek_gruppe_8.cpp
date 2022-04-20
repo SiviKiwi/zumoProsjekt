@@ -106,7 +106,7 @@ int Zumo32U4_bibliotek_gruppe_8::getBatteryLevel()
 
 void Zumo32U4_bibliotek_gruppe_8::setBatteryHealth(int batteryHealth)
 {
-  this->batteryHealth = battteryHealth;
+  this->batteryHealth = batteryHealth;
 }
 
 float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, float currentCapacity)

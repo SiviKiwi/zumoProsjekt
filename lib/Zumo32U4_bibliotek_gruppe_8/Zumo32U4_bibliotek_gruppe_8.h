@@ -42,6 +42,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     void batteryLevelWarning();
     void batteryService();
     void updateBatteryHealth();
+    int getBatteryLevel();
     int getBatteryHealth();
     void setBatteryHealth(int batteryHealth);
     
