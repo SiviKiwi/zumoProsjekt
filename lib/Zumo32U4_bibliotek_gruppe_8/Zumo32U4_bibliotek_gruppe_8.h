@@ -40,13 +40,13 @@ class Zumo32U4_bibliotek_gruppe_8{
     void runningDisplay();
     void everyTenSecondsDisplay();
     void batteryLevelWarning();
-    void batteryService();
     void updateBatteryHealth();
     int getBatteryLevel();
     int getBatteryHealth();
     void setBatteryHealth(int batteryHealth);
     void batteryHealthAlgorithm();
-    
+    void batteryReplacement();
+    void batteryService();
 
   private:
 
@@ -91,6 +91,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     unsigned long batteryLevelWarningTimer;
     bool batteryLevelWarningOne;
     int batteryHealth;
+    void batteryService;
+
 
     bool ledYellow1State1;
     bool ledYellow1State2;

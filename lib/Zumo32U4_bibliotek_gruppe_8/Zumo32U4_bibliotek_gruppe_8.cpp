@@ -634,7 +634,7 @@ void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
 }
 
 
-void Zumo32U4_bibliotek_gruppe_8::batteryServive()
+void Zumo32U4_bibliotek_gruppe_8::batteryService()
 {
   if (level_1 = true);  // Disse kan vel settes rett i loopen?
   {
