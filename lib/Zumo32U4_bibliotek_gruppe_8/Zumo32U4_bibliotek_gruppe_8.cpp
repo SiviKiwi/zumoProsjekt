@@ -118,7 +118,7 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, fl
   
 //---------------------------------------------------------------
 
-  if((buttonB == true) && (SOSmodeOneTimeOnly == false))
+  if((buttonB.isPressed()) && (SOSmodeOneTimeOnly == false))
     {
       SOSmode = true;
       SOSmodeOneTimeOnly = true;
