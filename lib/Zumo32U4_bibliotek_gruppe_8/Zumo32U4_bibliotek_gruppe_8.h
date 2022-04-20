@@ -54,6 +54,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     int twoToTenCounter;
     bool tenAchieved;
     unsigned long lastTimeGetSpeed;
+    unsigned long start_time_one_sec_display;
 
     bool SOSmode;
     bool SOSmodeOneTimeOnly;
@@ -79,7 +80,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     int chargingCycles;
     int StateOfChargeBelow5;
     bool askForChargingState;
-    int batteryLevel;
+    float batteryLevel;
     bool continueChargingDisplay;
     bool absContinueChargingDisplay;
     bool everyTenSecondsDisplayState;

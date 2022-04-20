@@ -28,6 +28,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   this->twoToTenCounter = 0;
   this->tenAchieved = false;
   this->lastTimeGetSpeed = 0;
+  this->start_time_one_sec_display = 0;
 
   this->SOSmode = false;
   this->SOSmodeOneTimeOnly = false;
@@ -138,7 +139,7 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, fl
   }
 
 
-            // TODO: Endre funksjonen slik at hvis farten er positiv skal den ikkke lades ut
+            // TODO: Endre funksjonen slik at hvis farten er positiv skal den ikke lades ut
             // ti ganger raskere.
   float currentUsage = 2.0 * multiplier * speed + 10.0;
   currentCapacity -= currentUsage * (float)ms / 1000.0;
@@ -176,11 +177,11 @@ void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
 
         if (everyTenSecondsDisplayState == false)
         {
-          unsigned long time_now = millis();
+          start_time_one_sec_display = millis();
           everyTenSecondsDisplayState = true;
         }
 
-        if (millis() - time_now> + 1000)
+        if (millis() - start_time_one_sec_display > 1000)
         {
           twoToTenCounter = 0;
           tenAchieved = false;
