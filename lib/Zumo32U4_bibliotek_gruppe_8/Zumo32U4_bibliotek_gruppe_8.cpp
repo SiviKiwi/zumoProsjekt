@@ -457,12 +457,12 @@ void Zumo32U4_bibliotek_gruppe_8::runningDisplay()  // Den som skal kjøres til 
 display.clear();
 
 display.print("Spd:");
-display.print(getSpeed(););
+display.print(getSpeed());
 display.print("m/s");
 
 display.gotoXY(0, 1);
 display.print("Dist:");
-display.print(getDistance(););
+display.print(getDistance());
 display.print("cm");
 
 }
