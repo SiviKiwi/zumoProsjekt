@@ -320,13 +320,13 @@ void Zumo32U4_bibliotek_gruppe_8::actualCharging()
 
 void Zumo32U4_bibliotek_gruppe_8::batteryLevelWarning()
 {
-  if ((batteryLevel <= 10) && (batteryLevel > 5) && batteryLevelWarningOne = false)
+  if ((batteryLevel <= 10) && (batteryLevel > 5) && batteryLevelWarningOne == false)
   {
 //-----------
       if (ledYellow1State1 == false)
       {
         ledYellow(1);
-        buzzer.playFrequency(200, 300, 11)
+        buzzer.playFrequency(200, 300, 11);
         batteryLevelWarningLedTimer1 = millis();
         ledYellow1State1 = true;
       }
@@ -352,7 +352,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryLevelWarning()
       if (ledYellow1State2 == false)
       {
         ledYellow(1);
-        buzzer.playFrequency(1000, 300, 14)
+        buzzer.playFrequency(1000, 300, 14);
         batteryLevelWarningLedTimer2 = millis();
         ledYellow1State2 = true;
       }
