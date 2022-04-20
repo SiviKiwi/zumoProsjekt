@@ -20,6 +20,17 @@ Zumo32U4LCD display;
 Zumo32U4_bibliotek_gruppe_8 egendefinert;
 
 
+enum State : uint8_t {
+  RESET = 0,
+  CALIBRATE_LINESENSORS,
+  WAIT_FOR_START_SIGNAL,
+  MOVING,
+  RETURN_TO_STATION,
+  STOPPED,
+  REFUELING,
+};
+
+
 unsigned long time;
 float speed;
 float dist;
@@ -56,7 +67,8 @@ void setup()
 
 }
 
- 
+
+State state = State::RESET;
 
 
 void loop()
@@ -66,21 +78,19 @@ void loop()
   // Det er også relevant å se på løsninger for å kunne lade over IoT,
   // foreløpig er det kun over zumoens knapper.
 
-  switch(/* Hva skal variabelen være? */)
+  switch(state)
   {
-    case 0:
+    case State::RESET:
 
-      egendefinert.linjefolgerFunctions();
-
-      break;
-
-    case 1: 
-
-      egendefinert.actualCharging();
 
       break;
 
-    case 2:
+    case State::WAIT_FOR_START_SIGNAL:
+
+
+      break;
+
+    case State::CALIBRATE_LINE_SENSORS:
 
     // evt. egendefinert.batteryReplacement(); Husk da å trekke ut den som sjekker tilstanden 
     // inne i funksjonen.
