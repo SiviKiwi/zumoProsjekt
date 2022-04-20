@@ -48,7 +48,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
   this->tid70 = 0;
   this->tid70Etter = 0;
   this->tid70Differensial = 0;
-  this->maksHastiget = 400; // NB: husk å endre denne verdien til faktisk makshastighet.
+  this->maksHastighet = 400; // NB: husk å endre denne verdien til faktisk makshastighet.
 
   this->chargingCycles = 0;
   this->StateOfChargeBelow5 = 0;
