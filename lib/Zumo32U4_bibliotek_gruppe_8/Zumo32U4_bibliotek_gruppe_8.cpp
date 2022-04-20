@@ -511,11 +511,81 @@ void Zumo32U4_bibliotek_gruppe_8::displayFunctions()
 
 
 
+void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
+{
+
+  const int K1 = 1;
+  const int K2 = 1;
+  const int K3 = 1;
+
+  // her kan vi forandre på koeffisientene slik at vi får et passende resultat.
+
+  const int Ka = 1;
+  const int Kb = 1;
+  const int Kc = 1;
+  const int Kd = 1;
+  const int Ke = 1;
+
+
+
+  int randomFactor = random(1,10);
+  int randomfactorExecuted;
+
+  if (randomFactor > 8)
+  {
+    randomFactorExecuted = 0.5;
+  }
+  else
+  {
+    randomFactorExecuted = 1;
+  }
 
 
 
 
+  if ((tid70Differensial != tid70DifferensialPrev) || (StateOfChargeBelow5 != StateOfChargeBelow5) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
+  {
+    if(tid70Differensial == tid70DifferensialPrev)
+    {
+      Ka = 0;
+    }
+    if(StateOfChargeBelow5 == StateOfChargeBelow5Prev)
+    {
+      ke = 0;
+    }
 
+    if(chargingCycles == chargingCyclesPrev)
+    {
+      Kb = 0;
+    }
+
+    if(sekstiSekMaksHastighet == sekstiSekMaksHastighetPrev)
+    {
+      Kc = 0;
+    }
+
+    if(gjennomsnittsHastighet == gjennomsnittsHastighetPrev)
+    {
+      Kd = 0;
+    }
+
+    int batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((StateOfChargeBelow5),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
+
+unsigned long tid70DifferensialPrev = tid70Differensial;
+int StateOfChargeBelow5Prev = StateOfChargeBelow5;
+int chargingCyclesPrev = chargingCycles;
+float sekstiSekMaksHastighetPrev = sekstiSekMaksHastighet;
+float gjennomsnittsHastighetPrev = gjennomsnittsHastighet;
+
+// dette her er nok litt rotete. Hvis dere har en annen løsning, så kan dere godt endre på det.
+// Poenget med å gjøre det sånn er at vi ikke endrer på variabelen unødvendig, fordi den er satt
+// opp slik at for hver gang den blir kalkulert så vil batteryHealth synke.
+
+  }
+
+ // Når det gjelder utregningen av batteryhealthfunksjonen så må vi nesten bare tilpasse konstantene når det blir nødving.
+
+}
 
 
 void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
@@ -594,80 +664,6 @@ void Zumo32U4_bibliotek_gruppe_8::batteryReplacement()
 }
 
 
-void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
-{
-
-  const int K1 = 1; 
-  const int K2 = 1;
-  const int K3 = 1;
-
-  // her kan vi forandre på koeffisientene slik at vi får et passende resultat.
-  
-  const int Ka = 1;
-  const int Kb = 1;
-  const int Kc = 1;
-  const int Kd = 1;
-  const int Ke = 1;
-
- 
-
-  randomFactor = random(1,10);
-
-  if (randomFactor > 8)
-  {
-    randomFactorExecuted = 0.5;
-  }
-  else
-  {
-    randomFactorExecuted = 1;
-  }
-
-
-
-
-  if ((tid70Differensial != tid70DifferensialPrev) || (StateOfChargeBelow5 != StateOfChargeBelow5) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
-  {
-    if(tid70Differensial == tid70DifferensialPrev)
-    {
-      Ka = 0;
-    }
-    if(StateOfChargeBelow5 == StateOfChargeBelow5Prev)
-    {
-      ke = 0;
-    }
-
-    if(chargingCycles == chargingCyclesPrev)
-    {
-      Kb = 0;
-    }
-
-    if(sekstiSekMaksHastighet == sekstiSekMaksHastighetPrev)
-    {
-      Kc = 0;
-    }
-
-    if(gjennomsnittsHastighet == gjennomsnittsHastighetPrev) 
-    {
-      Kd = 0;
-    }
-
-    int batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((StateOfChargeBelow5),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
-
-unsigned long tid70DifferensialPrev = tid70Differensial;
-int StateOfChargeBelow5Prev = StateOfChargeBelow5;
-int chargingCyclesPrev = chargingCycles;
-float sekstiSekMaksHastighetPrev = sekstiSekMaksHastighet;
-float gjennomsnittsHastighetPrev = gjennomsnittsHastighet; 
-
-// dette her er nok litt rotete. Hvis dere har en annen løsning, så kan dere godt endre på det.
-// Poenget med å gjøre det sånn er at vi ikke endrer på variabelen unødvendig, fordi den er satt
-// opp slik at for hver gang den blir kalkulert så vil batteryHealth synke.
-
-  }
-
- // Når det gjelder utregningen av batteryhealthfunksjonen så må vi nesten bare tilpasse konstantene når det blir nødving.
-
-}
 
 
 
