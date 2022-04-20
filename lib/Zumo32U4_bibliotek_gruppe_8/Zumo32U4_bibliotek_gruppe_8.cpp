@@ -529,7 +529,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
 
 
   int randomFactor = random(1,10);
-  int randomfactorExecuted;
+  int randomFactorExecuted = 0;
 
   if (randomFactor > 8)
   {
