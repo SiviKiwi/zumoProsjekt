@@ -180,10 +180,11 @@ void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
           everyTenSecondsDisplayState = true;
         }
 
-        if (millis() - time_now> + 1000)
+        if (millis() - time_now > + 1000)
         {
           twoToTenCounter = 0;
           tenAchieved = false;
+          everyTenSecondsDisplayState = false;
         }
     }
 }
