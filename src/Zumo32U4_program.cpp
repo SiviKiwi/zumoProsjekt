@@ -140,7 +140,7 @@ void loop()
   // evt. egendefinert.batteryReplacement();
 }
 
-ISR(TIMER1_OVF_VECT)
+ISR(TIMER1_OVF_vect)
 {
   TCNT1 = 31250;
   egendefinert.vectorOverflow(); // Denne funksjonen forteller oneSecBatState om den skal agere.
