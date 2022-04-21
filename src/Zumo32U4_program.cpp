@@ -18,7 +18,7 @@ Zumo32U4ButtonB buttonB;
 Zumo32U4ButtonC buttonC;
 Zumo32U4Buzzer buzzer;
 Zumo32U4LCD display;
-Zumo32U4_bibliotek_gruppe_8 egendefinert;
+Zumo32U4_bibliotek_gruppe_8 egendefinert(encoders, motors, buttonA, buttonB, buttonC, buzzer, display);
 
 
 enum State : uint8_t {

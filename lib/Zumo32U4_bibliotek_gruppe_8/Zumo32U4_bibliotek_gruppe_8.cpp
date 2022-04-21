@@ -10,18 +10,27 @@
 #include <Zumo32U4.h>
 #include <EEPROM.h>
 
-Zumo32U4Encoders encoders;
-Zumo32U4Motors motors;
-Zumo32U4ButtonA buttonA;
-Zumo32U4ButtonB buttonB;
-Zumo32U4ButtonC buttonC;
-Zumo32U4Buzzer buzzer;
-Zumo32U4LCD display;
 
 
 
 
-Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(){
+
+Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
+      Zumo32U4Encoders encoders,
+      Zumo32U4Motors motors,
+      Zumo32U4ButtonA buttonA,
+      Zumo32U4ButtonB buttonB,
+      Zumo32U4ButtonC buttonC,
+      Zumo32U4Buzzer buzzer,
+      Zumo32U4LCD display){
+
+  this->encoders = encoders;
+  this->motors = motors;
+  this->buttonA = buttonA;
+  this->buttonB = buttonB;
+  this->buttonC = buttonC;
+  this->buzzer = buzzer;
+  this->display = display;
 
   this->currentCapacity = 1200.0 * 3600;
 

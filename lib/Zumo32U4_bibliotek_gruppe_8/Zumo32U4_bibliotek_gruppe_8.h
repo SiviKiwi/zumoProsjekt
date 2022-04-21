@@ -21,7 +21,15 @@
 class Zumo32U4_bibliotek_gruppe_8{
   public:
 
-    Zumo32U4_bibliotek_gruppe_8();
+    Zumo32U4_bibliotek_gruppe_8(
+        Zumo32U4Encoders encoders,
+        Zumo32U4Motors motors,
+        Zumo32U4ButtonA buttonA,
+        Zumo32U4ButtonB buttonB,
+        Zumo32U4ButtonC buttonC,
+        Zumo32U4Buzzer buzzer,
+        Zumo32U4LCD display);
+
     int getTwoTenCounter();
     bool getTenAchieved();
     float getDistance();
@@ -49,6 +57,14 @@ class Zumo32U4_bibliotek_gruppe_8{
     void batteryService();
 
   private:
+
+    Zumo32U4Encoders encoders;
+    Zumo32U4Motors motors;
+    Zumo32U4ButtonA buttonA;
+    Zumo32U4ButtonB buttonB;
+    Zumo32U4ButtonC buttonC;
+    Zumo32U4Buzzer buzzer;
+    Zumo32U4LCD display;
 
     float currentCapacity;
   
