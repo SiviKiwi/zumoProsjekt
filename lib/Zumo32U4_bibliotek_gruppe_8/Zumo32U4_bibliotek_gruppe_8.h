@@ -91,7 +91,6 @@ class Zumo32U4_bibliotek_gruppe_8{
     unsigned long batteryLevelWarningTimer;
     bool batteryLevelWarningOne;
     int batteryHealth;
-    void batteryService;
 
 
     bool ledYellow1State1;

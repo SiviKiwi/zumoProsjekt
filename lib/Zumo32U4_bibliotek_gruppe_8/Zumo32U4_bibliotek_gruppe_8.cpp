@@ -492,17 +492,15 @@ void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay()  // Den som skal kjø
 
 void Zumo32U4_bibliotek_gruppe_8::displayFunctions()
 {
-  if () //TODO
-  {
-    runningDisplay();
-  }
-  else if (tenAchieved == true) //TODO Trenger vi getTenAchieved Sivert?
+  if (tenAchieved == true) //TODO Trenger vi getTenAchieved Sivert?
   {
     everyTenSecondsDisplay();
   }
   else if (absContinueChargingDisplay == true)
   {
     chargingDisplay();
+  } else {
+    runningDisplay();
   }
 
 // Hvis det trengs flere displaytyper, legg gjerne til.
@@ -514,17 +512,17 @@ void Zumo32U4_bibliotek_gruppe_8::displayFunctions()
 void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
 {
 
-  const int K1 = 1;
-  const int K2 = 1;
-  const int K3 = 1;
+  int K1 = 1;
+  int K2 = 1;
+  int K3 = 1;
 
   // her kan vi forandre på koeffisientene slik at vi får et passende resultat.
 
-  const int Ka = 1;
-  const int Kb = 1;
-  const int Kc = 1;
-  const int Kd = 1;
-  const int Ke = 1;
+  int Ka = 1;
+  int Kb = 1;
+  int Kc = 1;
+  int Kd = 1;
+  int Ke = 1;
 
 
 
@@ -551,7 +549,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
     }
     if(StateOfChargeBelow5 == StateOfChargeBelow5Prev)
     {
-      ke = 0;
+      Ke = 0;
     }
 
     if(chargingCycles == chargingCyclesPrev)
