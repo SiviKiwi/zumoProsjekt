@@ -180,7 +180,7 @@ void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
 
 void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
 {
-    if (tenAchieved = true)
+    if (tenAchieved == true)
     {
         //everyTenSecondsDisplay(); Ikke nødvendig siden den er flyttet til egen skjermvelger
 
@@ -284,7 +284,7 @@ void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist()  // Denne funksjonen erstatt
   dist = rotasjoner * 12.2522;
 
   if(millis() - lastTimeGetSpeed > 100){
-    float cmSecond = (dist - prevDist) / ((float)(millis() - lastTimeGetSpeed) / 1000);
+    speed = (dist - prevDist) / ((float)(millis() - lastTimeGetSpeed) / 1000);
 
     prevDist = dist;
     lastTimeGetSpeed = millis();
@@ -643,7 +643,7 @@ void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
 
 void Zumo32U4_bibliotek_gruppe_8::batteryService()
 {
-  if (level_1 = true);  // Disse kan vel settes rett i loopen?
+  if (level_1 == true);  // Disse kan vel settes rett i loopen?
   {
     if (buttonA.isPressed())
     {
