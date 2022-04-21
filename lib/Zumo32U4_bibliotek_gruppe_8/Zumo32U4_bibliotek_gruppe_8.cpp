@@ -119,7 +119,7 @@ void Zumo32U4_bibliotek_gruppe_8::setBatteryHealth(int batteryHealth)
   this->batteryHealth = batteryHealth;
 }
 
-float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, float currentCapacity)
+float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
 {
   if (speed < 0)
   {
@@ -175,6 +175,7 @@ void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
     if (twoToTenCounter >= 5)
     {
         tenAchieved = true;
+        twoToTenCounter = 0;
     }
 }
 

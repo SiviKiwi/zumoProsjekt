@@ -35,7 +35,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     float getDistance();
     float getSpeed();
     void updateSpeedDist();
-    float setCapacity(float speed, unsigned long ms, float currentCapacity);
+    float setCapacity(float speed, unsigned long ms);
     void vectorOverflow();
     void oneSecBatState();
     void speedometerEvery60(float speed);

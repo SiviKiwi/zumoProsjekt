@@ -113,13 +113,13 @@ void loop()
     speed = egendefinert.getSpeed();
     dist = egendefinert.getDistance();
 
-    egendefinert.setCapacity(speed, elapsedTime, currentCapacity);
+    egendefinert.setCapacity(speed, elapsedTime);
 
-    display.clear();
-    display.gotoXY(0, 0);
-    display.print((float)currentCapacity / 3600.0);
-    display.print(dist);
-    display.print(speed);
+//    display.clear();
+//    display.gotoXY(0, 0);
+//    display.print((float)currentCapacity / 3600.0);
+//    display.print(dist);
+//    display.print(speed);
 
     egendefinert.displayFunctions(); // Denne skal erstatte alle med display ovenfor.
 
