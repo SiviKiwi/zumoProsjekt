@@ -55,16 +55,6 @@ void setup()
     egendefinert.setBatteryHealth(EEPROM.read(0));
   }
 
-  unsigned long time_now = millis();
-  while (millis() < time_now + 5000)
-  {
-
-    lineSensors.calibrate();
-    motors.setSpeeds(200, -200);
-
-  }
-
-  motors.setSpeeds(0, 0);
 
 }
 
@@ -93,6 +83,16 @@ void loop()
 
     case State::CALIBRATE_LINESENSORS:
 
+      unsigned long time_now = millis();
+      while (millis() < time_now + 5000)
+      {
+
+        lineSensors.calibrate();
+        motors.setSpeeds(200, -200);
+
+      }
+
+      motors.setSpeeds(0, 0);
     // evt. egendefinert.batteryReplacement(); Husk da å trekke ut den som sjekker tilstanden 
     // inne i funksjonen.
 
@@ -112,16 +112,19 @@ void loop()
     unsigned long elapsedTime = timeNow - time;
     speed = egendefinert.getSpeed();
     dist = egendefinert.getDistance();
-
     egendefinert.setCapacity(speed, elapsedTime);
 
-//    display.clear();
-//    display.gotoXY(0, 0);
+
+    display.clear();
+    display.gotoXY(0, 0);
+    display.print(dist);
 //    display.print((float)currentCapacity / 3600.0);
 //    display.print(dist);
 //    display.print(speed);
 
-    egendefinert.displayFunctions(); // Denne skal erstatte alle med display ovenfor.
+
+
+    //egendefinert.displayFunctions(); // Denne skal erstatte alle med display ovenfor.
 
     time = millis();
   }
