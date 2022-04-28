@@ -127,7 +127,9 @@ void Zumo32U4_bibliotek_gruppe_8::sendSerial()
   sendString.concat()
   sendString.concat(";zumoAskForCharging;")
     if (zumoAskForCharging) {
-      sendString
+      sendString.concat(1);
+    } else {
+      sendString.concat(0);
     }
   sendString.concat()
   sendString.concat(";currentCapacity;")
