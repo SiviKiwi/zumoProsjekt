@@ -119,7 +119,29 @@ void Zumo32U4_bibliotek_gruppe_8::sendSerial()
   batteryHealth
   sporOmSaldo
   sendSaldo
+
+
   */
+  String sendString = "";
+  sendString.concat("BileierID;");
+  sendString.concat()
+  sendString.concat(";zumoAskForCharging;")
+    if (zumoAskForCharging) {
+      sendString
+    }
+  sendString.concat()
+  sendString.concat(";currentCapacity;")
+  sendString.concat("")
+  sendString.concat("speed")
+  sendString.concat("")
+  sendString.concat("distance")
+  sendString.concat("")
+  sendString.concat("batteryHealth")
+  sendString.concat("")
+  sendString.concat("sporOmSaldo")
+  sendString.concat("")
+  sendString.concat("sendSaldo")
+  sendString.concat("")
 }
 
 
@@ -752,7 +774,7 @@ String Zumo32U4_bibliotek_gruppe_8::getSerialValue(int index)
   int maxIndex = serialString.length() - 1;
 
   for (int i = 0; i <= maxIndex && found <= index; i++) {
-    if (serialString.charAt(i) == ':' || i == maxIndex) {
+    if (serialString.charAt(i) == ';' || i == maxIndex) {
       found++;
       strengIndex[0] = strengIndex[1] + 1;
       strengIndex[1] = (i == maxIndex) ? i + 1 : i;
