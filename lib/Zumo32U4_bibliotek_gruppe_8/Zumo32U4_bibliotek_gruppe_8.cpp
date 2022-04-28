@@ -847,8 +847,8 @@ if (timesTrackRun > 0) {  // timesTrackRun er en teller for hvor mange ganger ba
 
 void crossroadData(int position; int prevPosition) {
   if (checkForCrossroad(position, prevPosition) == 2700 || checkForCrossroad() == 1300) { // !!!!!
-    long fluxingCountSinceCrossroadLeft = getCountsLeft();
-    long fluxingCountSinceCrossroadRight = getCountsRight();
+    long fluxingCountSinceCrossroadLeft = encoders.getCountsLeft();
+    long fluxingCountSinceCrossroadRight = encoders.getCountsRight();
     fluxingAverageCountCrossroad = ((fluxingCountSinceCrossroadLeft + fluxingCountSinceCrossroadRight) / 2) - 300;
     fluxingTimeBeforeCrossroad = millis - rundeTidStart - 500;  //    !!!!!
   }
