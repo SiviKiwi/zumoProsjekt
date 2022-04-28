@@ -79,9 +79,9 @@ void loop()
       Streng = String(getValue(inputFromZumo, ';', 11));
       client.publish("batteryHealth", Streng.c_str()); // batteryHealth
 
-      //Streng = String(getValue(inputFromZumo, ';', 13));
+      //Streng = String(getValue(inputFromZumo, ';', 15));
       //client.publish("sendSaldo", Streng.c_str()); sendSaldo
-      //Streng = String(getValue(inputFromZumo, ';', i));
+      //Streng = String(getValue(inputFromZumo, ';', 13));
       //client.publish("sporOmSaldo", Streng.c_str()); sporOmSaldo
 
       if (getValue(inputFromZumo, ';', 3) == "0")
@@ -90,8 +90,7 @@ void loop()
         client.publish("bileierID", Streng.c_str()); // bileierID
         Streng = String(getValue(inputFromZumo, ';', 3));
         client.publish("zumoAskForCharging", Streng.c_str()); // zumoAskForcharging x, y
-      }
-
+      }     
 
       publishTimer = millis();
 
@@ -178,6 +177,10 @@ void callback(String topic, byte* message, unsigned int length) {
   {
     Serial.println(String(topic) + "," + String(messageTemp));
   }
+  else if (topic == "idealTid")
+  {
+    Serial.println(String(topic) + "," + String(messageTemp));
+  }
   else if (topic == "ladingStoppet")
   {
     Serial.println(String(topic) + "," + String(messageTemp));
@@ -210,6 +213,7 @@ void reconnect() {
       client.subscribe("ladingStoppet");
       client.subscribe("batteriNivaaSend");
       client.subscribe("zumoStopConfirmed");
+      client.subscribe("idealTid");
 
       // evt. ladepris
 

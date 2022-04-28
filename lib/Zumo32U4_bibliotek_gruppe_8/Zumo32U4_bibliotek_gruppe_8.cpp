@@ -101,7 +101,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
 void Zumo32U4_bibliotek_gruppe_8::checkSerial()
 {
   if (Serial1.available() > 0) {
-    // TODO: Kanskje sjekke om strengen er tom.
+    // TODO: Kanskje sjekke om strengen er tom.             // Vi trenger ikke den her lenger.
     serialString = Serial1.readString();
     //Serial1.flush(); //TODO: Kansje vi ma bruke dette?
   }
@@ -126,30 +126,33 @@ void Zumo32U4_bibliotek_gruppe_8::sendSerial()
   sendString.concat("BileierID;");
   sendString.concat()
   sendString.concat(";zumoAskForCharging;")
-    if (zumoAskForCharging) {
+    if (askForChargingState == true) {
       sendString.concat(1);
-    } else {
+    } 
+    else {
       sendString.concat(0);
     }
   
-  sendString.concat(";currentCapacity;")
-  sendString.concat("") // * (100/(1200 * 3600))
+  sendString.concat(";batteriNivaa;")
+  sendString.concat(getBatteryLevel()) // * (100/(1200 * 3600))
   sendString.concat(";speed;")
-  sendString.concat("") 
+  sendString.concat(getSpeed()) 
   sendString.concat(";distance;")
-  sendString.concat("") 
+  sendString.concat(getDistance()) 
   sendString.concat(";batteryHealth;")
+  sendString.concat(getBatteryHealth())
+  sendString.concat(";sporOmSaldo;")  //TODO: Her må det vurderes om lading fra bilen skal kunne trekke fra kontoen.
+  sendString.concat("")               //TODO: Det vil komplisere koden betraktelig, siden man kan ikke sende saldo,
+  sendString.concat(";sendSaldo;")    //TODO: med mindre man har hentet inn saldoen først.
   sendString.concat("")
-  sendString.concat(";sporOmSaldo;")
-  sendString.concat("")
-  sendString.concat(";sendSaldo;")
-  sendString.concat("")
+
+  Serial1.println(sendString);
 }
 
 
-int Zumo32U4_bibliotek_gruppe_8::getState()
+int Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en void?
 {
-  String kommando = getSerialValue(0);
+
 
   /*
   mottas:
@@ -164,27 +167,54 @@ int Zumo32U4_bibliotek_gruppe_8::getState()
   */
 
   // TODO: Kanskje sjekke at det ikke er lik prevKommando
-  if (kommando == "zumoStopConfirmed") {
 
-  } else if (kommando == "ladingStoppet") {
 
-  } else if (kommando == "batteriNivaaSend") {
+   if (Serial1.available() > 0) 
+   {
+    // TODO: Kanskje sjekke om strengen er tom.
+    serialString = Serial1.readString();
 
-  } else if (kommando == "batteryHealth") {
+    String kommando = getSerialValue(serialStreng, ',', 0);
+    //Serial1.flush(); //TODO: Kansje vi ma bruke dette?
+  
+    if (kommando == "zumoStopConfirmed")
+    {
+      zumoStopConfirmed = true; // WX79 TODO å definere variabelen. Skal bestemme linjefølger
+    } 
+    else if (kommando == "ladingStoppet") 
+    {
+      ladingStoppet = true; // WX79 HUSK å definere variabelen.
+    } 
+    else if (kommando == "batteriNivaaSend") 
+    {
+      currentCapacity = ((int(getSerialValue(serialStreng, ',', 1)) * 0.01) * (1200 * 3600)); // Dette gjør om fra prosent til faktisk kapasitet.
+    } 
+    else if (kommando == "batteryHealth") 
+    {
+      batteryHealth = int(getSerialValue(serialStreng, ',', 1));
+    } 
+    else if (kommando == "Ny_runde") 
+    {
+      nyRunde = "1";
+    } 
+    else if (kommando == "idealTidsAvvik") 
+    {
+      //idealTidsAvvik = getSerialValue(serialStreng, ',', 1); //Trenger den egt. ikke
+    } 
+    else if (kommando == "sporOmSaldo2") 
+    {
 
-  } else if (kommando == "Ny_runde") {
-
-  } else if (kommando == "idealTidsAvvik") {
-
-  } else if (kommando == "sporOmSaldo2") {
-
-  } else if (kommando == "linjeFolger") {
-
-  } else {
-
+    } 
+    else if (kommando == "linjeFolger") 
+    {
+      linjeFolger = getSerialValue(serialStreng, ',', 1); // TODO definere variabelen WX79
+    } 
+    else if (kommando == "idealTid")
+    {
+      idealTid = int(getSerialValue(serialStreng, ',', 1)); // TODO definere variabelen WX79
+    }
+    return state;
   }
-  return state;
-
 }
 
 void Zumo32U4_bibliotek_gruppe_8::setState(int state)
@@ -391,7 +421,7 @@ void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist()  // Denne funksjonen erstatt
 
 void Zumo32U4_bibliotek_gruppe_8::askForCharging()
 {
-  if ((buttonA.isPressed() == true && buttonC.isPressed() == true) || askForChargingState == true)
+  if ((buttonA.isPressed() == true && buttonC.isPressed() == true) || askForChargingState == true || (batteryLevel <= 10)) // WX79
   {
     // sett swith variabel til casen med funksjonen actualCharging() i.
     askForChargingState = true;
@@ -416,10 +446,11 @@ void Zumo32U4_bibliotek_gruppe_8::actualCharging()
 
   }
 
-  if ((buttonA.isPressed() == true) && (buttonC.isPressed() == true)) // Jeg har gjort det slik at
+  if (((buttonA.isPressed() == true) && (buttonC.isPressed() == true)) || (ladingStoppet == true)) // Jeg har gjort det slik at WX79
   {
     askForChargingState = false;
     continueChargingDisplay = true;
+    ladingStoppet = false;  //WX79
   }
 }
 
@@ -443,6 +474,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryLevelWarning()
         batteryLevelWarningOne = true;
       }
 
+    
 
   }
 
@@ -1098,17 +1130,17 @@ void linjefolgerFunctions();
 {                     // Det som bestemmer denne valgfunksjonen kan være
                       // IoT avhengig
  
-  if()
+  if(linjeFolger == "Avslått")
   {
     avslaattLinjefolger();
   }
 
-  else if()
+  else if(linjeFolger == "Bestetid")
   {
     besteTidLinjefolger();
   }
 
-  else if()
+  else if(linjeFolger == "Idealtid")
   {
     idealTidLinjefolger();
   }
