@@ -24,6 +24,7 @@ Zumo32U4_bibliotek_gruppe_8 egendefinert(encoders, motors, buttonA, buttonB, but
 unsigned long time;
 float speed;
 float dist;
+int variabel;
 
 float currentCapacity = 1200.0 * 3600;
 
