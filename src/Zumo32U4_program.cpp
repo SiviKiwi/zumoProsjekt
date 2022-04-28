@@ -54,12 +54,7 @@ void setup()
   {
     egendefinert.setBatteryHealth(EEPROM.read(0));
   }
-
-
 }
-
-
-State state = State::RESET;
 
 
 void loop()
@@ -69,38 +64,31 @@ void loop()
   // Det er også relevant å se på løsninger for å kunne lade over IoT,
   // foreløpig er det kun over zumoens knapper.
 
-  switch(state)
+  egendefinert.askForCharging();
+
+  if (zumoStopConfirmed == true)
   {
-    case State::RESET:
+    variabel = 2;
+  }
+  else{
+    variabel = 1;
+  }
 
-      state = State::WAIT_FOR_START_SIGNAL;
+  switch(variabel)
+  {
+    case 1:
+
+      egendefinert.linjefolgerFunctions();
+
       break;
 
-    case State::WAIT_FOR_START_SIGNAL:
-      if(buttonA.isPressed()) {
-        delay(2000);
-        state = State::CALIBRATE_LINESENSORS;
-      }
-
-      break;
-
-    case State::CALIBRATE_LINESENSORS:
-
-      unsigned long time_now = millis();
-      while (millis() < time_now + 5000)
-      {
-
-        lineSensors.calibrate();
-        motors.setSpeeds(100, -100);
-
-      }
+    case 2:
 
       motors.setSpeeds(0, 0);
-    // evt. egendefinert.batteryReplacement(); Husk da å trekke ut den som sjekker tilstanden 
-    // inne i funksjonen.
-      state = State::RESET;
+      egendefinert.actualCharging();
 
-      break;
+      break
+
   }
 
 
