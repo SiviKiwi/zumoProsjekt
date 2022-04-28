@@ -791,13 +791,176 @@ void normalLinjefolger();
 {
 
   int position = lineSensors.readLine(lineSensorValues);
-  // Her ser man at man leser av disse sensorene.
+// Her ser man at man leser av disse sensorene.
 
-      // TODO Vi må legge inn funkjsonen som gjør at den skal kunne returnere
-      // fra en blindvei.
+   ikke definert fra før av og må defineres
 
+unsigned long ***prevPositionUpdateTimer*** = millis();                                            /////// variabel som ikke er lagt inn fra før **= 0
+
+if (millis() - prevPositionUpdateTimer = 50) {
+  ***prevPosition*** = position;                                            /////// variabel som ikke er lagt inn fra før **initialiser
+}
+
+if (***timesTrackRun*** == 0) {                                            /////// variabel som ikke er lagt inn fra før
+  crossroadData(position, prevPosition);
+}
+
+if (timesTrackRun > 0) {  // timesTrackRun er en teller for hvor mange ganger banen har kjørt
+  preEmptiveLookForCrossroad ()
+  ////---------------------------------------------------------
+  void preemptiveLookForCrossroad () {
+    long ***currentRoundTime*** = millis() - rundeTidStart;                                            /////// variabel som ikke er lagt inn fra før **initialiser
+    //ved ny rundetid restart mulighet for lookForCrossroad
+    if (rundeTidStart <= 200 && crossroadPassed = true) {
+      bool crossroadPassed = false;
+    }
+
+    if (crossroadPassed == false) {
+      /////
+      if ((position <= prevPosition - 600) && (timeBeforeCrossroad - currentRoundTime <= 0)) {
+        *****************
+        motors.setSpeeds(0, 300);
+        crossroadPassed = true;
+      }
+      else if ((position <= prevPosition + 600) && (timeBeforeCrossroad - currentRoundTime <= 0)) {
+        motors.setSpeeds(300, 0);
+        crossroadPassed = true;
+      }
+      /////
+    }
+  }
+  ////---------------------------------------------------------
+}
+//// -------------------------------------------------------------------------------------
+
+/**
+   Funksjonen ser etter siste gang posisjonen var over 600 fra sentrert på midten av bilen
+   og lagrer varierende variabler for sist gang posisjonen var  600
+
+
+   Variabler som må defineres:                                            /////// variabel som ikke er lagt inn fra før
+   long fluxingCountSinceCrossroadLeft;
+   long fluxingCountSinceCrossroadRight;
+   long fluxingAverageCountCrossroad ??
+   unsigned long fluxingTimeBeforeCrossroad
+
+
+void crossroadData(int position; int prevPosition) {
+  if (checkForCrossroad(position, prevPosition) == 2700 || checkForCrossroad() == 1300) { // !!!!!
+    long fluxingCountSinceCrossroadLeft = getCountsLeft();
+    long fluxingCountSinceCrossroadRight = getCountsRight();
+    fluxingAverageCountCrossroad = ((fluxingCountSinceCrossroadLeft + fluxingCountSinceCrossroadRight) / 2) - 300;
+    fluxingTimeBeforeCrossroad = millis - rundeTidStart - 500;  //    !!!!!
+  }
+}
+
+////// -------------------------------------------------------------------------------------
+int checkForCrossroad(int position; int prevPosition) {
+  int crossroadFound = 2000;
+  if (position <= prevPosition - 600 && position != 4000 && position != 0 && (encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800) {
+    crossroadFound = 1300;
+  }
+  else if (position >= prevPosition + 600) && position != 4000 && position != 0 && (encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800) {
+    crossroadFound = 2700;
+  }
+  return crossroadFound;
+}
+////// -------------------------------------------------------------------------------------
+
+////------------------------------------------------------------------
+// TODO Vi må legge inn funkjsonen som gjør at den skal kunne returnere
+// fra en blindvei.
+
+
+  // usikker på om denne if statmenten trengs //---
+
+if ((position == 4000 || position == 0) && timesTrackRun > 0) {
+  motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);
+}
+//----------------------------------------------------------------
+
+if ((position == 4000 || position == 0) && (timesTrackRun == 0)) {
+  if (timeSinceRoadlossNotSet) {
+    unsigned long timeSinceRoadloss = millis();
+    ***timeSinceRoadlossNotSet*** = false;                                            /////// variabel som ikke er lagt inn fra før
+  }
+  if (millis() - timeSinceRoadloss <= 1500) {
+    motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);
+  }
+  else if (millis() - timeSinceRoadloss >= 1500) {
+    motors.setSpeeds(-venstrePaadrag / 2, -hoyrePaadrag / 2);
+    saveCrossroadData()
+    //// ---------------------------------------------------
+    /////// variabel som ikke er lagt inn fra før **
+
+    /*
+      Funksjonen lagrer varierende data fra siste oppdaget Crossroad i mer permanente variabler
+    
+    void saveCrossroadData () {
+      countSinceCrossroadLeft = fluxingCountSinceCrossroadLeft;                                              /////// variabel som ikke er lagt inn fra før **long initialiser
+      countSinceCrossroadRight = fluxingCountSinceCrossroadRight;                                            /////// variabel som ikke er lagt inn fra før **long initialiser
+      averageCountCrossroad = fluxingAverageCountCrossroad;                                                  /////// variabel som ikke er lagt inn fra før **long initialiser
+      timeBeforeCrossroad = fluxingTimeBeforeCrossroad;                                                      /////// variabel som ikke er lagt inn fra før **long initialiser
+    }
+    //// ---------------------------------------------------
+
+    ***reverseLinefollower*** = true                                            /////// variabel som ikke er lagt inn fra før **= false
+  }
+}
+
+else if (reverseLinefollower == true) {
+  if (checkForCrossroad(position, prevPosition) != 2000 || millis() - sideroadFoundStopTimer <= 250) {     /////// midlertidig antakelse må justeres
+    if (firstTimeSideroadFoundStopTimer) {
+      motors.setSpeeds(0, 0);
+      unsigned long sideroadFoundStopTimer = millis();
+      int sideroad = checkForCrossroad(position, prevPosition);
+      ***firstTimeSideroadFoundStopTimer*** = false;                                                      /////// variabel som ikke er lagt inn fra før **= true
+    }
+    else if (millis() - sideroadFoundStopTimer >= 100) {     /////// midlertidig antakelse må justeres
+      turnToSideroad(sideroad);
+      //// ---------------------------------------------------
+      void turnToSideroad(int sideroadDirection;) {
+        if (sideroadDirection == 2700) {
+          motors.setSpeeds(300, 0);
+        }
+        else if (sideroadDirection == 1300) {
+          motors.setSpeeds(0, 300);
+        }
+      }
+      //// ---------------------------------------------------
+    }
+  }
+  else {
+    // Her ser man avviket. Avviket forteller oss målet om hvor vi skal.
+    int avvik = position - 2000;
+
+    // Når avviket er null, kreves det ingen regulering.
+    int konstantP = 1;  // Disse er konstantene til PD-reguleringen.
+    int konstantD = 10; // De er viktige for dens egenskaper.
+
+    int PD = konstantP * avvik + konstantD * (avvik - forrigeAvvik);
+    // Her får vi pådraget. Det er selve reguleringen.
+    // Den bestemmer hvilke forandringer vi skal
+    // gjøre på hastigheten til motorene.
+
+    forrigeAvvik = avvik;
+
+    int venstrePaadrag = 200 + PD;
+    int hoyrePaadrag = 200 - PD;
+
+    venstrePaadrag = constrain(venstrePaadrag, 0, 400);
+    hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);   // Vi ønsker ikke
+    // mer enn 400 til
+    // motorene.
+    motors.setSpeeds(-venstrePaadrag, -hoyrePaadrag);
+  }
+}
+
+
+else {
+  // Her ser man avviket. Avviket forteller oss målet om hvor vi skal.
   int avvik = position - 2000;
-  // Her ser man avviket. Avviket forteller oss om målet.
+  timeSinceRoadlossNotSet = false;
   // Når avviket er null, kreves det ingen regulering.
   int konstantP = 1;  // Disse er konstantene til PD-reguleringen.
   int konstantD = 10; // De er viktige for dens egenskaper.
@@ -809,16 +972,16 @@ void normalLinjefolger();
 
   forrigeAvvik = avvik;
 
-  int venstrePaadrag = 400 + PD;
-  int hoyrePaadrag = 400 - PD;
+  int venstrePaadrag = 200 + PD;
+  int hoyrePaadrag = 200 - PD;
 
   venstrePaadrag = constrain(venstrePaadrag, 0, 400);
   hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);   // Vi ønsker ikke
   // mer enn 400 til
   // motorene.
+  motors.setSpeeds(venstrePaadrag, hoyrePaadrag);
 
-  motors.setSpeeds(venstrePaadrag, hoyrePaadrag); 
-
+}
 }
 
 void avslaattLinjefolger();
@@ -961,7 +1124,13 @@ void linjefolgerFunctions();
 bool nyRunde = false;
 void nyRunde();
 {
-  // TODO Dette er en funksjon som skal gjøre en boolsk variabel sann når 
+  ***nyRunde*** = ***Ny_runde***;                                            /////// variabel som ikke er lagt inn fra før ** = 0 ** = 0
+  if(nyRunde == "1"){
+    timesTrackRun += 1;                                            /////// variabel som ikke er lagt inn fra før ** = 0
+    rundeTidStart = millis();                                            /////// variabel som ikke er lagt inn fra før
+    Ny_runde = "0";
+  }
+  // TODO Dette er en funksjon som skal gjøre en boolsk variabel sann når ----- gjort?
   //      zumoen har kjørt en runde. Dette skal brukes i 
   //      kunkurranselinjefølgerfunksjonene. Sensorer er bestilt og på vei.
   //
