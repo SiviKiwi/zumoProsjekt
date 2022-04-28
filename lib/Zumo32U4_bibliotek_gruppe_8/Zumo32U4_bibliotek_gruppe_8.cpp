@@ -119,7 +119,7 @@ void Zumo32U4_bibliotek_gruppe_8::setBatteryHealth(int batteryHealth)
   this->batteryHealth = batteryHealth;
 }
 
-float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
+float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, float currentCapacity)
 {
   if (speed < 0)
   {
@@ -140,7 +140,6 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
   {
     multiplier = 10;
   }
-
 
   if (currentCapacity > 864000)
   {
@@ -175,7 +174,6 @@ void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
     if (twoToTenCounter >= 5)
     {
         tenAchieved = true;
-        twoToTenCounter = 0;
     }
 }
 
@@ -551,7 +549,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
 
 
 
-  if ((tid70Differensial != tid70DifferensialPrev) || (StateOfChargeBelow5 != StateOfChargeBelow5Prev) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
+  if ((tid70Differensial != tid70DifferensialPrev) || (StateOfChargeBelow5 != StateOfChargeBelow5) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
   {
     if(tid70Differensial == tid70DifferensialPrev)
     {
@@ -579,11 +577,11 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
 
     int batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((StateOfChargeBelow5),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
 
-    tid70DifferensialPrev = tid70Differensial;
-    StateOfChargeBelow5Prev = StateOfChargeBelow5;
-    chargingCyclesPrev = chargingCycles;
-    sekstiSekMaksHastighetPrev = sekstiSekMaksHastighet;
-    gjennomsnittsHastighetPrev = gjennomsnittsHastighet;
+unsigned long tid70DifferensialPrev = tid70Differensial;
+int StateOfChargeBelow5Prev = StateOfChargeBelow5;
+int chargingCyclesPrev = chargingCycles;
+float sekstiSekMaksHastighetPrev = sekstiSekMaksHastighet;
+float gjennomsnittsHastighetPrev = gjennomsnittsHastighet;
 
 // dette her er nok litt rotete. Hvis dere har en annen løsning, så kan dere godt endre på det.
 // Poenget med å gjøre det sånn er at vi ikke endrer på variabelen unødvendig, fordi den er satt
@@ -644,7 +642,7 @@ void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
 
 void Zumo32U4_bibliotek_gruppe_8::batteryService()
 {
-  if (level_1 == true)  // Disse kan vel settes rett i loopen?
+  if (level_1 == true);  // Disse kan vel settes rett i loopen?
   {
     if (buttonA.isPressed())
     {
@@ -658,7 +656,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryService()
 
 void Zumo32U4_bibliotek_gruppe_8::batteryReplacement()
 {
-  if (level_0 == true)
+  if (level_0 = true)
   {
     if (buttonA.isPressed())
     {
