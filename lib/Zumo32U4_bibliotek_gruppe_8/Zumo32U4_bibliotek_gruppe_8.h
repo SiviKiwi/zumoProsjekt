@@ -56,8 +56,9 @@ class Zumo32U4_bibliotek_gruppe_8{
     void batteryReplacement();
     void batteryService();
     void checkSerial();
+    void sendSerial();
     int getState();
-    int setState();
+    void setState(int state);
     String getSerialValue(int index);
 
   private:
@@ -73,6 +74,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     float currentCapacity;
 
     int state;
+    String prevStateName;
     String serialString;
   
     int twoToTenCounter;
