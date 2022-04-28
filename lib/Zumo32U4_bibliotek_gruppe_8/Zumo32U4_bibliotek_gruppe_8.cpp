@@ -32,6 +32,9 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->buzzer = buzzer;
   this->display = display;
 
+  this->state = 0;
+  this->serialString = "";
+
   this->currentCapacity = 1200.0 * 3600;
 
   this->twoToTenCounter = 0;
@@ -94,6 +97,25 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
 
 }
 
+void Zumo32U4_bibliotek_gruppe_8::checkSerial()
+{
+  if (Serial1.available() > 0) {
+    serialString = Serial1.readString();
+  }
+}
+
+
+int Zumo32U4_bibliotek_gruppe_8::getState()
+{
+  if (getSerialValue(0) != "");
+
+}
+
+int Zumo32U4_bibliotek_gruppe_8::setState()
+{
+
+}
+
 float Zumo32U4_bibliotek_gruppe_8::getDistance()
 {
   return dist;
@@ -119,7 +141,7 @@ void Zumo32U4_bibliotek_gruppe_8::setBatteryHealth(int batteryHealth)
   this->batteryHealth = batteryHealth;
 }
 
-float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms, float currentCapacity)
+float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
 {
   if (speed < 0)
   {
@@ -549,7 +571,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
 
 
 
-  if ((tid70Differensial != tid70DifferensialPrev) || (StateOfChargeBelow5 != StateOfChargeBelow5) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
+  if ((tid70Differensial != tid70DifferensialPrev) || (StateOfChargeBelow5 != StateOfChargeBelow5Prev) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
   {
     if(tid70Differensial == tid70DifferensialPrev)
     {
@@ -577,11 +599,11 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
 
     int batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((StateOfChargeBelow5),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
 
-unsigned long tid70DifferensialPrev = tid70Differensial;
-int StateOfChargeBelow5Prev = StateOfChargeBelow5;
-int chargingCyclesPrev = chargingCycles;
-float sekstiSekMaksHastighetPrev = sekstiSekMaksHastighet;
-float gjennomsnittsHastighetPrev = gjennomsnittsHastighet;
+    tid70DifferensialPrev = tid70Differensial;
+    StateOfChargeBelow5Prev = StateOfChargeBelow5;
+    chargingCyclesPrev = chargingCycles;
+    sekstiSekMaksHastighetPrev = sekstiSekMaksHastighet;
+    gjennomsnittsHastighetPrev = gjennomsnittsHastighet;
 
 // dette her er nok litt rotete. Hvis dere har en annen løsning, så kan dere godt endre på det.
 // Poenget med å gjøre det sånn er at vi ikke endrer på variabelen unødvendig, fordi den er satt
@@ -630,7 +652,7 @@ void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
 
   if( (batteryHealth < 15) && batteryHealth > 3 )
   {
-    level_1 = true; 
+    level_1 == true;
   }
   else if(batteryHealth <= 3)
   {
@@ -656,7 +678,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryService()
 
 void Zumo32U4_bibliotek_gruppe_8::batteryReplacement()
 {
-  if (level_0 = true)
+  if (level_0 == true)
   {
     if (buttonA.isPressed())
     {
@@ -669,7 +691,22 @@ void Zumo32U4_bibliotek_gruppe_8::batteryReplacement()
   }
 }
 
+String Zumo32U4_bibliotek_gruppe_8::getSerialValue(int index)
+{
+  int found = 0;
+  int strengIndex[] = {0, -1};
+  int maxIndex = serialString.length() - 1;
 
+  for (int i = 0; i <= maxIndex && found <= index; i++) {
+    if (serialString.charAt(i) == ':' || i == maxIndex) {
+      found++;
+      strengIndex[0] = strengIndex[1] + 1;
+      strengIndex[1] = (i == maxIndex) ? i + 1 : i;
+    }
+  }
+
+  return found > index ? serialString.substring(strengIndex[0], strengIndex[1]) : "";
+}
 
 
 

@@ -55,6 +55,10 @@ class Zumo32U4_bibliotek_gruppe_8{
     void batteryHealthAlgorithm();
     void batteryReplacement();
     void batteryService();
+    void checkSerial();
+    int getState();
+    int setState();
+    String getSerialValue(int index);
 
   private:
 
@@ -67,6 +71,9 @@ class Zumo32U4_bibliotek_gruppe_8{
     Zumo32U4LCD display;
 
     float currentCapacity;
+
+    int state;
+    String serialString;
   
     int twoToTenCounter;
     bool tenAchieved;
