@@ -11,19 +11,6 @@ String c = "c";
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-String unit = "C";
-
-float readTemp() {
-
-float readValue = analogRead(tmpPin);
-// Regner om fra ADC-verdi til spenning
-float voltage = (readValue*5)/1023;
-
- // Regner om fra spenning til celsius
-float celsius = (voltage-0.5)*100;
-
- return celsius;
-}
 
 void displayText(String text){
   
@@ -61,16 +48,12 @@ void loop() {
 if (Serial.available() > 0)
 {
   c = Serial.readString();
-
 }
 
-String stringDisplay = "x";
 displayText(c);
 Serial.println(c);
 //c = "c";
 
 delay(10);
-
-
 
 }
