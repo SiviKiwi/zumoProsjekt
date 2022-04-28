@@ -1,3 +1,13 @@
+enum State : uint8_t {
+  RESET = 0,
+  CALIBRATE_LINESENSORS,
+  WAIT_FOR_START_SIGNAL,
+  MOVING,
+  RETURN_TO_STATION,
+  STOPPED,
+  REFUELING,
+};
+
 State state = State::RESET;
 
 switch(state)

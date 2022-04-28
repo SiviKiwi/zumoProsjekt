@@ -96,6 +96,13 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->gjennomsnittsHastighetPrev = 0;
   this->StateOfChargeBelow5Prev = 0;
 
+  this->bileierID = "Gruppe 8";
+  this->zumoStopConfirmed = false;
+  this->ladingStoppet = false;
+  this->nyRunde = "0";
+  this->linjeFolger = "Normal";
+  this->idealTid = 0;
+
 }
 
 void Zumo32U4_bibliotek_gruppe_8::checkSerial()
@@ -222,6 +229,11 @@ void Zumo32U4_bibliotek_gruppe_8::setState(int state)
 
   this->state = state;
 
+}
+
+bool Zumo32U4_bibliotek_gruppe_8::getZumoStopConfirmed()
+{
+  return zumoStopConfirmed;
 }
 
 float Zumo32U4_bibliotek_gruppe_8::getDistance()
@@ -451,6 +463,7 @@ void Zumo32U4_bibliotek_gruppe_8::actualCharging()
     askForChargingState = false;
     continueChargingDisplay = true;
     ladingStoppet = false;  //WX79
+    zumoStopConfirmed = false;
   }
 }
 

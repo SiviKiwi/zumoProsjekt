@@ -60,6 +60,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     int getState();
     void setState(int state);
     String getSerialValue(int index);
+    bool getZumoStopConfirmed();
 
   private:
 
@@ -117,7 +118,6 @@ class Zumo32U4_bibliotek_gruppe_8{
     bool batteryLevelWarningOne;
     int batteryHealth;
 
-
     bool ledYellow1State1;
     bool ledYellow1State2;
     bool ledYellow0State2;
@@ -135,6 +135,13 @@ class Zumo32U4_bibliotek_gruppe_8{
     float sekstiSekMaksHastighetPrev;
     float gjennomsnittsHastighetPrev;
     int StateOfChargeBelow5Prev;
+
+    String bileierID;
+    bool zumoStopConfirmed;
+    bool ladingStoppet;
+    String nyRunde;
+    String linjeFolger;
+    int idealTid;
 
     
 };

@@ -21,17 +21,6 @@ Zumo32U4LCD display;
 Zumo32U4_bibliotek_gruppe_8 egendefinert(encoders, motors, buttonA, buttonB, buttonC, buzzer, display);
 
 
-enum State : uint8_t {
-  RESET = 0,
-  CALIBRATE_LINESENSORS,
-  WAIT_FOR_START_SIGNAL,
-  MOVING,
-  RETURN_TO_STATION,
-  STOPPED,
-  REFUELING,
-};
-
-
 unsigned long time;
 float speed;
 float dist;
@@ -66,7 +55,7 @@ void loop()
 
   egendefinert.askForCharging();
 
-  if (zumoStopConfirmed == true)
+  if (getZumoStopConfirmed() == true)
   {
     variabel = 2;
   }
@@ -79,14 +68,12 @@ void loop()
     case 1:
 
       egendefinert.linjefolgerFunctions();
-
       break;
 
     case 2:
 
       motors.setSpeeds(0, 0);
       egendefinert.actualCharging();
-
       break
 
   }
