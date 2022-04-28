@@ -40,7 +40,7 @@ float currentCapacity = 1200.0 * 3600;
 
 void setup()
 {
-  display.init();
+  //display.init();
   time = millis();
 
   noInterrupts();
@@ -119,9 +119,9 @@ void loop()
     egendefinert.setCapacity(speed, elapsedTime);
 
 
-    display.clear();
-    display.gotoXY(0, 0);
-    display.print(dist);
+//    display.clear();
+//    display.gotoXY(0, 0);
+//    display.print(dist);
 //    display.print((float)currentCapacity / 3600.0);
 //    display.print(dist);
 //    display.print(speed);
