@@ -40,7 +40,7 @@ float currentCapacity = 1200.0 * 3600;
 
 void setup()
 {
-  display.init();
+  //display.init();
   time = millis();
 
   noInterrupts();
@@ -73,11 +73,14 @@ void loop()
   {
     case State::RESET:
 
-
+      state = State::WAIT_FOR_START_SIGNAL;
       break;
 
     case State::WAIT_FOR_START_SIGNAL:
-
+      if(buttonA.isPressed()) {
+        delay(2000);
+        state = State::CALIBRATE_LINESENSORS;
+      }
 
       break;
 
@@ -88,13 +91,14 @@ void loop()
       {
 
         lineSensors.calibrate();
-        motors.setSpeeds(200, -200);
+        motors.setSpeeds(100, -100);
 
       }
 
       motors.setSpeeds(0, 0);
     // evt. egendefinert.batteryReplacement(); Husk da å trekke ut den som sjekker tilstanden 
     // inne i funksjonen.
+      state = State::RESET;
 
       break;
   }
@@ -115,9 +119,9 @@ void loop()
     egendefinert.setCapacity(speed, elapsedTime);
 
 
-    display.clear();
-    display.gotoXY(0, 0);
-    display.print(dist);
+//    display.clear();
+//    display.gotoXY(0, 0);
+//    display.print(dist);
 //    display.print((float)currentCapacity / 3600.0);
 //    display.print(dist);
 //    display.print(speed);

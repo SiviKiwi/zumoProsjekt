@@ -31,11 +31,13 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->buttonC = buttonC;
   this->buzzer = buzzer;
   this->display = display;
-  
-  // funksjon - setCapacity
+
+  this->state = 0;
+  this->prevStateName = "";
+  this->serialString = "";
+
   this->currentCapacity = 1200.0 * 3600;
   
-  // funksjon - 
   this->twoToTenCounter = 0;
   this->tenAchieved = false;
   this->lastTimeGetSpeed = 0;
@@ -93,6 +95,78 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->sekstiSekMaksHastighetPrev = 0;
   this->gjennomsnittsHastighetPrev = 0;
   this->StateOfChargeBelow5Prev = 0;
+
+}
+
+void Zumo32U4_bibliotek_gruppe_8::checkSerial()
+{
+  if (Serial1.available() > 0) {
+    // TODO: Kanskje sjekke om strengen er tom.
+    serialString = Serial1.readString();
+    //Serial1.flush(); //TODO: Kansje vi ma bruke dette?
+  }
+}
+
+void Zumo32U4_bibliotek_gruppe_8::sendSerial()
+{
+  /*
+  Sendes:
+  Bileierid
+  zumoAskforCharging
+  CurrentCapacity
+  Speed
+  Distance
+  batteryHealth
+  sporOmSaldo
+  sendSaldo
+  */
+}
+
+
+int Zumo32U4_bibliotek_gruppe_8::getState()
+{
+  String kommando = getSerialValue(0);
+
+  /*
+  mottas:
+  zumoStopConfirm
+  ladingStoppet
+  batteriNivaSend
+  batteryHealth
+  nyRunde
+  idealtidsAvvik
+  sporOmSaldo2
+  linjeFolger
+  */
+
+  // TODO: Kanskje sjekke at det ikke er lik prevKommando
+  if (kommando == "zumoStopConfirm") {
+
+  } else if (kommando == "ladingStoppet") {
+
+  } else if (kommando == "batteriNivaaSend") {
+
+  } else if (kommando == "batteryHealth") {
+
+  } else if (kommando == "Ny_runde") {
+
+  } else if (kommando == "idealTidsAvvik") {
+
+  } else if (kommando == "sporOmSaldo2") {
+
+  } else if (kommando == "linjeFolger") {
+
+  } else {
+
+  }
+  return state;
+
+}
+
+void Zumo32U4_bibliotek_gruppe_8::setState(int state)
+{
+
+  this->state = state;
 
 }
 
@@ -174,7 +248,6 @@ void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
     if (twoToTenCounter >= 5)
     {
         tenAchieved = true;
-        twoToTenCounter = 0;
     }
 }
 
@@ -631,7 +704,7 @@ void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
 
   if( (batteryHealth < 15) && batteryHealth > 3 )
   {
-    level_1 = true; 
+    level_1 == true;
   }
   else if(batteryHealth <= 3)
   {
@@ -643,7 +716,7 @@ void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
 
 void Zumo32U4_bibliotek_gruppe_8::batteryService()
 {
-  if (level_1 == true)  // Disse kan vel settes rett i loopen?
+  if (level_1 == true);  // Disse kan vel settes rett i loopen?
   {
     if (buttonA.isPressed())
     {
@@ -670,7 +743,22 @@ void Zumo32U4_bibliotek_gruppe_8::batteryReplacement()
   }
 }
 
+String Zumo32U4_bibliotek_gruppe_8::getSerialValue(int index)
+{
+  int found = 0;
+  int strengIndex[] = {0, -1};
+  int maxIndex = serialString.length() - 1;
 
+  for (int i = 0; i <= maxIndex && found <= index; i++) {
+    if (serialString.charAt(i) == ':' || i == maxIndex) {
+      found++;
+      strengIndex[0] = strengIndex[1] + 1;
+      strengIndex[1] = (i == maxIndex) ? i + 1 : i;
+    }
+  }
+
+  return found > index ? serialString.substring(strengIndex[0], strengIndex[1]) : "";
+}
 
 
 
