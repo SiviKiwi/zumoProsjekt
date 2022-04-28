@@ -37,7 +37,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->serialString = "";
 
   this->currentCapacity = 1200.0 * 3600;
-
+  
   this->twoToTenCounter = 0;
   this->tenAchieved = false;
   this->lastTimeGetSpeed = 0;
@@ -225,28 +225,31 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
   }
   
 //---------------------------------------------------------------
-
+// SOS modus for 10x lading av batteri
   if((buttonB.isPressed()) && (SOSmodeOneTimeOnly == false))
     {
       SOSmode = true;
       SOSmodeOneTimeOnly = true;
     }
 
-//---------------------------------------------------------------
   int multiplier = 1;
   if ((SOSmode == true) && (currentCapacity < 864000))
   {
-    multiplier = 10;
+    if (speed > 0) {
+      multiplier = 1;
+    }
+    else {
+      multiplier = 10;
+    }
   }
 
   if (currentCapacity > 864000)
   {
     SOSmode = false;
   }
+  
+  //---------------------------------------------------------------
 
-
-            // TODO: Endre funksjonen slik at hvis farten er positiv skal den ikke lades ut
-            // ti ganger raskere.
   float currentUsage = 2.0 * multiplier * speed + 10.0;
   currentCapacity -= currentUsage * (float)ms / 1000.0;
 
@@ -259,11 +262,6 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
 
   return currentCapacity;
 }
-
-
-
-
-
 
 
 void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
