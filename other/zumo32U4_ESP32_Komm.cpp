@@ -69,26 +69,26 @@ void loop()
     {
       inputFromZumo = Serial.readString();
 
-      String Streng = String(getValue(inputFromZumo, ';', i));
+      String Streng = String(getValue(inputFromZumo, ';', 7));
       client.publish("speed", Streng.c_str()); // Speed
-      Streng = String(getValue(inputFromZumo, ';', i));
+      Streng = String(getValue(inputFromZumo, ';', 9));
       client.publish("distance", Streng.c_str()); // distance
 
-      Streng = String(getValue(inputFromZumo, ';', i));
+      Streng = String(getValue(inputFromZumo, ';', 5));
       client.publish("batteriNivaa", Streng.c_str()); // battery
-      Streng = String(getValue(inputFromZumo, ';', i));
+      Streng = String(getValue(inputFromZumo, ';', 11));
       client.publish("batteryHealth", Streng.c_str()); // batteryHealth
 
-      //Streng = String(getValue(inputFromZumo, ';', i));
+      //Streng = String(getValue(inputFromZumo, ';', 13));
       //client.publish("sendSaldo", Streng.c_str()); sendSaldo
       //Streng = String(getValue(inputFromZumo, ';', i));
       //client.publish("sporOmSaldo", Streng.c_str()); sporOmSaldo
 
-      if (getValue(inputFromZumo, ';', i) == "0")
+      if (getValue(inputFromZumo, ';', 3) == "0")
       {
-        Streng = String(getValue(inputFromZumo, ';', i));
+        Streng = String(getValue(inputFromZumo, ';', 1));
         client.publish("bileierID", Streng.c_str()); // bileierID
-        Streng = String(getValue(inputFromZumo, ';', i));
+        Streng = String(getValue(inputFromZumo, ';', 3));
         client.publish("zumoAskForCharging", Streng.c_str()); // zumoAskForcharging x, y
       }
 

@@ -131,18 +131,18 @@ void Zumo32U4_bibliotek_gruppe_8::sendSerial()
     } else {
       sendString.concat(0);
     }
-  sendString.concat()
+  
   sendString.concat(";currentCapacity;")
+  sendString.concat("") // * (100/(1200 * 3600))
+  sendString.concat(";speed;")
+  sendString.concat("") 
+  sendString.concat(";distance;")
+  sendString.concat("") 
+  sendString.concat(";batteryHealth;")
   sendString.concat("")
-  sendString.concat("speed")
+  sendString.concat(";sporOmSaldo;")
   sendString.concat("")
-  sendString.concat("distance")
-  sendString.concat("")
-  sendString.concat("batteryHealth")
-  sendString.concat("")
-  sendString.concat("sporOmSaldo")
-  sendString.concat("")
-  sendString.concat("sendSaldo")
+  sendString.concat(";sendSaldo;")
   sendString.concat("")
 }
 
@@ -164,7 +164,7 @@ int Zumo32U4_bibliotek_gruppe_8::getState()
   */
 
   // TODO: Kanskje sjekke at det ikke er lik prevKommando
-  if (kommando == "zumoStopConfirm") {
+  if (kommando == "zumoStopConfirmed") {
 
   } else if (kommando == "ladingStoppet") {
 
