@@ -47,7 +47,7 @@ void loop() {
 
 if (Serial.available() > 0)
 {
-  c = Serial.readString();
+    c = Serial.readString();
 }
 
 displayText(c);
