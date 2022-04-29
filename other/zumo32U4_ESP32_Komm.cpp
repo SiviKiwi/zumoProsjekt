@@ -75,7 +75,7 @@ void loop()
       client.publish("distance", Streng.c_str()); // distance
 
       Streng = String(getValue(inputFromZumo, ';', 5));
-      client.publish("batteriNivaa", Streng.c_str()); // battery
+      client.publish("batteriNivaaSend", Streng.c_str()); // battery
       Streng = String(getValue(inputFromZumo, ';', 11));
       client.publish("batteryHealth", Streng.c_str()); // batteryHealth
 
@@ -185,7 +185,7 @@ void callback(String topic, byte* message, unsigned int length) {
   {
     Serial.println(String(topic) + "," + String(messageTemp));
   }
-  else if (topic == "batteriNivaaSend")
+  else if (topic == "batteriNivaa")
   {
     Serial.println(String(topic) + "," + String(messageTemp));
   }
@@ -211,7 +211,7 @@ void reconnect() {
       client.subscribe("sporOmSaldo2");
       client.subscribe("linjeFolger");
       client.subscribe("ladingStoppet");
-      client.subscribe("batteriNivaaSend");
+      client.subscribe("batteriNivaa");
       client.subscribe("zumoStopConfirmed");
       client.subscribe("idealTid");
 
@@ -220,7 +220,7 @@ void reconnect() {
       // UT
       client.subscribe("bileierID");
       client.subscribe("zumoAskForCharging");
-      client.subscribe("batteriNivaa");
+      client.subscribe("batteriNivaaSend");
       client.subscribe("sporOmSaldo");
       client.subscribe("sendSaldo");
       client.subscribe("speed");

@@ -619,8 +619,13 @@ void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay() // Den som skal kjør
   display.print("100");
   display.print("%");
 
+<<<<<<< HEAD
   display.gotoXY(0, 1);
   display.print("cc:");
+=======
+  display.gotoXY(0,1);
+  display.print("cc:"); // Charging cycles WX79
+>>>>>>> d94dd19f90f87e2cdc422da1fab8ff3f677e5e80
   display.print("10");
 
   display.gotoXY(6, 1);
@@ -700,7 +705,11 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
       Kd = 0;
     }
 
+<<<<<<< HEAD
     int batteryHealth = randomFactorExecuted * (batteryHealth - ((Ka * (K1 * pow((tid70Differensial), 2))) + (Ke * (pow((StateOfChargeBelow5), 2))) + (Kb * (K2 * (chargingCycles))) + (K3 * (Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet))));
+=======
+    batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((StateOfChargeBelow5),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
+>>>>>>> d94dd19f90f87e2cdc422da1fab8ff3f677e5e80
 
     tid70DifferensialPrev = tid70Differensial;
     StateOfChargeBelow5Prev = StateOfChargeBelow5;
@@ -808,9 +817,16 @@ String Zumo32U4_bibliotek_gruppe_8::getSerialValue(int index)
   return found > index ? serialString.substring(strengIndex[0], strengIndex[1]) : "";
 }
 
+<<<<<<< HEAD
 ///////////////////////----------------------------------------------------//////////////////////////
 ////---------------------------------------------------------
 void Zumo32U4_bibliotek_gruppe_8::preemptiveLookForCrossroad()
+=======
+/*
+
+
+void normalLinjefolger();
+>>>>>>> d94dd19f90f87e2cdc422da1fab8ff3f677e5e80
 {
   long currentRoundTime = millis() - rundetidStart;
   // ved ny rundetid restart mulighet for lookForCrossroad

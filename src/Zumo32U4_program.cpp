@@ -25,6 +25,7 @@ unsigned long time;
 float speed;
 float dist;
 int variabel;
+unsigned long time_now = 0;
 
 float currentCapacity = 1200.0 * 3600;
 
@@ -44,6 +45,14 @@ void setup()
   {
     egendefinert.setBatteryHealth(EEPROM.read(0));
   }
+
+  time_now = millis();
+  while (millis() < time_now + 5000)
+  {
+    lineSensors.calibrate();
+    motors.setSpeeds(100, -100);
+  }
+  motors.setSpeeds(0, 0);
 }
 
 
@@ -84,7 +93,7 @@ void loop()
   egendefinert.oneSecBatState(); // Denne funksjonen sjekker om det har gått ti sekunder siden
   // den sist. gå til library c++ for å legge til statusfunksjoner.
 
-  egendefinert.updateSpeedDist(/* Må ta inn tiden siden programfilen startet.*/);
+  egendefinert.updateSpeedDist();
 
   unsigned long timeNow = millis();
   if (timeNow - time > 100)
