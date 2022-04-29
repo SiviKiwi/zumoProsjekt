@@ -10,19 +10,15 @@
 #include <Zumo32U4.h>
 #include <EEPROM.h>
 
-
-
-
-
-
 Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
-      Zumo32U4Encoders encoders,
-      Zumo32U4Motors motors,
-      Zumo32U4ButtonA buttonA,
-      Zumo32U4ButtonB buttonB,
-      Zumo32U4ButtonC buttonC,
-      Zumo32U4Buzzer buzzer,
-      Zumo32U4LCD display){
+    Zumo32U4Encoders encoders,
+    Zumo32U4Motors motors,
+    Zumo32U4ButtonA buttonA,
+    Zumo32U4ButtonB buttonB,
+    Zumo32U4ButtonC buttonC,
+    Zumo32U4Buzzer buzzer,
+    Zumo32U4LCD display)
+  {
 
   this->encoders = encoders;
   this->motors = motors;
@@ -37,7 +33,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->serialString = "";
 
   this->currentCapacity = 1200.0 * 3600;
-  
+
   this->twoToTenCounter = 0;
   this->tenAchieved = false;
   this->lastTimeGetSpeed = 0;
@@ -103,14 +99,41 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->linjeFolger = "Normal";
   this->idealTid = 0;
 
+  this->prevPositionUpdateTimer = 0;
+  this->prevPosition = 2000;
+  this->timesTrackRun = 0;
+  this->currentRoundTime = 0;
+
+  this->fluxingCountSinceCrossroadLeft;
+  this->fluxingCountSinceCrossroadRight;
+  this->fluxingAverageCountCrossroad;
+  this->fluxingTimeBeforeCrossroad;
+
+  this->timeSinceRoadlossNotSet;
+
+  this->countSinceCrossroadLeft;
+  this->countSinceCrossroadRight;
+  this->averageCountCrossroad;
+  this->timeBeforeCrossroad;
+
+  this->crossroadPassed = true;
+  this->reverseLinefollower = true;
+  this->firstTimeSideroadFoundStopTimer = true;
+
+  this->rundetid = 0;
+  this->rundetidStart = 0;
+  this->rundetidSlutt = 0;
+  this->best_rundetid = 0;
+  this->antall_runder_counter = 0;
 }
 
 void Zumo32U4_bibliotek_gruppe_8::checkSerial()
 {
-  if (Serial1.available() > 0) {
+  if (Serial1.available() > 0)
+  {
     // TODO: Kanskje sjekke om strengen er tom.             // Vi trenger ikke den her lenger.
     serialString = Serial1.readString();
-    //Serial1.flush(); //TODO: Kansje vi ma bruke dette?
+    // Serial1.flush(); //TODO: Kansje vi ma bruke dette?
   }
 }
 
@@ -131,35 +154,35 @@ void Zumo32U4_bibliotek_gruppe_8::sendSerial()
   */
   String sendString = "";
   sendString.concat("BileierID;");
-  sendString.concat()
-  sendString.concat(";zumoAskForCharging;")
-    if (askForChargingState == true) {
-      sendString.concat(1);
-    } 
-    else {
-      sendString.concat(0);
-    }
-  
-  sendString.concat(";batteriNivaa;")
-  sendString.concat(getBatteryLevel()) // * (100/(1200 * 3600))
-  sendString.concat(";speed;")
-  sendString.concat(getSpeed()) 
-  sendString.concat(";distance;")
-  sendString.concat(getDistance()) 
-  sendString.concat(";batteryHealth;")
-  sendString.concat(getBatteryHealth())
-  sendString.concat(";sporOmSaldo;")  //TODO: Her må det vurderes om lading fra bilen skal kunne trekke fra kontoen.
-  sendString.concat("")               //TODO: Det vil komplisere koden betraktelig, siden man kan ikke sende saldo,
-  sendString.concat(";sendSaldo;")    //TODO: med mindre man har hentet inn saldoen først.
-  sendString.concat("")
+  sendString.concat();
+  sendString.concat(";zumoAskForCharging;");
+  if (askForChargingState == true)
+  {
+    sendString.concat(1);
+  }
+  else
+  {
+    sendString.concat(0);
+  }
+
+  sendString.concat(";batteriNivaa;");
+  sendString.concat(getBatteryLevel()); // * (100/(1200 * 3600))
+  sendString.concat(";speed;");
+  sendString.concat(getSpeed());
+  sendString.concat(";distance;");
+  sendString.concat(getDistance());
+  sendString.concat(";batteryHealth;");
+  sendString.concat(getBatteryHealth());
+  sendString.concat(";sporOmSaldo;"); // TODO: Her må det vurderes om lading fra bilen skal kunne trekke fra kontoen.
+  sendString.concat("");              // TODO: Det vil komplisere koden betraktelig, siden man kan ikke sende saldo,
+  sendString.concat(";sendSaldo;");   // TODO: med mindre man har hentet inn saldoen først.
+  sendString.concat("");
 
   Serial1.println(sendString);
 }
 
-
 int Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en void?
 {
-
 
   /*
   mottas:
@@ -175,47 +198,45 @@ int Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en vo
 
   // TODO: Kanskje sjekke at det ikke er lik prevKommando
 
-
-   if (Serial1.available() > 0) 
-   {
-    // TODO: Kanskje sjekke om strengen er tom.
-    serialString = Serial1.readString();
+  if (Serial1.available() > 0)
+  {
+    // TODO: Kanskje sjekke om strengen er tom.og definere variabelen som streng/int
+    int serialStreng = Serial1.readString();
 
     String kommando = getSerialValue(serialStreng, ',', 0);
-    //Serial1.flush(); //TODO: Kansje vi ma bruke dette?
-  
+    // Serial1.flush(); //TODO: Kansje vi ma bruke dette?
+
     if (kommando == "zumoStopConfirmed")
     {
       zumoStopConfirmed = true; // WX79 TODO å definere variabelen. Skal bestemme linjefølger
-    } 
-    else if (kommando == "ladingStoppet") 
+    }
+    else if (kommando == "ladingStoppet")
     {
       ladingStoppet = true; // WX79 HUSK å definere variabelen.
-    } 
-    else if (kommando == "batteriNivaaSend") 
+    }
+    else if (kommando == "batteriNivaaSend")
     {
       currentCapacity = ((int(getSerialValue(serialStreng, ',', 1)) * 0.01) * (1200 * 3600)); // Dette gjør om fra prosent til faktisk kapasitet.
-    } 
-    else if (kommando == "batteryHealth") 
+    }
+    else if (kommando == "batteryHealth")
     {
       batteryHealth = int(getSerialValue(serialStreng, ',', 1));
-    } 
-    else if (kommando == "Ny_runde") 
+    }
+    else if (kommando == "Ny_runde")
     {
       nyRunde = "1";
-    } 
-    else if (kommando == "idealTidsAvvik") 
+    }
+    else if (kommando == "idealTidsAvvik")
     {
-      //idealTidsAvvik = getSerialValue(serialStreng, ',', 1); //Trenger den egt. ikke
-    } 
-    else if (kommando == "sporOmSaldo2") 
+      // idealTidsAvvik = getSerialValue(serialStreng, ',', 1); //Trenger den egt. ikke
+    }
+    else if (kommando == "sporOmSaldo2")
     {
-
-    } 
-    else if (kommando == "linjeFolger") 
+    }
+    else if (kommando == "linjeFolger")
     {
       linjeFolger = getSerialValue(serialStreng, ',', 1); // TODO definere variabelen WX79
-    } 
+    }
     else if (kommando == "idealTid")
     {
       idealTid = int(getSerialValue(serialStreng, ',', 1)); // TODO definere variabelen WX79
@@ -228,7 +249,6 @@ void Zumo32U4_bibliotek_gruppe_8::setState(int state)
 {
 
   this->state = state;
-
 }
 
 bool Zumo32U4_bibliotek_gruppe_8::getZumoStopConfirmed()
@@ -243,7 +263,7 @@ float Zumo32U4_bibliotek_gruppe_8::getDistance()
 
 float Zumo32U4_bibliotek_gruppe_8::getSpeed()
 {
-    return speed;
+  return speed;
 }
 
 int Zumo32U4_bibliotek_gruppe_8::getBatteryHealth()
@@ -267,22 +287,24 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
   {
     chargingCycles++;
   }
-  
-//---------------------------------------------------------------
-// SOS modus for 10x lading av batteri
-  if((buttonB.isPressed()) && (SOSmodeOneTimeOnly == false))
-    {
-      SOSmode = true;
-      SOSmodeOneTimeOnly = true;
-    }
+
+  //---------------------------------------------------------------
+  // SOS modus for 10x lading av batteri
+  if ((buttonB.isPressed()) && (SOSmodeOneTimeOnly == false))
+  {
+    SOSmode = true;
+    SOSmodeOneTimeOnly = true;
+  }
 
   int multiplier = 1;
   if ((SOSmode == true) && (currentCapacity < 864000))
   {
-    if (speed > 0) {
+    if (speed > 0)
+    {
       multiplier = 1;
     }
-    else {
+    else
+    {
       multiplier = 10;
     }
   }
@@ -291,7 +313,7 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
   {
     SOSmode = false;
   }
-  
+
   //---------------------------------------------------------------
 
   float currentUsage = 2.0 * multiplier * speed + 10.0;
@@ -307,112 +329,99 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
   return currentCapacity;
 }
 
-
 void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
 {
-    twoToTenCounter = twoToTenCounter + 1;
-    if (twoToTenCounter >= 5)
-    {
-        tenAchieved = true;
-    }
+  twoToTenCounter = twoToTenCounter + 1;
+  if (twoToTenCounter >= 5)
+  {
+    tenAchieved = true;
+  }
 }
 
 void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
 {
-    if (tenAchieved == true)
+  if (tenAchieved == true)
+  {
+    // everyTenSecondsDisplay(); Ikke nødvendig siden den er flyttet til egen skjermvelger
+
+    if (everyTenSecondsDisplayState == false)
     {
-        //everyTenSecondsDisplay(); Ikke nødvendig siden den er flyttet til egen skjermvelger
-
-        if (everyTenSecondsDisplayState == false)
-        {
-          start_time_one_sec_display = millis();
-          everyTenSecondsDisplayState = true;
-        }
-
-        if (millis() - start_time_one_sec_display > 1000)
-        {
-          twoToTenCounter = 0;
-          tenAchieved = false;
-          everyTenSecondsDisplayState = false;
-        }
+      start_time_one_sec_display = millis();
+      everyTenSecondsDisplayState = true;
     }
+
+    if (millis() - start_time_one_sec_display > 1000)
+    {
+      twoToTenCounter = 0;
+      tenAchieved = false;
+      everyTenSecondsDisplayState = false;
+    }
+  }
 }
-
-
-
-
-
 
 void Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid(float speed)
 {
 
-    if (sekstiSekTimerFor == 0)
-    {
-        sekstiSekTimerEtter = 0;
-    }
+  if (sekstiSekTimerFor == 0)
+  {
+    sekstiSekTimerEtter = 0;
+  }
 
-    else
-    {
-        sekstiSekTimerEtter = millis();
-    }
+  else
+  {
+    sekstiSekTimerEtter = millis();
+  }
 
-    if (speed > 0.1)
-    {
-        sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
-        sekstiSekTimerFor = millis();
-    }
+  if (speed > 0.1)
+  {
+    sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
+    sekstiSekTimerFor = millis();
+  }
 
-    else if (speed < 0.1)
-    {
-        sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
-        sekstiSekTimerFor = 0;
-    }
+  else if (speed < 0.1)
+  {
+    sekstiSekTimer = sekstiSekTimer + (sekstiSekTimerEtter - sekstiSekTimerFor);
+    sekstiSekTimerFor = 0;
+  }
 }
 
 void Zumo32U4_bibliotek_gruppe_8::speedometerEvery60(float speed)
 {
 
-if (sekstiSekTimer > 60000)
+  if (sekstiSekTimer > 60000)
+  {
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    if (speed > sekstiSekMaksHastighet)
+    {                                 // Her henter jeg inn makshastigheten som skal vises etter seksti sekunder.
+      sekstiSekMaksHastighet = speed; // VIKTIG
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    gjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist) / 60; // VIKTIG Denne er ikke ferdig!!!
+    prevSekstiSekunderDist = sekstiSekunderDist;                                 // sekstiSekunderDist trenger en verdi.
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    if (speed > sekstiSekMaksHastighet)
     {
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+      tid70 = millis();
+    }
 
+    if (speed < sekstiSekMaksHastighet)
+    {
+      tid70Etter = millis();
+      tid70Differensial = tid70Etter - tid70; // VIKTIG
+    }
 
-        if (speed > sekstiSekMaksHastighet)
-        {                 // Her henter jeg inn makshastigheten som skal vises etter seksti sekunder.
-            sekstiSekMaksHastighet = speed; // VIKTIG
-        }
-
-
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-
-        gjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist)/60; // VIKTIG Denne er ikke ferdig!!!
-        prevSekstiSekunderDist = sekstiSekunderDist; // sekstiSekunderDist trenger en verdi.
-
-
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-
-        if (speed > sekstiSekMaksHastighet)
-        {
-            tid70 = millis();
-        }
-
-        if (speed < sekstiSekMaksHastighet)
-        {
-            tid70Etter = millis();
-            tid70Differensial = tid70Etter - tid70; // VIKTIG
-        }
-
-
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     sekstiSekTimer = 0;
-
-    }
+  }
 }
 
-void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist()  // Denne funksjonen erstatter distanse koden.
+void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist() // Denne funksjonen erstatter distanse koden.
 {
   int16_t countLeft = encoders.getCountsLeft();
   int16_t countRight = encoders.getCountsRight();
@@ -422,14 +431,14 @@ void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist()  // Denne funksjonen erstatt
   float rotasjoner = (float)avgCount / (75.81 * 12.0);
   dist = rotasjoner * 12.2522;
 
-  if(millis() - lastTimeGetSpeed > 100){
+  if (millis() - lastTimeGetSpeed > 100)
+  {
     speed = (dist - prevDist) / ((float)(millis() - lastTimeGetSpeed) / 1000);
 
     prevDist = dist;
     lastTimeGetSpeed = millis();
-    }
+  }
 }
-
 
 void Zumo32U4_bibliotek_gruppe_8::askForCharging()
 {
@@ -441,10 +450,9 @@ void Zumo32U4_bibliotek_gruppe_8::askForCharging()
   }
 }
 
-
 void Zumo32U4_bibliotek_gruppe_8::actualCharging()
 {
- 
+
   if (buttonC.isPressed() == true)
   {
     batteryLevel = batteryLevel + 10;
@@ -455,116 +463,103 @@ void Zumo32U4_bibliotek_gruppe_8::actualCharging()
 
     // husk å også trekke kostnad fra konto
     // hvis kontoen er tom, så må ladingen avsluttes(askForChargingState)
-
   }
 
   if (((buttonA.isPressed() == true) && (buttonC.isPressed() == true)) || (ladingStoppet == true)) // Jeg har gjort det slik at WX79
   {
     askForChargingState = false;
     continueChargingDisplay = true;
-    ladingStoppet = false;  //WX79
+    ladingStoppet = false; // WX79
     zumoStopConfirmed = false;
   }
 }
-
 
 void Zumo32U4_bibliotek_gruppe_8::batteryLevelWarning()
 {
   if ((batteryLevel <= 10) && (batteryLevel > 5) && batteryLevelWarningOne == false)
   {
-//-----------
-      if (ledYellow1State1 == false)
-      {
-        ledYellow(1);
-        buzzer.playFrequency(200, 300, 11);
-        batteryLevelWarningLedTimer1 = millis();
-        ledYellow1State1 = true;
-      }
-//-----------
-      if ((millis() - batteryLevelWarningLedTimer1) > 300)
-      {
-        ledYellow(0);
-        batteryLevelWarningOne = true;
-      }
-
-    
-
+    //-----------
+    if (ledYellow1State1 == false)
+    {
+      ledYellow(1);
+      buzzer.playFrequency(200, 300, 11);
+      batteryLevelWarningLedTimer1 = millis();
+      ledYellow1State1 = true;
+    }
+    //-----------
+    if ((millis() - batteryLevelWarningLedTimer1) > 300)
+    {
+      ledYellow(0);
+      batteryLevelWarningOne = true;
+    }
   }
 
   else if (batteryLevel <= 5)
   {
 
-    if ((batteryLevelState == false) || ((millis() - batteryLevelWarningTimer) > 15000)) 
+    if ((batteryLevelState == false) || ((millis() - batteryLevelWarningTimer) > 15000))
 
-      motors.setSpeeds(0,0);
+      motors.setSpeeds(0, 0);
 
+    //-----------
+    if (ledYellow1State2 == false)
+    {
+      ledYellow(1);
+      buzzer.playFrequency(1000, 300, 14);
+      batteryLevelWarningLedTimer2 = millis();
+      ledYellow1State2 = true;
+    }
+    //----------
+    if (ledYellow0State2 == false)
+    {
+      if ((millis() - batteryLevelWarningLedTimer2) > 300)
+      {
+        ledYellow(0);
+        batteryLevelWarningLedTimer2 = millis();
+        ledYellow0State2 = true;
+      }
+    }
 
-//-----------
-      if (ledYellow1State2 == false)
+    //----------
+    if (ledYellow1Nr2State2 == false)
+    {
+      if ((millis() - batteryLevelWarningLedTimer2) > 100)
       {
         ledYellow(1);
         buzzer.playFrequency(1000, 300, 14);
         batteryLevelWarningLedTimer2 = millis();
-        ledYellow1State2 = true;
+        ledYellow1Nr2State2 = true;
       }
-//----------    
-      if (ledYellow0State2 == false)
-      {
-        if ((millis() - batteryLevelWarningLedTimer2) > 300)
-        {
-          ledYellow(0); 
-          batteryLevelWarningLedTimer2 = millis();
-          ledYellow0State2 = true;
-        }
-      }
+    }
 
-//----------   
-      if (ledYellow1Nr2State2 == false)
+    //----------
+    if (ledYellow0Nr2State2 == false)
+    {
+      if ((millis() - batteryLevelWarningLedTimer2) > 300)
       {
-        if ((millis() - batteryLevelWarningLedTimer2) > 100)
-        {
-          ledYellow(1);
-          buzzer.playFrequency(1000, 300, 14);
-          batteryLevelWarningLedTimer2 = millis();
-          ledYellow1Nr2State2 = true;
-        }
+        ledYellow(0);
+        batteryLevelState = true;
+        batteryLevelWarningTimer = millis();
+        ledYellow0Nr2State2 = true;
       }
-    
-//----------  
-      if (ledYellow0Nr2State2 == false)
-      {
-        if ((millis() - batteryLevelWarningLedTimer2) > 300)
-        {
-          ledYellow(0);
-          batteryLevelState = true;
-          batteryLevelWarningTimer = millis();
-          ledYellow0Nr2State2 = true;
-        }
-      }
+    }
 
-      if(( ledYellow1State1 == true) && (ledYellow1State2 == true) && (ledYellow0State2 == true) && (ledYellow1Nr2State2 == true) && (ledYellow0Nr2State2 == true))
-      {
-        ledYellow1State1 = false;
-        ledYellow1State2 = false;
-        ledYellow0State2 = false;
-        ledYellow1Nr2State2 = false;
-        ledYellow0Nr2State2 = false;
-      }
+    if ((ledYellow1State1 == true) && (ledYellow1State2 == true) && (ledYellow0State2 == true) && (ledYellow1Nr2State2 == true) && (ledYellow0Nr2State2 == true))
+    {
+      ledYellow1State1 = false;
+      ledYellow1State2 = false;
+      ledYellow0State2 = false;
+      ledYellow1Nr2State2 = false;
+      ledYellow0Nr2State2 = false;
+    }
   }
 
   else
   {
-      batteryLevelWarningOne = false;
-      batteryLevelState = false;
+    batteryLevelWarningOne = false;
+    batteryLevelState = false;
   }
 }
-
-
-
-
-
-
-
 
 void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
 {
@@ -574,20 +569,18 @@ void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man 
 
   display.gotoXY(0, 0);
   display.print("Bat: ");
-  display.print(getBatteryLevel()); //TODO trenger vi getBatteryLevel sivert?
+  display.print(getBatteryLevel()); // TODO trenger vi getBatteryLevel sivert?
   display.print("%");
 
   display.gotoXY(0, 1);
   display.print("Char_$: ");
-  display.print("\n");  // TODO legge til IoT for ladekostnader.
+  display.print("\n"); // TODO legge til IoT for ladekostnader.
   display.print("\n");
 
   display.gotoXY(6, 1);
   display.print("acc_bal: ");
-  display.print("\n");  // TODO legge til IoT for ladekostnader.
+  display.print("\n"); // TODO legge til IoT for ladekostnader.
   display.print("\n");
-
-
 
   if ((continueChargingDisplay == true) && (continueChargingDisplayPrev == false))
   {
@@ -601,64 +594,58 @@ void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man 
   }
 }
 
-
-void Zumo32U4_bibliotek_gruppe_8::runningDisplay()  // Den som skal kjøres til vanlig
+void Zumo32U4_bibliotek_gruppe_8::runningDisplay() // Den som skal kjøres til vanlig
 {
 
-display.clear();
+  display.clear();
 
-display.print("Spd:");
-display.print(getSpeed());
-display.print("m/s");
+  display.print("Spd:");
+  display.print(getSpeed());
+  display.print("m/s");
 
-display.gotoXY(0, 1);
-display.print("Dist:");
-display.print(getDistance());
-display.print("cm");
-
+  display.gotoXY(0, 1);
+  display.print("Dist:");
+  display.print(getDistance());
+  display.print("cm");
 }
 
-
-void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay()  // Den som skal kjøres hvert tiende sekund på interrupt
+void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay() // Den som skal kjøres hvert tiende sekund på interrupt
 {
 
   display.scrollDisplayLeft();
 
-  display.gotoXY(0,0);
+  display.gotoXY(0, 0);
   display.print("Bat:");
   display.print("100");
   display.print("%");
 
-  display.gotoXY(0,1);
+  display.gotoXY(0, 1);
   display.print("cc:");
   display.print("10");
 
-  display.gotoXY(6,1);
+  display.gotoXY(6, 1);
   display.print("bh:");
   display.print("100");
   display.print("p");
-
 }
-
 
 void Zumo32U4_bibliotek_gruppe_8::displayFunctions()
 {
-  if (tenAchieved == true) //TODO Trenger vi getTenAchieved Sivert?
+  if (tenAchieved == true) // TODO Trenger vi getTenAchieved Sivert?
   {
     everyTenSecondsDisplay();
   }
   else if (absContinueChargingDisplay == true)
   {
     chargingDisplay();
-  } else {
+  }
+  else
+  {
     runningDisplay();
   }
 
-// Hvis det trengs flere displaytyper, legg gjerne til.
-
+  // Hvis det trengs flere displaytyper, legg gjerne til.
 }
-
-
 
 void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
 {
@@ -675,9 +662,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
   int Kd = 1;
   int Ke = 1;
 
-
-
-  int randomFactor = random(1,10);
+  int randomFactor = random(1, 10);
   int randomFactorExecuted = 0;
 
   if (randomFactor > 8)
@@ -689,36 +674,33 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
     randomFactorExecuted = 1;
   }
 
-
-
-
   if ((tid70Differensial != tid70DifferensialPrev) || (StateOfChargeBelow5 != StateOfChargeBelow5Prev) || (chargingCycles != chargingCyclesPrev) || (sekstiSekMaksHastighet != sekstiSekMaksHastighetPrev) || (gjennomsnittsHastighet != gjennomsnittsHastighetPrev))
   {
-    if(tid70Differensial == tid70DifferensialPrev)
+    if (tid70Differensial == tid70DifferensialPrev)
     {
       Ka = 0;
     }
-    if(StateOfChargeBelow5 == StateOfChargeBelow5Prev)
+    if (StateOfChargeBelow5 == StateOfChargeBelow5Prev)
     {
       Ke = 0;
     }
 
-    if(chargingCycles == chargingCyclesPrev)
+    if (chargingCycles == chargingCyclesPrev)
     {
       Kb = 0;
     }
 
-    if(sekstiSekMaksHastighet == sekstiSekMaksHastighetPrev)
+    if (sekstiSekMaksHastighet == sekstiSekMaksHastighetPrev)
     {
       Kc = 0;
     }
 
-    if(gjennomsnittsHastighet == gjennomsnittsHastighetPrev)
+    if (gjennomsnittsHastighet == gjennomsnittsHastighetPrev)
     {
       Kd = 0;
     }
 
-    int batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((StateOfChargeBelow5),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
+    int batteryHealth = randomFactorExecuted * (batteryHealth - ((Ka * (K1 * pow((tid70Differensial), 2))) + (Ke * (pow((StateOfChargeBelow5), 2))) + (Kb * (K2 * (chargingCycles))) + (K3 * (Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet))));
 
     tid70DifferensialPrev = tid70Differensial;
     StateOfChargeBelow5Prev = StateOfChargeBelow5;
@@ -726,66 +708,62 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
     sekstiSekMaksHastighetPrev = sekstiSekMaksHastighet;
     gjennomsnittsHastighetPrev = gjennomsnittsHastighet;
 
-// dette her er nok litt rotete. Hvis dere har en annen løsning, så kan dere godt endre på det.
-// Poenget med å gjøre det sånn er at vi ikke endrer på variabelen unødvendig, fordi den er satt
-// opp slik at for hver gang den blir kalkulert så vil batteryHealth synke.
-
+    // dette her er nok litt rotete. Hvis dere har en annen løsning, så kan dere godt endre på det.
+    // Poenget med å gjøre det sånn er at vi ikke endrer på variabelen unødvendig, fordi den er satt
+    // opp slik at for hver gang den blir kalkulert så vil batteryHealth synke.
   }
 
- // Når det gjelder utregningen av batteryhealthfunksjonen så må vi nesten bare tilpasse konstantene når det blir nødving.
-
+  // Når det gjelder utregningen av batteryhealthfunksjonen så må vi nesten bare tilpasse konstantene når det blir nødving.
 }
-
 
 void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
 {
 
   batteryHealthAlgorithm();
 
-  //if (batteryHealth != last_EEPROM_batteryHealth)
+  // if (batteryHealth != last_EEPROM_batteryHealth)
   //{
-    unsigned long time_now_batteryHealth = millis();
-    if ((millis() - time_now_batteryHealth) > 1000)
-    {
-        //EEPROM.write(0, batteryHealth)
-        EEPROM.put(0, batteryHealth);
-        EEPROM.put(1,1);
-        //last_EEPROM_batteryHealth = batteryHealth;
-    }
+  unsigned long time_now_batteryHealth = millis();
+  if ((millis() - time_now_batteryHealth) > 1000)
+  {
+    // EEPROM.write(0, batteryHealth)
+    EEPROM.put(0, batteryHealth);
+    EEPROM.put(1, 1);
+    // last_EEPROM_batteryHealth = batteryHealth;
+  }
 }
-  // chargingCycles
-  // StateOfChargeBelow5
-  // gjennomsnittsHastighet
-  // sekstiSekMaksHastighet
-  // tid70Differensial
-  // random faktor
-  
-  // level_1 for service
-  // level_0 for batteribytt
-  // batteriservice forbedrer batteryHealth poengsummen
-  // batteribytte starter batteryHealth med ny verdi.
+// chargingCycles
+// StateOfChargeBelow5
+// gjennomsnittsHastighet
+// sekstiSekMaksHastighet
+// tid70Differensial
+// random faktor
 
-  // jeg tenker at utladningshastighet, altså fart må ha mye å si
-  // jeg tenker også at antall ladesykluser må ha mye og si.
+// level_1 for service
+// level_0 for batteribytt
+// batteriservice forbedrer batteryHealth poengsummen
+// batteribytte starter batteryHealth med ny verdi.
 
- void Zumo32U4_bibliotek_gruppe_8::checkForBatteryStatus()
+// jeg tenker at utladningshastighet, altså fart må ha mye å si
+// jeg tenker også at antall ladesykluser må ha mye og si.
+
+void Zumo32U4_bibliotek_gruppe_8::checkForBatteryStatus()
 {
 
-  if( (batteryHealth < 15) && batteryHealth > 3 )
+  if ((batteryHealth < 15) && batteryHealth > 3)
   {
     level_1 == true;
   }
-  else if(batteryHealth <= 3)
+  else if (batteryHealth <= 3)
   {
     level_0 = true;
   }
-
 }
-
 
 void Zumo32U4_bibliotek_gruppe_8::batteryService()
 {
-  if (level_1 == true);  // Disse kan vel settes rett i loopen?
+  if (level_1 == true)
+    ; // Disse kan vel settes rett i loopen?
   {
     if (buttonA.isPressed())
     {
@@ -796,7 +774,6 @@ void Zumo32U4_bibliotek_gruppe_8::batteryService()
   }
 }
 
-
 void Zumo32U4_bibliotek_gruppe_8::batteryReplacement()
 {
   if (level_0 == true)
@@ -806,7 +783,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryReplacement()
       batteryHealth = 100;
       level_0 = false;
       // Husk også kostnad for batteribytte. Jeg tror akkurat denne kan inn i switch-casen.
-      // Den forstyrrer jo tross alt ikke noe av det andre. Hvilke biler er det som 
+      // Den forstyrrer jo tross alt ikke noe av det andre. Hvilke biler er det som
       // skifter batteri i fart, eller mens noen av de andre funksjonene fungerer samtidig?
     }
   }
@@ -818,8 +795,10 @@ String Zumo32U4_bibliotek_gruppe_8::getSerialValue(int index)
   int strengIndex[] = {0, -1};
   int maxIndex = serialString.length() - 1;
 
-  for (int i = 0; i <= maxIndex && found <= index; i++) {
-    if (serialString.charAt(i) == ';' || i == maxIndex) {
+  for (int i = 0; i <= maxIndex && found <= index; i++)
+  {
+    if (serialString.charAt(i) == ';' || i == maxIndex)
+    {
       found++;
       strengIndex[0] = strengIndex[1] + 1;
       strengIndex[1] = (i == maxIndex) ? i + 1 : i;
@@ -830,158 +809,210 @@ String Zumo32U4_bibliotek_gruppe_8::getSerialValue(int index)
 }
 
 ///////////////////////----------------------------------------------------//////////////////////////
-
-
-/*
-
-
-void normalLinjefolger();
+////---------------------------------------------------------
+void Zumo32U4_bibliotek_gruppe_8::preemptiveLookForCrossroad()
 {
+  long currentRoundTime = millis() - rundetidStart;
+  // ved ny rundetid restart mulighet for lookForCrossroad
+  if (rundetidStart <= 200 && crossroadPassed = true)
+  {
+    bool crossroadPassed = false;
+  }
 
-  int position = lineSensors.readLine(lineSensorValues);
-// Her ser man at man leser av disse sensorene.
-
-   ikke definert fra før av og må defineres
-
-unsigned long ***prevPositionUpdateTimer*** = millis();                                            /////// variabel som ikke er lagt inn fra før **= 0
-
-if (millis() - prevPositionUpdateTimer = 50) {
-  ***prevPosition*** = position;                                            /////// variabel som ikke er lagt inn fra før **initialiser
-}
-
-if (***timesTrackRun*** == 0) {                                            /////// variabel som ikke er lagt inn fra før
-  crossroadData(position, prevPosition);
-}
-
-if (timesTrackRun > 0) {  // timesTrackRun er en teller for hvor mange ganger banen har kjørt
-  preEmptiveLookForCrossroad ()
-  ////---------------------------------------------------------
-  void preemptiveLookForCrossroad () {
-    long ***currentRoundTime*** = millis() - rundeTidStart;                                            /////// variabel som ikke er lagt inn fra før **initialiser
-    //ved ny rundetid restart mulighet for lookForCrossroad
-    if (rundeTidStart <= 200 && crossroadPassed = true) {
-      bool crossroadPassed = false;
+  if (crossroadPassed == false)
+  {
+    /////
+    if ((position <= prevPosition - 600) && (timeBeforeCrsosroad - currentRoundTime <= 0))
+    {
+      //*****************
+      motors.setSpeeds(0, 300);
+      crossroadPassed = true;
     }
-
-    if (crossroadPassed == false) {
-      /////
-      if ((position <= prevPosition - 600) && (timeBeforeCrossroad - currentRoundTime <= 0)) {
-        *****************
-        motors.setSpeeds(0, 300);
-        crossroadPassed = true;
-      }
-      else if ((position <= prevPosition + 600) && (timeBeforeCrossroad - currentRoundTime <= 0)) {
-        motors.setSpeeds(300, 0);
-        crossroadPassed = true;
-      }
-      /////
+    else if ((position <= prevPosition + 600) && (timeBeforeCrossroad - currentRoundTime <= 0))
+    {
+      motors.setSpeeds(300, 0);
+      crossroadPassed = true;
     }
   }
-  ////---------------------------------------------------------
 }
+/////
+
+//// ---------------------------------------------------
+void Zumo32U4_bibliotek_gruppe_8::turnToSideroad(int sideroadDirection;)
+{
+  if (sideroadDirection == 2700)
+  {
+    motors.setSpeeds(300, 0);
+  }
+  else if (sideroadDirection == 1300)
+  {
+    motors.setSpeeds(0, 300);
+  }
+}
+//// ---------------------------------------------------
+
 //// -------------------------------------------------------------------------------------
 
-/**
-   Funksjonen ser etter siste gang posisjonen var over 600 fra sentrert på midten av bilen
-   og lagrer varierende variabler for sist gang posisjonen var  600
+// Funksjonen ser etter siste gang posisjonen var over 600 fra sentrert på midten av bilen
+// og lagrer varierende variabler for sist gang posisjonen var  600
 
-
-   Variabler som må defineres:                                            /////// variabel som ikke er lagt inn fra før
+/*
+   Variabler som må defineres:
    long fluxingCountSinceCrossroadLeft;
    long fluxingCountSinceCrossroadRight;
    long fluxingAverageCountCrossroad ??
    unsigned long fluxingTimeBeforeCrossroad
+*/
 
-
-void crossroadData(int position; int prevPosition) {
-  if (checkForCrossroad(position, prevPosition) == 2700 || checkForCrossroad() == 1300) { // !!!!!
+void Zumo32U4_bibliotek_gruppe_8::crossroadData(int position; int prevPosition)
+{
+  if (checkForCrossroad(position, prevPosition) == 2700 || checkForCrossroad() == 1300)
+  { // !!!!!
     long fluxingCountSinceCrossroadLeft = encoders.getCountsLeft();
     long fluxingCountSinceCrossroadRight = encoders.getCountsRight();
     fluxingAverageCountCrossroad = ((fluxingCountSinceCrossroadLeft + fluxingCountSinceCrossroadRight) / 2) - 300;
-    fluxingTimeBeforeCrossroad = millis - rundeTidStart - 500;  //    !!!!!
+    fluxingTimeBeforeCrossroad = millis - rundetidStart - 500; //    !!!!!
   }
 }
 
+////------------------------------------------------------------------
+
 ////// -------------------------------------------------------------------------------------
-int checkForCrossroad(int position; int prevPosition) {
+int Zumo32U4_bibliotek_gruppe_8::checkForCrossroad(int position; int prevPosition)
+{
   int crossroadFound = 2000;
-  if (position <= prevPosition - 600 && position != 4000 && position != 0 && (encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800) {
+  if (position <= prevPosition - 600 && position != 4000 && position != 0 && (encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800)
+  {
     crossroadFound = 1300;
   }
-  else if (position >= prevPosition + 600) && position != 4000 && position != 0 && (encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800) {
-    crossroadFound = 2700;
-  }
+  else if (position >= prevPosition + 600) && position != 4000 && position != 0 && (encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800)
+    {
+      crossroadFound = 2700;
+    }
   return crossroadFound;
 }
 ////// -------------------------------------------------------------------------------------
 
-////------------------------------------------------------------------
-// TODO Vi må legge inn funkjsonen som gjør at den skal kunne returnere
-// fra en blindvei.
+//// ---------------------------------------------------
 
+// Funksjonen lagrer varierende data fra siste oppdaget Crossroad i mer permanente variabler
 
-  // usikker på om denne if statmenten trengs //---
-
-if ((position == 4000 || position == 0) && timesTrackRun > 0) {
-  motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);
+void Zumo32U4_bibliotek_gruppe_8::saveCrossroadData()
+{
+  countSinceCrossroadLeft = fluxingCountSinceCrossroadLeft;
+  countSinceCrossroadRight = fluxingCountSinceCrossroadRight;
+  averageCountCrossroad = fluxingAverageCountCrossroad;
+  timeBeforeCrossroad = fluxingTimeBeforeCrossroad;
 }
-//----------------------------------------------------------------
+//// ---------------------------------------------------
 
-if ((position == 4000 || position == 0) && (timesTrackRun == 0)) {
-  if (timeSinceRoadlossNotSet) {
-    unsigned long timeSinceRoadloss = millis();
-    ***timeSinceRoadlossNotSet*** = false;                                            /////// variabel som ikke er lagt inn fra før
+void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
+{
+
+  int position = lineSensors.readLine(lineSensorValues);
+  // Her ser man at man leser av disse sensorene.
+
+  // ikke definert fra før av og må defineres
+
+  unsigned long prevPositionUpdateTimer = millis();
+
+  if (millis() - prevPositionUpdateTimer = 50)
+  {
+    prevPosition = position;
   }
-  if (millis() - timeSinceRoadloss <= 1500) {
+
+  if (timesTrackRun == 0)
+  {
+    crossroadData(position, prevPosition);
+  }
+
+  if (timesTrackRun > 0)
+  { // timesTrackRun er en teller for hvor mange ganger banen har kjørt
+    preEmptiveLookForCrossroad()
+  }
+
+  ////---------------------------------------------------------
+
+  // TODO Vi må legge inn funkjsonen som gjør at den skal kunne returnere
+  // fra en blindvei.
+
+  // usikker på om denne if statmenten trengs //--->
+
+  if ((position == 4000 || position == 0) && timesTrackRun > 0)
+  {
     motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);
   }
-  else if (millis() - timeSinceRoadloss >= 1500) {
-    motors.setSpeeds(-venstrePaadrag / 2, -hoyrePaadrag / 2);
-    saveCrossroadData()
-    //// ---------------------------------------------------
-    /////// variabel som ikke er lagt inn fra før **
 
-    /*
-      Funksjonen lagrer varierende data fra siste oppdaget Crossroad i mer permanente variabler
-    
-    void saveCrossroadData () {
-      countSinceCrossroadLeft = fluxingCountSinceCrossroadLeft;                                              /////// variabel som ikke er lagt inn fra før **long initialiser
-      countSinceCrossroadRight = fluxingCountSinceCrossroadRight;                                            /////// variabel som ikke er lagt inn fra før **long initialiser
-      averageCountCrossroad = fluxingAverageCountCrossroad;                                                  /////// variabel som ikke er lagt inn fra før **long initialiser
-      timeBeforeCrossroad = fluxingTimeBeforeCrossroad;                                                      /////// variabel som ikke er lagt inn fra før **long initialiser
+  //----------------------------------------------------------------
+
+  if ((position == 4000 || position == 0) && (timesTrackRun == 0))
+  {
+    if (timeSinceRoadlossNotSet)
+    {
+      unsigned long timeSinceRoadloss = millis();
+      ***timeSinceRoadlossNotSet *** = false;
     }
-    //// ---------------------------------------------------
-
-    ***reverseLinefollower*** = true                                            /////// variabel som ikke er lagt inn fra før **= false
+    if (millis() - timeSinceRoadloss <= 1500)
+    {
+      motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);
+    }
+    else if (millis() - timeSinceRoadloss >= 1500)
+    {
+      motors.setSpeeds(-venstrePaadrag / 2, -hoyrePaadrag / 2);
+      saveCrossroadData()
+          reverseLinefollower = true;
+    }
   }
-}
 
-else if (reverseLinefollower == true) {
-  if (checkForCrossroad(position, prevPosition) != 2000 || millis() - sideroadFoundStopTimer <= 250) {     /////// midlertidig antakelse må justeres
-    if (firstTimeSideroadFoundStopTimer) {
-      motors.setSpeeds(0, 0);
-      unsigned long sideroadFoundStopTimer = millis();
-      int sideroad = checkForCrossroad(position, prevPosition);
-      ***firstTimeSideroadFoundStopTimer*** = false;                                                      /////// variabel som ikke er lagt inn fra før **= true
-    }
-    else if (millis() - sideroadFoundStopTimer >= 100) {     /////// midlertidig antakelse må justeres
-      turnToSideroad(sideroad);
-      //// ---------------------------------------------------
-      void turnToSideroad(int sideroadDirection;) {
-        if (sideroadDirection == 2700) {
-          motors.setSpeeds(300, 0);
-        }
-        else if (sideroadDirection == 1300) {
-          motors.setSpeeds(0, 300);
-        }
+  else if (reverseLinefollower == true)
+  {
+    if (checkForCrossroad(position, prevPosition) != 2000 || millis() - sideroadFoundStopTimer <= 250)
+    { /////// midlertidig antakelse må justeres
+      if (firstTimeSideroadFoundStopTimer)
+      {
+        motors.setSpeeds(0, 0);
+        unsigned long sideroadFoundStopTimer = millis();
+        int sideroad = checkForCrossroad(position, prevPosition);
+        firstTimeSideroadFoundStopTimer = false;
       }
-      //// ---------------------------------------------------
+      else if (millis() - sideroadFoundStopTimer >= 100)
+      { /////// midlertidig antakelse må justeres
+        turnToSideroad(sideroad);
+      }
+    }
+    else
+    {
+      // Her ser man avviket. Avviket forteller oss målet om hvor vi skal.
+      int avvik = position - 2000;
+
+      // Når avviket er null, kreves det ingen regulering.
+      int konstantP = 1;  // Disse er konstantene til PD-reguleringen.
+      int konstantD = 10; // De er viktige for dens egenskaper.
+
+      int PD = konstantP * avvik + konstantD * (avvik - forrigeAvvik);
+      // Her får vi pådraget. Det er selve reguleringen.
+      // Den bestemmer hvilke forandringer vi skal
+      // gjøre på hastigheten til motorene.
+
+      forrigeAvvik = avvik;
+
+      int venstrePaadrag = 200 + PD;
+      int hoyrePaadrag = 200 - PD;
+
+      venstrePaadrag = constrain(venstrePaadrag, 0, 400);
+      hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);
+      // Vi ønsker ikke
+      // mer enn 400 til
+      // motorene.
+      motors.setSpeeds(-venstrePaadrag, -hoyrePaadrag);
     }
   }
-  else {
+
+  else
+  {
     // Her ser man avviket. Avviket forteller oss målet om hvor vi skal.
     int avvik = position - 2000;
-
+    timeSinceRoadlossNotSet = false;
     // Når avviket er null, kreves det ingen regulering.
     int konstantP = 1;  // Disse er konstantene til PD-reguleringen.
     int konstantD = 10; // De er viktige for dens egenskaper.
@@ -997,62 +1028,28 @@ else if (reverseLinefollower == true) {
     int hoyrePaadrag = 200 - PD;
 
     venstrePaadrag = constrain(venstrePaadrag, 0, 400);
-    hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);   // Vi ønsker ikke
+    hoyrePaadrag = constrain(hoyrePaadrag, 0, 400); // Vi ønsker ikke
     // mer enn 400 til
     // motorene.
-    motors.setSpeeds(-venstrePaadrag, -hoyrePaadrag);
+    motors.setSpeeds(venstrePaadrag, hoyrePaadrag);
   }
 }
 
-
-else {
-  // Her ser man avviket. Avviket forteller oss målet om hvor vi skal.
-  int avvik = position - 2000;
-  timeSinceRoadlossNotSet = false;
-  // Når avviket er null, kreves det ingen regulering.
-  int konstantP = 1;  // Disse er konstantene til PD-reguleringen.
-  int konstantD = 10; // De er viktige for dens egenskaper.
-
-  int PD = konstantP * avvik + konstantD * (avvik - forrigeAvvik);
-  // Her får vi pådraget. Det er selve reguleringen.
-  // Den bestemmer hvilke forandringer vi skal
-  // gjøre på hastigheten til motorene.
-
-  forrigeAvvik = avvik;
-
-  int venstrePaadrag = 200 + PD;
-  int hoyrePaadrag = 200 - PD;
-
-  venstrePaadrag = constrain(venstrePaadrag, 0, 400);
-  hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);   // Vi ønsker ikke
-  // mer enn 400 til
-  // motorene.
-  motors.setSpeeds(venstrePaadrag, hoyrePaadrag);
-
-}
-}
-
-void avslaattLinjefolger();
+void Zumo32U4_bibliotek_gruppe_8::avslaattLinjefolger()
 {
 
   // TODO Her må vi bestemme om denne funksjonen skal være litt
   // komplisert ved at den skal kunne være avslått på ulike
   // plasser.
 
-  motors.setSpeeds(0,0);
-
+  motors.setSpeeds(0, 0);
 }
 
-unsigned long rundetid = 0;
-unsigned long rundetidStart = 0;
-unsigned long rundetidSlutt = 0;
-unsigned long best_rundetid = 0;
-int antall_runder_counter = 0;
-void besteTidLinjefolger();
+void Zumo32U4_bibliotek_gruppe_8::besteTidLinjefolger()
 {
   // TODO Jeg vet ikke helt hvordan vi skal løse den annet enn å bare si at den beste runden
   // gir poeng eller noe sånt. å begynne å påvirke reguleringen for å få enda bedre tid
-  // er svært vanskelig og jeg tenker at vi ikke har tid til det. Skal vi begynne å legge 
+  // er svært vanskelig og jeg tenker at vi ikke har tid til det. Skal vi begynne å legge
   // til integralledd liksom. denne funksjonen kan egt være en poenggivende funksjon.
 
   if (nyRunde == true)
@@ -1063,10 +1060,9 @@ void besteTidLinjefolger();
     unsigned long rundetidStart = millis();
 
     nyRunde = false;
-
   }
 
-  if(rundetid > best_rundetid)
+  if (rundetid > best_rundetid)
   {
     best_rundetid = rundetid;
 
@@ -1074,14 +1070,13 @@ void besteTidLinjefolger();
   }
 }
 
-void idealTidLinjefolger();
+void Zumo32U4_bibliotek_gruppe_8::idealTidLinjefolger()
 {
 
   int idealtid;
-  bool nyRunde
-  unsigned long besteRundetid;
+  bool nyRunde unsigned long besteRundetid;
 
-  if(nyRunde == true)
+  if (nyRunde == "1")
   {
 
     // Her skal den endre på pådragene slik at man kan oppnå en tid nærmere idealtid
@@ -1089,7 +1084,7 @@ void idealTidLinjefolger();
     unsigned long rundetidSlutt = millis();
     unsigned long rundetid = rundetidSlutt - rundetidStart;
     unsigned long rundetidStart = millis();
-    
+
     int idealtidAvvik = rundetid - idealtid;
 
     int idealtidKonstantP = 1;  // Disse er konstantene til PD-reguleringen.
@@ -1097,14 +1092,12 @@ void idealTidLinjefolger();
 
     int idealtidPD = idealtidKonstantP * idealtidAvvik + idealtidKonstantD * (idealtidAvvik - idealtidForrigeAvvik);
 
-
-    if(abs(idealtidAvvik) > abs(idealtidForrigeAvvik))
+    if (abs(idealtidAvvik) > abs(idealtidForrigeAvvik))
     {
       besteRundetid = rundetid;
 
       // TODO her må det gis poeng siden det har blitt
       //  oppnådd det minste avviket fra idealtiden.
-
     }
 
     idealtidForrigeAvvik = idealtidAvvik;
@@ -1131,30 +1124,28 @@ void idealTidLinjefolger();
   int hoyrePaadrag = 400 - PD - idealtidPD;
 
   venstrePaadrag = constrain(venstrePaadrag, 0, 400);
-  hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);   // Vi ønsker ikke
+  hoyrePaadrag = constrain(hoyrePaadrag, 0, 400); // Vi ønsker ikke
   // mer enn 400 til
   // motorene.
 
   motors.setSpeeds(venstrePaadrag, hoyrePaadrag);
-
 }
 
+void Zumo32U4_bibliotek_gruppe_8::linjefolgerFunctions()
+{ // Det som bestemmer denne valgfunksjonen kan være
+  // IoT avhengig
 
-void linjefolgerFunctions();
-{                     // Det som bestemmer denne valgfunksjonen kan være
-                      // IoT avhengig
- 
-  if(linjeFolger == "Avslått")
+  if (linjeFolger == "Avslått")
   {
     avslaattLinjefolger();
   }
 
-  else if(linjeFolger == "Bestetid")
+  else if (linjeFolger == "Bestetid")
   {
     besteTidLinjefolger();
   }
 
-  else if(linjeFolger == "Idealtid")
+  else if (linjeFolger == "Idealtid")
   {
     idealTidLinjefolger();
   }
@@ -1165,22 +1156,17 @@ void linjefolgerFunctions();
   }
 }
 
-
-
-
-
 bool nyRunde = false;
-void nyRunde();
+void Zumo32U4_bibliotek_gruppe_8::nyRunde();
 {
-  ***nyRunde*** = ***Ny_runde***;                                            /////// variabel som ikke er lagt inn fra før ** = 0 ** = 0
-  if(nyRunde == "1"){
-    timesTrackRun += 1;                                            /////// variabel som ikke er lagt inn fra før ** = 0
-    rundeTidStart = millis();                                            /////// variabel som ikke er lagt inn fra før
-    Ny_runde = "0";
+  if (nyRunde == "1")
+  {
+    timesTrackRun += 1;
+    rundetidStart = millis();
+    nyRunde = "0";
   }
   // TODO Dette er en funksjon som skal gjøre en boolsk variabel sann når ----- gjort?
-  //      zumoen har kjørt en runde. Dette skal brukes i 
+  //      zumoen har kjørt en runde. Dette skal brukes i
   //      kunkurranselinjefølgerfunksjonene. Sensorer er bestilt og på vei.
   //
 }
-*/
