@@ -1146,7 +1146,7 @@ void Zumo32U4_bibliotek_gruppe_8::linjefolgerFunctions()
   }
 }
 
-void Zumo32U4_bibliotek_gruppe_8::countRounds();
+void Zumo32U4_bibliotek_gruppe_8::countRounds()
 {
   if (nyRunde == "1")
   {
