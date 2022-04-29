@@ -14,7 +14,6 @@
 #include <Zumo32U4.h>
 #include <EEPROM.h>
 
-//#define NUM_SENSORS 5
 
 class Zumo32U4_bibliotek_gruppe_8{
   public:
