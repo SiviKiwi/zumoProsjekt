@@ -71,20 +71,20 @@ void loop()
 
   if (egendefinert.getZumoStopConfirmed() == true)
   {
-    variabel = 2;
+    variabel = 1;
   }
   else{
-    variabel = 1;
+    variabel = 0;
   }
 
   switch(variabel)
   {
-    case 1:
+    case 0:
 
       egendefinert.linjefolgerFunctions();
       break;
 
-    case 2:
+    case 1:
 
       motors.setSpeeds(0, 0);
       egendefinert.actualCharging();
@@ -107,6 +107,17 @@ void loop()
     dist = egendefinert.getDistance();
     egendefinert.setCapacity(speed, elapsedTime);
 
+    egendefinert.updateSpeedDist();
+    egendefinert.findSekstiSekTid(speed); // Denne funksjonen setter variabelen speedometerEvery60 trenger for agere.
+    egendefinert.speedometerEvery60(speed); // Setter variablene som vil brukes i battery_health
+
+    egendefinert.batteryLevelWarning();
+
+    egendefinert.updateBatteryHealth();
+    egendefinert.checkForBatteryStatus();
+
+    egendefinert.batteryService();
+    egendefinert.batteryReplacement();
 
 //    display.clear();
 //    display.gotoXY(0, 0);
@@ -123,17 +134,7 @@ void loop()
   }
 
   /* Under er for sekstisekunders */
-  egendefinert.updateSpeedDist();
-  egendefinert.findSekstiSekTid(speed); // Denne funksjonen setter variabelen speedometerEvery60 trenger for agere.
-  egendefinert.speedometerEvery60(speed); // Setter variablene som vil brukes i battery_health
 
-  egendefinert.batteryLevelWarning();
-
-  egendefinert.updateBatteryHealth();
-  egendefinert.checkForBatteryStatus();
-
-  egendefinert.batteryService();
-  egendefinert.batteryReplacement();
 
   egendefinert.sendSerial();
 }
