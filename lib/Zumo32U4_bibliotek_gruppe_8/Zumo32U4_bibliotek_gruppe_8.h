@@ -52,6 +52,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     void updateBatteryHealth();
     int getBatteryLevel();
     int getBatteryHealth();
+    String getBileierID();
     void setBatteryHealth(int batteryHealth);
     void batteryHealthAlgorithm();
     void batteryReplacement();
@@ -60,7 +61,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     void sendSerial();
     int getState();
     void setState(int state);
-    String getSerialValue(int index);
+    String getSerialValue(String serialString, char seperator, int index);
     bool getZumoStopConfirmed();
     void preemptiveLookForCrossroad(int position, int prevPosition);
     void turnToSideroad(int sideroadDirection);
@@ -71,7 +72,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     void avslaattLinjefolger();
     void besteTidLinjefolger();
     void idealTidLinjefolger();
-    void nyRunde();
+    void nyRundeFunk();
 
   private:
 
