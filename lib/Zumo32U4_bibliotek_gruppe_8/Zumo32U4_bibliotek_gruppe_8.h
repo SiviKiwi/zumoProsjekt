@@ -84,7 +84,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     Zumo32U4Buzzer buzzer;
     Zumo32U4LCD display;
 
-    unsigned int lineSensorValues;
+    unsigned int* lineSensorValues;
 
     float currentCapacity;
 
