@@ -72,7 +72,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     void avslaattLinjefolger();
     void besteTidLinjefolger();
     void idealTidLinjefolger();
-    void nyRundeFunk();
+    void countRounds();
+    void linjefolgerFunctions();
 
   private:
 
@@ -154,6 +155,10 @@ class Zumo32U4_bibliotek_gruppe_8{
     String nyRunde;
     String linjeFolger;
     int idealTid;
+    int forrigeAvvik;
+    int idealtidForrigeAvvik;
+    unsigned long idealRundetidStart;
+    int idealtidPD;
 
     ////////---------------------------------------------
     unsigned long prevPositionUpdateTimer;
@@ -177,6 +182,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     bool crossroadPassed;
     bool reverseLinefollower;
     unsigned long sideroadFoundStopTimer;
+    int sideroad;
     bool firstTimeSideroadFoundStopTimer;
 
     unsigned long rundetid = 0;

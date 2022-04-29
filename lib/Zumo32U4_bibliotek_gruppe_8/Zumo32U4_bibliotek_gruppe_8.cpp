@@ -100,6 +100,10 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->nyRunde = "0";
   this->linjeFolger = "Normal";
   this->idealTid = 0;
+  this->forrigeAvvik = 0;
+  this->idealtidForrigeAvvik = 0;
+  this->idealRundetidStart = 0;
+  this->idealtidPD = 0;
 
   this->prevPositionUpdateTimer = 0;
   this->prevPosition = 2000;
@@ -122,6 +126,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->crossroadPassed = true;
   this->reverseLinefollower = true;
   this->sideroadFoundStopTimer = 0;
+  this->sideroad = 2000;
   this->firstTimeSideroadFoundStopTimer = true;
 
   this->rundetid = 0;
@@ -158,7 +163,7 @@ void Zumo32U4_bibliotek_gruppe_8::sendSerial()
   */
   String sendString = "";
   sendString.concat("BileierID;");
-  sendString.concat();
+  sendString.concat(getBileierID());
   sendString.concat(";zumoAskForCharging;");
   if (askForChargingState == true)
   {
@@ -220,11 +225,11 @@ int Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en vo
     }
     else if (kommando == "batteriNivaaSend")
     {
-      currentCapacity = ((int(getSerialValue(serialStreng, ',', 1)) * 0.01) * (1200 * 3600)); // Dette gjør om fra prosent til faktisk kapasitet.
+      currentCapacity = ((getSerialValue(serialStreng, ',', 1).toInt() * 0.01) * (1200 * 3600)); // Dette gjør om fra prosent til faktisk kapasitet.
     }
     else if (kommando == "batteryHealth")
     {
-      batteryHealth = int(getSerialValue(serialStreng, ',', 1));
+      batteryHealth = getSerialValue(serialStreng, ',', 1).toInt();
     }
     else if (kommando == "Ny_runde")
     {
@@ -243,7 +248,7 @@ int Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en vo
     }
     else if (kommando == "idealTid")
     {
-      idealTid = int(getSerialValue(serialStreng, ',', 1)); // TODO definere variabelen WX79
+      idealTid = getSerialValue(serialStreng, ',', 1).toInt(); // TODO definere variabelen WX79
     }
     return state;
   }
@@ -278,6 +283,11 @@ int Zumo32U4_bibliotek_gruppe_8::getBatteryHealth()
 int Zumo32U4_bibliotek_gruppe_8::getBatteryLevel()
 {
   return batteryLevel;
+}
+
+String Zumo32U4_bibliotek_gruppe_8::getBileierID()
+{
+  return bileierID;
 }
 
 void Zumo32U4_bibliotek_gruppe_8::setBatteryHealth(int batteryHealth)
@@ -801,7 +811,7 @@ String Zumo32U4_bibliotek_gruppe_8::getSerialValue(String serialString, char sep
 
   for (int i = 0; i <= maxIndex && found <= index; i++)
   {
-    if (serialString.charAt(i) == ';' || i == maxIndex)
+    if (serialString.charAt(i) == seperator || i == maxIndex)
     {
       found++;
       strengIndex[0] = strengIndex[1] + 1;
@@ -872,8 +882,8 @@ void Zumo32U4_bibliotek_gruppe_8::crossroadData(int position, int prevPosition)
 {
   if (checkForCrossroad(position, prevPosition) == 2700 || checkForCrossroad(position, prevPosition) == 1300)
   { // !!!!!
-    long fluxingCountSinceCrossroadLeft = encoders.getCountsLeft();
-    long fluxingCountSinceCrossroadRight = encoders.getCountsRight();
+    int16_t fluxingCountSinceCrossroadLeft = encoders.getCountsLeft();
+    int16_t fluxingCountSinceCrossroadRight = encoders.getCountsRight();
     fluxingAverageCountCrossroad = ((fluxingCountSinceCrossroadLeft + fluxingCountSinceCrossroadRight) / 2) - 300;
     fluxingTimeBeforeCrossroad = millis() - rundetidStart - 500; //    !!!!!
   }
@@ -885,11 +895,11 @@ void Zumo32U4_bibliotek_gruppe_8::crossroadData(int position, int prevPosition)
 int Zumo32U4_bibliotek_gruppe_8::checkForCrossroad(int position, int prevPosition)
 {
   int crossroadFound = 2000;
-  if ((position <= prevPosition - 600) && (position != 4000) && (position != 0) && ((encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800))
+  if ((position <= prevPosition - 600) && (position != 4000) && (position != 0) && ((encoders.getCountsLeft() + encoders.getCountsRight()) / 2 >= (800 + fluxingAverageCountCrossroad)))
   {
     crossroadFound = 1300;
   }
-  else if ((position >= prevPosition + 600) && (position != 4000) && (position != 0) && ((encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800))
+  else if ((position >= prevPosition + 600) && (position != 4000) && (position != 0) && (fluxingAverageCountCrossroad + 800 <= ((encoders.getCountsLeft() + encoders.getCountsRight()) / 2)))
   {
     crossroadFound = 2700;
   }
@@ -929,7 +939,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
   // Den bestemmer hvilke forandringer vi skal
   // gjøre på hastigheten til motorene.
 
-  int forrigeAvvik = avvik; //???????? endring declarert som int
+  forrigeAvvik = avvik; //???????? endring declarert som int
 
   int venstrePaadrag = 200 + PD;
   int hoyrePaadrag = 200 - PD;
@@ -942,7 +952,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
 
   unsigned long prevPositionUpdateTimer = millis();
 
-  if (millis() - prevPositionUpdateTimer = 50)
+  if (millis() - prevPositionUpdateTimer == 50)
   {
     prevPosition = position;
   }
@@ -998,7 +1008,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
       {
         motors.setSpeeds(0, 0);
         unsigned long sideroadFoundStopTimer = millis();
-        int sideroad = checkForCrossroad(position, prevPosition);
+        sideroad = checkForCrossroad(position, prevPosition);
         firstTimeSideroadFoundStopTimer = false;
       }
       else if (millis() - sideroadFoundStopTimer >= 100)
@@ -1037,7 +1047,7 @@ void Zumo32U4_bibliotek_gruppe_8::besteTidLinjefolger()
 
   if (nyRunde == "1")
   {
-    int antall_runder_counter += 1;
+    antall_runder_counter += 1;
     unsigned long rundetidSlutt = millis();
     unsigned long rundetid = rundetidSlutt - rundetidStart;
     unsigned long rundetidStart = millis();
@@ -1056,8 +1066,6 @@ void Zumo32U4_bibliotek_gruppe_8::besteTidLinjefolger()
 void Zumo32U4_bibliotek_gruppe_8::idealTidLinjefolger()
 {
 
-  int idealtid;
-  bool nyRunde;
   unsigned long besteRundetid;
 
   if (nyRunde == "1")
@@ -1065,11 +1073,11 @@ void Zumo32U4_bibliotek_gruppe_8::idealTidLinjefolger()
 
     // Her skal den endre på pådragene slik at man kan oppnå en tid nærmere idealtid
 
-    unsigned long rundetidSlutt = millis();
-    unsigned long rundetid = rundetidSlutt - rundetidStart;
-    unsigned long rundetidStart = millis();
+    unsigned long idealRundetidSlutt = millis();
+    unsigned long idealRundetid = idealRundetidSlutt - idealRundetidStart;
+    idealRundetidStart = millis();
 
-    int idealtidAvvik = rundetid - idealtid;
+    int idealtidAvvik = idealRundetid - idealTid;
 
     int idealtidKonstantP = 1;  // Disse er konstantene til PD-reguleringen.
     int idealtidKonstantD = 10; // De er viktige for dens egenskaper.
@@ -1138,7 +1146,7 @@ void Zumo32U4_bibliotek_gruppe_8::linjefolgerFunctions()
   }
 }
 
-void Zumo32U4_bibliotek_gruppe_8::nyRunde();
+void Zumo32U4_bibliotek_gruppe_8::countRounds();
 {
   if (nyRunde == "1")
   {

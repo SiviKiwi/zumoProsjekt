@@ -18,7 +18,7 @@ Zumo32U4ButtonB buttonB;
 Zumo32U4ButtonC buttonC;
 Zumo32U4Buzzer buzzer;
 Zumo32U4LCD display;
-Zumo32U4_bibliotek_gruppe_8 egendefinert(encoders, motors, buttonA, buttonB, buttonC, buzzer, display);
+Zumo32U4_bibliotek_gruppe_8 egendefinert(encoders, lineSensors, motors, buttonA, buttonB, buttonC, buzzer, display);
 
 
 unsigned long time;
@@ -58,14 +58,14 @@ void setup()
 
 void loop()
 {
-
+  egendefinert.getState();
   // Funksjonen askForCharging må kjøres for å sjekke om case skal byttes.
   // Det er også relevant å se på løsninger for å kunne lade over IoT,
   // foreløpig er det kun over zumoens knapper.
 
   egendefinert.askForCharging();
 
-  if (getZumoStopConfirmed() == true)
+  if (egendefinert.getZumoStopConfirmed() == true)
   {
     variabel = 2;
   }
@@ -84,7 +84,7 @@ void loop()
 
       motors.setSpeeds(0, 0);
       egendefinert.actualCharging();
-      break
+      break;
 
   }
 
