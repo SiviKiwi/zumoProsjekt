@@ -630,7 +630,7 @@ void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay()  // Den som skal kjø
   display.print("%");
 
   display.gotoXY(0,1);
-  display.print("cc:");
+  display.print("cc:"); // Charging cycles WX79
   display.print("10");
 
   display.gotoXY(6,1);
@@ -718,7 +718,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
       Kd = 0;
     }
 
-    int batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((StateOfChargeBelow5),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
+    batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((StateOfChargeBelow5),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
 
     tid70DifferensialPrev = tid70Differensial;
     StateOfChargeBelow5Prev = StateOfChargeBelow5;
@@ -829,7 +829,6 @@ String Zumo32U4_bibliotek_gruppe_8::getSerialValue(int index)
   return found > index ? serialString.substring(strengIndex[0], strengIndex[1]) : "";
 }
 
-///////////////////////----------------------------------------------------//////////////////////////
 
 
 /*
