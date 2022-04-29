@@ -793,7 +793,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryReplacement()
   }
 }
 
-String Zumo32U4_bibliotek_gruppe_8::getSerialValue(int index)
+String Zumo32U4_bibliotek_gruppe_8::getSerialValue(String serialString, char seperator, int index)
 {
   int found = 0;
   int strengIndex[] = {0, -1};
