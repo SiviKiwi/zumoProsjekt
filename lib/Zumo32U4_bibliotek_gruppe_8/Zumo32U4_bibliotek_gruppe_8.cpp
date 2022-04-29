@@ -22,8 +22,8 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
     Zumo32U4LCD display)
 {
 
-  this->encoders = encoders;
   this->lineSensors = lineSensors;
+  this->encoders = encoders;
   this->motors = motors;
   this->buttonA = buttonA;
   this->buttonB = buttonB;
