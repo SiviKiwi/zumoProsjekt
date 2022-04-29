@@ -11,6 +11,7 @@
 #include <EEPROM.h>
 
 Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
+    Zumo32U4LineSensors lineSensors,
     Zumo32U4Encoders encoders,
     Zumo32U4Motors motors,
     Zumo32U4ButtonA buttonA,
@@ -18,9 +19,10 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
     Zumo32U4ButtonC buttonC,
     Zumo32U4Buzzer buzzer,
     Zumo32U4LCD display)
-  {
+{
 
   this->encoders = encoders;
+  this->lineSensors = lineSensors;
   this->motors = motors;
   this->buttonA = buttonA;
   this->buttonB = buttonB;
@@ -109,6 +111,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->fluxingAverageCountCrossroad;
   this->fluxingTimeBeforeCrossroad;
 
+  this->timeSinceRoadloss = 0;
   this->timeSinceRoadlossNotSet;
 
   this->countSinceCrossroadLeft;
@@ -118,6 +121,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
 
   this->crossroadPassed = true;
   this->reverseLinefollower = true;
+  this->sideroadFoundStopTimer = 0;
   this->firstTimeSideroadFoundStopTimer = true;
 
   this->rundetid = 0;
@@ -200,8 +204,8 @@ int Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en vo
 
   if (Serial1.available() > 0)
   {
-    // TODO: Kanskje sjekke om strengen er tom.og definere variabelen som streng/int
-    int serialStreng = Serial1.readString();
+    // TODO: Kanskje sjekke om strengen er tom.  ------- og definere variabelen som streng/int
+    String serialStreng = Serial1.readString();
 
     String kommando = getSerialValue(serialStreng, ',', 0);
     // Serial1.flush(); //TODO: Kansje vi ma bruke dette?
@@ -619,13 +623,8 @@ void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay() // Den som skal kjør
   display.print("100");
   display.print("%");
 
-<<<<<<< HEAD
   display.gotoXY(0, 1);
-  display.print("cc:");
-=======
-  display.gotoXY(0,1);
   display.print("cc:"); // Charging cycles WX79
->>>>>>> d94dd19f90f87e2cdc422da1fab8ff3f677e5e80
   display.print("10");
 
   display.gotoXY(6, 1);
@@ -705,11 +704,7 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
       Kd = 0;
     }
 
-<<<<<<< HEAD
-    int batteryHealth = randomFactorExecuted * (batteryHealth - ((Ka * (K1 * pow((tid70Differensial), 2))) + (Ke * (pow((StateOfChargeBelow5), 2))) + (Kb * (K2 * (chargingCycles))) + (K3 * (Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet))));
-=======
-    batteryHealth = randomFactorExecuted * (batteryHealth - ( (Ka* (K1 * pow((tid70Differensial),2))) + (Ke * (pow((StateOfChargeBelow5),2))) + ( Kb * (K2*(chargingCycles))) + (K3 * ( Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet)) ));
->>>>>>> d94dd19f90f87e2cdc422da1fab8ff3f677e5e80
+    batteryHealth = randomFactorExecuted * (batteryHealth - ((Ka * (K1 * pow((tid70Differensial), 2))) + (Ke * (pow((StateOfChargeBelow5), 2))) + (Kb * (K2 * (chargingCycles))) + (K3 * (Kc * sekstiSekMaksHastighet - Kd * gjennomsnittsHastighet))));
 
     tid70DifferensialPrev = tid70Differensial;
     StateOfChargeBelow5Prev = StateOfChargeBelow5;
@@ -817,20 +812,13 @@ String Zumo32U4_bibliotek_gruppe_8::getSerialValue(int index)
   return found > index ? serialString.substring(strengIndex[0], strengIndex[1]) : "";
 }
 
-<<<<<<< HEAD
 ///////////////////////----------------------------------------------------//////////////////////////
 ////---------------------------------------------------------
-void Zumo32U4_bibliotek_gruppe_8::preemptiveLookForCrossroad()
-=======
-/*
-
-
-void normalLinjefolger();
->>>>>>> d94dd19f90f87e2cdc422da1fab8ff3f677e5e80
+void Zumo32U4_bibliotek_gruppe_8::preemptiveLookForCrossroad(int position, int prevPosition)
 {
-  long currentRoundTime = millis() - rundetidStart;
+  unsigned long currentRoundTime = millis() - rundetidStart;
   // ved ny rundetid restart mulighet for lookForCrossroad
-  if (rundetidStart <= 200 && crossroadPassed = true)
+  if ((rundetidStart <= 200) && (crossroadPassed = true))
   {
     bool crossroadPassed = false;
   }
@@ -838,7 +826,7 @@ void normalLinjefolger();
   if (crossroadPassed == false)
   {
     /////
-    if ((position <= prevPosition - 600) && (timeBeforeCrsosroad - currentRoundTime <= 0))
+    if ((position <= prevPosition - 600) && (timeBeforeCrossroad - currentRoundTime <= 0))
     {
       //*****************
       motors.setSpeeds(0, 300);
@@ -854,7 +842,7 @@ void normalLinjefolger();
 /////
 
 //// ---------------------------------------------------
-void Zumo32U4_bibliotek_gruppe_8::turnToSideroad(int sideroadDirection;)
+void Zumo32U4_bibliotek_gruppe_8::turnToSideroad(int sideroadDirection)
 {
   if (sideroadDirection == 2700)
   {
@@ -880,31 +868,31 @@ void Zumo32U4_bibliotek_gruppe_8::turnToSideroad(int sideroadDirection;)
    unsigned long fluxingTimeBeforeCrossroad
 */
 
-void Zumo32U4_bibliotek_gruppe_8::crossroadData(int position; int prevPosition)
+void Zumo32U4_bibliotek_gruppe_8::crossroadData(int position, int prevPosition)
 {
-  if (checkForCrossroad(position, prevPosition) == 2700 || checkForCrossroad() == 1300)
+  if (checkForCrossroad(position, prevPosition) == 2700 || checkForCrossroad(position, prevPosition) == 1300)
   { // !!!!!
     long fluxingCountSinceCrossroadLeft = encoders.getCountsLeft();
     long fluxingCountSinceCrossroadRight = encoders.getCountsRight();
     fluxingAverageCountCrossroad = ((fluxingCountSinceCrossroadLeft + fluxingCountSinceCrossroadRight) / 2) - 300;
-    fluxingTimeBeforeCrossroad = millis - rundetidStart - 500; //    !!!!!
+    fluxingTimeBeforeCrossroad = millis() - rundetidStart - 500; //    !!!!!
   }
 }
 
 ////------------------------------------------------------------------
 
 ////// -------------------------------------------------------------------------------------
-int Zumo32U4_bibliotek_gruppe_8::checkForCrossroad(int position; int prevPosition)
+int Zumo32U4_bibliotek_gruppe_8::checkForCrossroad(int position, int prevPosition)
 {
   int crossroadFound = 2000;
-  if (position <= prevPosition - 600 && position != 4000 && position != 0 && (encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800)
+  if ((position <= prevPosition - 600) && (position != 4000) && (position != 0) && ((encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800))
   {
     crossroadFound = 1300;
   }
-  else if (position >= prevPosition + 600) && position != 4000 && position != 0 && (encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800)
-    {
-      crossroadFound = 2700;
-    }
+  else if ((position >= prevPosition + 600) && (position != 4000) && (position != 0) && ((encoders.getCountsLeft() + encoders.getCountsRight()) / 2 = fluxingAverageCountCrossroad + 800))
+  {
+    crossroadFound = 2700;
+  }
   return crossroadFound;
 }
 ////// -------------------------------------------------------------------------------------
@@ -944,7 +932,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
 
   if (timesTrackRun > 0)
   { // timesTrackRun er en teller for hvor mange ganger banen har kjørt
-    preEmptiveLookForCrossroad()
+    preemptiveLookForCrossroad(position, prevPosition);
   }
 
   ////---------------------------------------------------------
@@ -966,7 +954,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
     if (timeSinceRoadlossNotSet)
     {
       unsigned long timeSinceRoadloss = millis();
-      ***timeSinceRoadlossNotSet *** = false;
+      timeSinceRoadlossNotSet = false;
     }
     if (millis() - timeSinceRoadloss <= 1500)
     {
@@ -975,8 +963,8 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
     else if (millis() - timeSinceRoadloss >= 1500)
     {
       motors.setSpeeds(-venstrePaadrag / 2, -hoyrePaadrag / 2);
-      saveCrossroadData()
-          reverseLinefollower = true;
+      saveCrossroadData();
+      reverseLinefollower = true;
     }
   }
 
@@ -1010,7 +998,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
       // Den bestemmer hvilke forandringer vi skal
       // gjøre på hastigheten til motorene.
 
-      forrigeAvvik = avvik;
+      int forrigeAvvik = avvik; //???????? endring declarert som int
 
       int venstrePaadrag = 200 + PD;
       int hoyrePaadrag = 200 - PD;
@@ -1068,14 +1056,14 @@ void Zumo32U4_bibliotek_gruppe_8::besteTidLinjefolger()
   // er svært vanskelig og jeg tenker at vi ikke har tid til det. Skal vi begynne å legge
   // til integralledd liksom. denne funksjonen kan egt være en poenggivende funksjon.
 
-  if (nyRunde == true)
+  if (nyRunde == "1")
   {
-    int antall_runder_counter++;
+    int antall_runder_counter += 1;
     unsigned long rundetidSlutt = millis();
     unsigned long rundetid = rundetidSlutt - rundetidStart;
     unsigned long rundetidStart = millis();
 
-    nyRunde = false;
+    nyRunde = "0";
   }
 
   if (rundetid > best_rundetid)
@@ -1090,7 +1078,8 @@ void Zumo32U4_bibliotek_gruppe_8::idealTidLinjefolger()
 {
 
   int idealtid;
-  bool nyRunde unsigned long besteRundetid;
+  bool nyRunde;
+  unsigned long besteRundetid;
 
   if (nyRunde == "1")
   {
@@ -1172,7 +1161,6 @@ void Zumo32U4_bibliotek_gruppe_8::linjefolgerFunctions()
   }
 }
 
-bool nyRunde = false;
 void Zumo32U4_bibliotek_gruppe_8::nyRunde();
 {
   if (nyRunde == "1")
