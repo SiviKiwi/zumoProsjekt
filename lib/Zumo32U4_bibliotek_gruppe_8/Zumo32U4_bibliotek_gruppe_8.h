@@ -14,9 +14,7 @@
 #include <Zumo32U4.h>
 #include <EEPROM.h>
 
-#define NUM_SENSORS 5
-
-
+//#define NUM_SENSORS 5
 
 class Zumo32U4_bibliotek_gruppe_8{
   public:
@@ -77,6 +75,7 @@ class Zumo32U4_bibliotek_gruppe_8{
 
   private:
 
+    Zumo32U4LineSensors lineSensors;
     Zumo32U4Encoders encoders;
     Zumo32U4Motors motors;
     Zumo32U4ButtonA buttonA;
@@ -84,6 +83,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     Zumo32U4ButtonC buttonC;
     Zumo32U4Buzzer buzzer;
     Zumo32U4LCD display;
+
+    unsigned int lineSensorValues;
 
     float currentCapacity;
 

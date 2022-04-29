@@ -10,6 +10,8 @@
 #include <Zumo32U4.h>
 #include <EEPROM.h>
 
+//#define NUM_SENSORS 5
+
 Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
     Zumo32U4LineSensors lineSensors,
     Zumo32U4Encoders encoders,
@@ -29,6 +31,8 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->buttonC = buttonC;
   this->buzzer = buzzer;
   this->display = display;
+
+  this->lineSensorValues[5];
 
   this->state = 0;
   this->prevStateName = "";
@@ -110,18 +114,18 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->timesTrackRun = 0;
   this->currentRoundTime = 0;
 
-  this->fluxingCountSinceCrossroadLeft;
-  this->fluxingCountSinceCrossroadRight;
-  this->fluxingAverageCountCrossroad;
-  this->fluxingTimeBeforeCrossroad;
+  this->fluxingCountSinceCrossroadLeft = 0;
+  this->fluxingCountSinceCrossroadRight = 0;
+  this->fluxingAverageCountCrossroad = 0;
+  this->fluxingTimeBeforeCrossroad = 0;
 
   this->timeSinceRoadloss = 0;
-  this->timeSinceRoadlossNotSet;
+  this->timeSinceRoadlossNotSet = true;
 
-  this->countSinceCrossroadLeft;
-  this->countSinceCrossroadRight;
-  this->averageCountCrossroad;
-  this->timeBeforeCrossroad;
+  this->countSinceCrossroadLeft = 0;
+  this->countSinceCrossroadRight = 0;
+  this->averageCountCrossroad = 0;
+  this->timeBeforeCrossroad = 0;
 
   this->crossroadPassed = true;
   this->reverseLinefollower = true;

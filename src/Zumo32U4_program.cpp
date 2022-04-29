@@ -32,6 +32,7 @@ float currentCapacity = 1200.0 * 3600;
 void setup()
 {
   //display.init();
+  
   time = millis();
 
   noInterrupts();
@@ -45,7 +46,8 @@ void setup()
   {
     egendefinert.setBatteryHealth(EEPROM.read(0));
   }
-
+  
+  lineSensors.initFiveSensors();
   time_now = millis();
   while (millis() < time_now + 5000)
   {
