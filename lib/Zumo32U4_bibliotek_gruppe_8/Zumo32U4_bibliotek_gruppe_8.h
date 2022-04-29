@@ -22,6 +22,7 @@ class Zumo32U4_bibliotek_gruppe_8{
   public:
 
     Zumo32U4_bibliotek_gruppe_8(
+        Zumo32U4LineSensors lineSensors,
         Zumo32U4Encoders encoders,
         Zumo32U4Motors motors,
         Zumo32U4ButtonA buttonA,
@@ -61,6 +62,16 @@ class Zumo32U4_bibliotek_gruppe_8{
     void setState(int state);
     String getSerialValue(int index);
     bool getZumoStopConfirmed();
+    void preemptiveLookForCrossroad(int position, int prevPosition);
+    void turnToSideroad(int sideroadDirection);
+    void crossroadData(int position, int prevPosition);
+    int checkForCrossroad(int position, int prevPosition);
+    void saveCrossroadData();
+    void normalLinjefolger();
+    void avslaattLinjefolger();
+    void besteTidLinjefolger();
+    void idealTidLinjefolger();
+    void nyRunde();
 
   private:
 
@@ -143,6 +154,35 @@ class Zumo32U4_bibliotek_gruppe_8{
     String linjeFolger;
     int idealTid;
 
+    ////////---------------------------------------------
+    unsigned long prevPositionUpdateTimer;
+    int prevPosition;
+    int timesTrackRun;
+    unsigned long currentRoundTime;
+    
+    long fluxingCountSinceCrossroadLeft;
+    long fluxingCountSinceCrossroadRight;
+    long fluxingAverageCountCrossroad;
+    unsigned long fluxingTimeBeforeCrossroad;
+
+    unsigned long timeSinceRoadloss;
+    bool timeSinceRoadlossNotSet;
+    
+    long countSinceCrossroadLeft;
+    long countSinceCrossroadRight;
+    long averageCountCrossroad;
+    unsigned long timeBeforeCrossroad;
+
+    bool crossroadPassed;
+    bool reverseLinefollower;
+    unsigned long sideroadFoundStopTimer;
+    bool firstTimeSideroadFoundStopTimer;
+
+    unsigned long rundetid = 0;
+    unsigned long rundetidStart = 0;
+    unsigned long rundetidSlutt = 0;
+    unsigned long best_rundetid = 0;
+    int antall_runder_counter = 0;
     
 };
 

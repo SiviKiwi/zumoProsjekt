@@ -917,6 +917,28 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
   // Her ser man at man leser av disse sensorene.
 
   // ikke definert fra før av og må defineres
+  // Her ser man avviket. Avviket forteller oss målet om hvor vi skal.
+  int avvik = position - 2000;
+
+  // Når avviket er null, kreves det ingen regulering.
+  int konstantP = 1;  // Disse er konstantene til PD-reguleringen.
+  int konstantD = 10; // De er viktige for dens egenskaper.
+
+  int PD = konstantP * avvik + konstantD * (avvik - forrigeAvvik);
+  // Her får vi pådraget. Det er selve reguleringen.
+  // Den bestemmer hvilke forandringer vi skal
+  // gjøre på hastigheten til motorene.
+
+  int forrigeAvvik = avvik; //???????? endring declarert som int
+
+  int venstrePaadrag = 200 + PD;
+  int hoyrePaadrag = 200 - PD;
+
+  venstrePaadrag = constrain(venstrePaadrag, 0, 400);
+  hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);
+  // Vi ønsker ikke
+  // mer enn 400 til
+  // motorene.
 
   unsigned long prevPositionUpdateTimer = millis();
 
@@ -986,55 +1008,12 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
     }
     else
     {
-      // Her ser man avviket. Avviket forteller oss målet om hvor vi skal.
-      int avvik = position - 2000;
-
-      // Når avviket er null, kreves det ingen regulering.
-      int konstantP = 1;  // Disse er konstantene til PD-reguleringen.
-      int konstantD = 10; // De er viktige for dens egenskaper.
-
-      int PD = konstantP * avvik + konstantD * (avvik - forrigeAvvik);
-      // Her får vi pådraget. Det er selve reguleringen.
-      // Den bestemmer hvilke forandringer vi skal
-      // gjøre på hastigheten til motorene.
-
-      int forrigeAvvik = avvik; //???????? endring declarert som int
-
-      int venstrePaadrag = 200 + PD;
-      int hoyrePaadrag = 200 - PD;
-
-      venstrePaadrag = constrain(venstrePaadrag, 0, 400);
-      hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);
-      // Vi ønsker ikke
-      // mer enn 400 til
-      // motorene.
       motors.setSpeeds(-venstrePaadrag, -hoyrePaadrag);
     }
   }
 
   else
   {
-    // Her ser man avviket. Avviket forteller oss målet om hvor vi skal.
-    int avvik = position - 2000;
-    timeSinceRoadlossNotSet = false;
-    // Når avviket er null, kreves det ingen regulering.
-    int konstantP = 1;  // Disse er konstantene til PD-reguleringen.
-    int konstantD = 10; // De er viktige for dens egenskaper.
-
-    int PD = konstantP * avvik + konstantD * (avvik - forrigeAvvik);
-    // Her får vi pådraget. Det er selve reguleringen.
-    // Den bestemmer hvilke forandringer vi skal
-    // gjøre på hastigheten til motorene.
-
-    forrigeAvvik = avvik;
-
-    int venstrePaadrag = 200 + PD;
-    int hoyrePaadrag = 200 - PD;
-
-    venstrePaadrag = constrain(venstrePaadrag, 0, 400);
-    hoyrePaadrag = constrain(hoyrePaadrag, 0, 400); // Vi ønsker ikke
-    // mer enn 400 til
-    // motorene.
     motors.setSpeeds(venstrePaadrag, hoyrePaadrag);
   }
 }
@@ -1106,8 +1085,6 @@ void Zumo32U4_bibliotek_gruppe_8::idealTidLinjefolger()
     }
 
     idealtidForrigeAvvik = idealtidAvvik;
-
-    nyRunde = false;
   }
 
   int position = lineSensors.readLine(lineSensorValues);
