@@ -60,7 +60,9 @@ void setup()
 
 void loop()
 {
+
   egendefinert.getState();
+
   // Funksjonen askForCharging må kjøres for å sjekke om case skal byttes.
   // Det er også relevant å se på løsninger for å kunne lade over IoT,
   // foreløpig er det kun over zumoens knapper.
@@ -90,7 +92,7 @@ void loop()
 
   }
 
-
+  egendefinert.countRounds();
 
   egendefinert.oneSecBatState(); // Denne funksjonen sjekker om det har gått ti sekunder siden
   // den sist. gå til library c++ for å legge til statusfunksjoner.
@@ -121,6 +123,7 @@ void loop()
   }
 
   /* Under er for sekstisekunders */
+  egendefinert.updateSpeedDist();
   egendefinert.findSekstiSekTid(speed); // Denne funksjonen setter variabelen speedometerEvery60 trenger for agere.
   egendefinert.speedometerEvery60(speed); // Setter variablene som vil brukes i battery_health
 
@@ -130,8 +133,9 @@ void loop()
   egendefinert.checkForBatteryStatus();
 
   egendefinert.batteryService();
+  egendefinert.batteryReplacement();
 
-  // evt. egendefinert.batteryReplacement();
+  egendefinert.sendSerial();
 }
 
 ISR(TIMER1_OVF_vect)

@@ -300,7 +300,7 @@ void Zumo32U4_bibliotek_gruppe_8::setBatteryHealth(int batteryHealth)
 
 float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
 {
-  if (speed < 0)
+  if (speed < 0 )
   {
     chargingCycles++;
   }
@@ -488,6 +488,7 @@ void Zumo32U4_bibliotek_gruppe_8::actualCharging()
     continueChargingDisplay = true;
     ladingStoppet = false; // WX79
     zumoStopConfirmed = false;
+    chargingCycles++;
   }
 }
 
