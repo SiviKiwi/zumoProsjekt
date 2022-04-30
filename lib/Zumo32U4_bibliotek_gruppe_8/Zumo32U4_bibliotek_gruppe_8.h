@@ -56,7 +56,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     void batteryService();
     void checkSerial();
     void sendSerial();
-    int getState();
+    void getState();
     void setState(int state);
     String getSerialValue(String serialString, char seperator, int index);
     bool getZumoStopConfirmed();

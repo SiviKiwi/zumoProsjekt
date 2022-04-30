@@ -193,7 +193,7 @@ void Zumo32U4_bibliotek_gruppe_8::sendSerial()
   Serial1.println(sendString);
 }
 
-int Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en void?
+void Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en void?
 {
 
   /*
