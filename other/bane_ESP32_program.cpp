@@ -1,4 +1,5 @@
-#include <Arduino.h>
+String hus = "hallo";
+
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
@@ -12,9 +13,12 @@
 #include <string>
 using namespace std;
 
-
 int trigger = 32;
 int echo = 34;
+
+unsigned long millisPrintScreen = 0;
+bool millisPrintScreenState = false;
+String unit = "cm";
 
 const char* ssid = "iPhone 13 Pro Max";
 const char* password = "hallosivert";
@@ -29,25 +33,21 @@ unsigned long besteTid = 0;
 unsigned long besteIdealTidsAvvik = 0;
 unsigned long idealTidsAvvik = 0;
 unsigned long idealTid = 0;
-String unit = "cm";
 String linjeFolger = "";
 String printVerdi = "";
 
-unsigned long millisPrintScreen = 0;
-bool millisPrintScreenState = false;
-
 float gamleSaldo = 0;
 bool sporOmSaldoState = false;
-
-WiFiClient espClient;
-PubSubClient client(espClient);
 
 long lastMsg = 0;
 char msg[50];
 int value = 0;
 int i = 0;
 float distance1 = 0;
+int globalPremiePenger = 0;
 
+WiFiClient espClient;
+PubSubClient client(espClient);
 
 void nyRundeFunction();
 void setup_wifi();
@@ -61,56 +61,32 @@ void bankKomm(int premiePenger);
 
 void setup() {
   // put your setup code here, to run once:
-
-  //Serial.begin(115200);
   Serial2.begin(115200, SERIAL_8N1, 16, 17);
+
   pinMode(trigger, OUTPUT);
   pinMode(echo, INPUT);
   Serial2.println("hello");
+
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-
-
 }
 
-void loop()
-{
+void loop() {
   // put your main code here, to run repeatedly:
-  
-  
-  nyRundeFunction();
-  Serial2.println("hello");
+
   if (!client.connected()) {
     reconnect();
   }
 
   client.loop();
 
+  nyRundeFunction();
 
+  
+  //Serial2.println("hallo");
+  //delay(1000);
 
-  //-----------------------------------------------------------------------
-  if (millisPrintScreenState == false)
-  {
-    millisPrintScreen = millis();
-    millisPrintScreenState = true;
-  }
-
-  if (millis() > millisPrintScreen + 1000)
-  {
-    Serial2.println(displayFunctionsSSD1306());
-    //Serial2.println(distance1);
-    millisPrintScreenState = false;
-    hendelserEtterNyRunde();
-  }
-  //-----------------------------------------------------------------------
-
-
-//cSerial2.println("Hallo");
-
-
-
-  //-----------------------------------------------------------------------
   // Skrur trigger lav for å være sikker på at
   // høypulsen er "ren"
   digitalWrite(trigger, LOW);
@@ -125,10 +101,22 @@ void loop()
   // Utregning av distanse. 0.0343 er lydens hastighet i cm/µs.
   // Deles på to da lyden skal både frem og tilbake igjen
   distance1 = duration * 0.0343 / 2;
-  //Serial.println(distance1);
+  //Serial.print(distance);
   delay(100);
-  //-----------------------------------------------------------------------
 
+  if (millisPrintScreenState == false)
+  {
+    millisPrintScreen = millis();
+    millisPrintScreenState = true;
+  }
+
+  if (millis() > millisPrintScreen + 1000)
+  {
+  Serial2.println(displayFunctionsSSD1306());
+  millisPrintScreenState = false;
+  hendelserEtterNyRunde();
+  }
+  
 }
 
 
@@ -170,21 +158,9 @@ void callback(String topic, byte* message, unsigned int length) {
 
   // If a message is received on the topic esp32/output, you check if the message is either "on" or "off".
   // Changes the output state according to the message
+
   
-  if (topic == "testTopic2") {
-    //Serial.print("Changing output to ");
-    if (messageTemp == "on") {
-      //Serial.println("on");
-      digitalWrite(2, HIGH);
-    }
-    
-    else if (messageTemp == "off") {
-      //Serial.println("off");
-      digitalWrite(2, LOW);
-    }
-  }
-  
-  else if (topic == "idealTid")
+  if (topic == "idealTid")
   {
     int b = messageTemp.length();
     if (b > 0)
@@ -193,7 +169,7 @@ void callback(String topic, byte* message, unsigned int length) {
     }
   }
   
-  else if (topic = "linjeFolger")
+  else if (topic == "linjeFolger")
   {
     if (messageTemp == "Avslått" || messageTemp == "Normal" || messageTemp == "Idealtid" || messageTemp == "Bestetid")
     {
@@ -201,13 +177,16 @@ void callback(String topic, byte* message, unsigned int length) {
     }
   }
   
-  else if (topic == "sporOmSaldo")
+  else if (topic == "sporOmSaldo2")
   {
-    if (messageTemp != "WX79")
-    {
+    
       gamleSaldo = messageTemp.toFloat();
-      sporOmSaldoState = true;
-    }
+      String nySaldo = String(gamleSaldo + globalPremiePenger);
+      client.publish("sendSaldo", nySaldo.c_str());
+      //Serial2.println("ubaduhba");
+      //delay(1000);
+      //sporOmSaldoState = true;
+    
   }
 }
 
@@ -222,10 +201,11 @@ void reconnect() {
       // Subscribe
       client.subscribe("Ny_runde");
       client.subscribe("idealTidsAvvik");
+      client.subscribe("idealTid");
       client.subscribe("sporOmSaldo");
       client.subscribe("sendSaldo");
       client.subscribe("linjeFolger");
-      client.subscribe("idealTid");
+      client.subscribe("sporOmSaldo2");
 
     }
 
@@ -275,14 +255,14 @@ void hendelserEtterNyRunde()
     if (rundeTid < besteTid)
     {
       besteTid = rundeTid;
-      bankKomm(1000);
+      //bankKomm(1000);
       //TODO penger
 
     }
     if (idealTidsAvvik > besteIdealTidsAvvik)
     {
       besteIdealTidsAvvik = idealTidsAvvik;
-      bankKomm(500);
+      //bankKomm(500);
       //TODO penger
 
     }
@@ -307,6 +287,7 @@ String displayFunctionsSSD1306()
   {
 
     return (String(distance1) + unit);
+   
   }
 }
 
@@ -314,12 +295,13 @@ String displayFunctionsSSD1306()
 void bankKomm(int premiePenger)
 {
   client.publish("sporOmSaldo", "WX79");
-  if (sporOmSaldoState != false)
+  globalPremiePenger = premiePenger;
+  /*if (sporOmSaldoState == true)
   {
     // OBS OBS hvis den ikke fungerer prøv å put callback inn her!
     
   String nySaldo = String(gamleSaldo + premiePenger);
   client.publish("sendSaldo", nySaldo.c_str());
   sporOmSaldoState = false;
-  }
+  }*/
 }
