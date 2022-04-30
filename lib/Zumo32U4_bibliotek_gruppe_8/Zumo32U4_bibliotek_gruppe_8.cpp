@@ -954,11 +954,10 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
   // mer enn 400 til
   // motorene.
 
-  unsigned long prevPositionUpdateTimer = millis();
-
   if (millis() - prevPositionUpdateTimer == 50)
   {
     prevPosition = position;
+    prevPositionUpdateTimer = millis();
   }
 
   if (timesTrackRun == 0)
@@ -973,9 +972,6 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
 
   ////---------------------------------------------------------
 
-  // TODO Vi må legge inn funkjsonen som gjør at den skal kunne returnere
-  // fra en blindvei.
-
   // usikker på om denne if statmenten trengs //--->
 
   if ((position == 4000 || position == 0) && timesTrackRun > 0)
@@ -983,7 +979,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
     motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);                                 /////////////
   }
 
-  //----------------------------------------------------------------
+  ////----------------------------------------------------------------
 
   if ((position == 4000 || position == 0) && (timesTrackRun == 0))
   {
