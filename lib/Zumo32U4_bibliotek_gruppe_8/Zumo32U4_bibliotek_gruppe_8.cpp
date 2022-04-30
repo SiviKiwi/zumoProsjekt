@@ -945,8 +945,8 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
 
   forrigeAvvik = avvik; //???????? endring declarert som int
 
-  int venstrePaadrag = 200 + PD;
-  int hoyrePaadrag = 200 - PD;
+  int venstrePaadrag = 400 + PD;
+  int hoyrePaadrag = 400 - PD;
 
   venstrePaadrag = constrain(venstrePaadrag, 0, 400);
   hoyrePaadrag = constrain(hoyrePaadrag, 0, 400);
@@ -994,7 +994,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
     }
     if (millis() - timeSinceRoadloss <= 1500)
     {
-      motors.setSpeeds(0, 0);                                 /////////////
+      motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);                                 /////////////
     }
     else if (millis() - timeSinceRoadloss >= 1500)
     {
