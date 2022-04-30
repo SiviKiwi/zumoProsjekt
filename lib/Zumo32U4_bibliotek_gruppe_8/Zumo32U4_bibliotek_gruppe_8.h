@@ -71,6 +71,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     void idealTidLinjefolger();
     void countRounds();
     void linjefolgerFunctions();
+    void initFiveSensors();
+    void calibrate();
 
   private:
 

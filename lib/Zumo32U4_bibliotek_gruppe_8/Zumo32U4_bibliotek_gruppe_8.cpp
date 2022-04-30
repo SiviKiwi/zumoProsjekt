@@ -827,6 +827,18 @@ String Zumo32U4_bibliotek_gruppe_8::getSerialValue(String serialString, char sep
 }
 
 ///////////////////////----------------------------------------------------//////////////////////////
+
+void Zumo32U4_bibliotek_gruppe_8::initFiveSensors()
+{
+  lineSensors.initFiveSensors();
+}
+
+void Zumo32U4_bibliotek_gruppe_8::calibrate()
+{
+  lineSensors.calibrate();
+}
+
+
 ////---------------------------------------------------------
 void Zumo32U4_bibliotek_gruppe_8::preemptiveLookForCrossroad(int position, int prevPosition)
 {
@@ -926,7 +938,7 @@ void Zumo32U4_bibliotek_gruppe_8::saveCrossroadData()
 
 void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
 {
-
+  
   int position = lineSensors.readLine(lineSensorValues);
   // Her ser man at man leser av disse sensorene.
 
@@ -1026,6 +1038,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
   {
     motors.setSpeeds(venstrePaadrag, hoyrePaadrag);                                 /////////////
   }
+  
 }
 
 void Zumo32U4_bibliotek_gruppe_8::avslaattLinjefolger()
@@ -1044,7 +1057,9 @@ void Zumo32U4_bibliotek_gruppe_8::besteTidLinjefolger()
   // gir poeng eller noe sånt. å begynne å påvirke reguleringen for å få enda bedre tid
   // er svært vanskelig og jeg tenker at vi ikke har tid til det. Skal vi begynne å legge
   // til integralledd liksom. denne funksjonen kan egt være en poenggivende funksjon.
+  motors.setSpeeds(0, 0);
 
+  /*
   if (nyRunde == "1")
   {
     antall_runder_counter += 1;
@@ -1061,6 +1076,7 @@ void Zumo32U4_bibliotek_gruppe_8::besteTidLinjefolger()
 
     // TODO her må det gis poeng siden man har klart å slå forrige rundetid.
   }
+  */
 }
 
 void Zumo32U4_bibliotek_gruppe_8::idealTidLinjefolger()
@@ -1124,7 +1140,7 @@ void Zumo32U4_bibliotek_gruppe_8::idealTidLinjefolger()
 void Zumo32U4_bibliotek_gruppe_8::linjefolgerFunctions()
 { // Det som bestemmer denne valgfunksjonen kan være
   // IoT avhengig
-
+/*
   if (linjeFolger == "Avslått")
   {
     avslaattLinjefolger();
@@ -1141,9 +1157,9 @@ void Zumo32U4_bibliotek_gruppe_8::linjefolgerFunctions()
   }
 
   else
-  {
+  {*/
     normalLinjefolger();
-  }
+  //}
 }
 
 void Zumo32U4_bibliotek_gruppe_8::countRounds()

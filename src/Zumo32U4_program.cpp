@@ -48,17 +48,19 @@ void setup()
     egendefinert.setBatteryHealth(EEPROM.read(0));
   }
     
-  delay(500);
+  delay(1000);
 
+  egendefinert.initFiveSensors();
   lineSensors.initFiveSensors();
   time_now = millis();
   while (millis() < time_now + 5000)
   {
+    egendefinert.calibrate();
     lineSensors.calibrate();
     motors.setSpeeds(100, -100);
   }
   motors.setSpeeds(0, 0);
-  delay(500);
+  delay(1000);
 }
 
 
