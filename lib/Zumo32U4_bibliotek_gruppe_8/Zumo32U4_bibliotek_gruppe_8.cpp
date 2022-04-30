@@ -834,8 +834,8 @@ void Zumo32U4_bibliotek_gruppe_8::preemptiveLookForCrossroad(int position, int p
   // ved ny rundetid restart mulighet for lookForCrossroad
   if ((rundetidStart <= 200) && (crossroadPassed = true))
   {
-    bool crossroadPassed = false;
-  }
+    bool crossroadPassed = false;   // crossroadPassed skrur av denne funksjonen hvis den har passert
+      }                             // området der man har kjørt ut.
 
   if (crossroadPassed == false)
   {
@@ -961,10 +961,10 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
     prevPosition = position;
   }
 
-  if (timesTrackRun == 0)
+  if (timesTrackRun == 0) // Teller hvor mange runder som har blitt kjørt: timesTrackRun.
   {
-    crossroadData(position, prevPosition);
-  }
+    crossroadData(position, prevPosition);  // finner differansen mellom forrige og nåværende posisjon. 
+  }                                         
 
   if (timesTrackRun > 0)
   { // timesTrackRun er en teller for hvor mange ganger banen har kjørt
