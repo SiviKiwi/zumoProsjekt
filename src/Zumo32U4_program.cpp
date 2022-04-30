@@ -32,6 +32,7 @@ float currentCapacity = 1200.0 * 3600;
 void setup()
 {
   //display.init();
+  Serial1.begin(115200);
   
   time = millis();
 
@@ -46,7 +47,9 @@ void setup()
   {
     egendefinert.setBatteryHealth(EEPROM.read(0));
   }
-  
+    
+  delay(500);
+
   lineSensors.initFiveSensors();
   time_now = millis();
   while (millis() < time_now + 5000)
@@ -55,6 +58,7 @@ void setup()
     motors.setSpeeds(100, -100);
   }
   motors.setSpeeds(0, 0);
+  delay(500);
 }
 
 

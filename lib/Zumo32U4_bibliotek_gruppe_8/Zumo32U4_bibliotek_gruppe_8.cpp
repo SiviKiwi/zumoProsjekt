@@ -126,8 +126,8 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->averageCountCrossroad = 0;
   this->timeBeforeCrossroad = 0;
 
-  this->crossroadPassed = true;
-  this->reverseLinefollower = true;
+  this->crossroadPassed = false;
+  this->reverseLinefollower = false;
   this->sideroadFoundStopTimer = 0;
   this->sideroad = 2000;
   this->firstTimeSideroadFoundStopTimer = true;
@@ -886,8 +886,8 @@ void Zumo32U4_bibliotek_gruppe_8::crossroadData(int position, int prevPosition)
 {
   if (checkForCrossroad(position, prevPosition) == 2700 || checkForCrossroad(position, prevPosition) == 1300)
   { // !!!!!
-    int16_t fluxingCountSinceCrossroadLeft = encoders.getCountsLeft();
-    int16_t fluxingCountSinceCrossroadRight = encoders.getCountsRight();
+    fluxingCountSinceCrossroadLeft = encoders.getCountsLeft();
+    fluxingCountSinceCrossroadRight = encoders.getCountsRight();
     fluxingAverageCountCrossroad = ((fluxingCountSinceCrossroadLeft + fluxingCountSinceCrossroadRight) / 2) - 300;
     fluxingTimeBeforeCrossroad = millis() - rundetidStart - 500; //    !!!!!
   }
@@ -980,7 +980,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
 
   if ((position == 4000 || position == 0) && timesTrackRun > 0)
   {
-    motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);
+    motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);                                 /////////////
   }
 
   //----------------------------------------------------------------
@@ -994,7 +994,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
     }
     if (millis() - timeSinceRoadloss <= 1500)
     {
-      motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);
+      motors.setSpeeds(0, 0);                                 /////////////
     }
     else if (millis() - timeSinceRoadloss >= 1500)
     {
@@ -1028,7 +1028,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
 
   else
   {
-    motors.setSpeeds(venstrePaadrag, hoyrePaadrag);
+    motors.setSpeeds(venstrePaadrag, hoyrePaadrag);                                 /////////////
   }
 }
 

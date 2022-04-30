@@ -166,8 +166,8 @@ class Zumo32U4_bibliotek_gruppe_8{
     int timesTrackRun;
     unsigned long currentRoundTime;
     
-    long fluxingCountSinceCrossroadLeft;
-    long fluxingCountSinceCrossroadRight;
+    int16_t fluxingCountSinceCrossroadLeft;
+    int16_t fluxingCountSinceCrossroadRight;
     long fluxingAverageCountCrossroad;
     unsigned long fluxingTimeBeforeCrossroad;
 
