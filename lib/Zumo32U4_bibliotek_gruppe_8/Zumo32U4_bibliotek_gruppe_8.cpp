@@ -192,11 +192,11 @@ void Zumo32U4_bibliotek_gruppe_8::sendSerial()
 
   Serial1.println(sendString);
 }
-
+/*
 int Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en void?
 {
 
-  /*
+  
   mottas:
   zumoStopConfirm
   ladingStoppet
@@ -206,7 +206,7 @@ int Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en vo
   idealtidsAvvik
   sporOmSaldo2
   linjeFolger
-  */
+  
 
   // TODO: Kanskje sjekke at det ikke er lik prevKommando
 
@@ -253,10 +253,10 @@ int Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en vo
     {
       idealTid = getSerialValue(serialStreng, ',', 1).toInt(); // TODO definere variabelen WX79
     }
-    return state;
+    //return state;
   }
 }
-
+*/
 void Zumo32U4_bibliotek_gruppe_8::setState(int state)
 {
 
