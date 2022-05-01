@@ -31,7 +31,7 @@ float currentCapacity = 1200.0 * 3600;
 
 void setup()
 {
-  //display.init();
+  display.init();
   Serial1.begin(115200);
   
   time = millis();
@@ -51,13 +51,11 @@ void setup()
   delay(1000);
 
   egendefinert.initFiveSensors();
-  lineSensors.initFiveSensors();
   time_now = millis();
   while (millis() < time_now + 5000)
   {
     egendefinert.calibrate();
-    lineSensors.calibrate();
-    motors.setSpeeds(100, -100);
+    motors.setSpeeds(50, -50);
   }
   motors.setSpeeds(0, 0);
   delay(1000);
@@ -86,7 +84,7 @@ void loop()
   switch(variabel)
   {
     case 0:
-
+      display.println("OK!!!!");
       egendefinert.linjefolgerFunctions();
       break;
 

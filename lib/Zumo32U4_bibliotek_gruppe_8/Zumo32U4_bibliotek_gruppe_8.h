@@ -73,6 +73,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     void linjefolgerFunctions();
     void initFiveSensors();
     void calibrate();
+    void displayBegin();
 
   private:
 
@@ -182,6 +183,7 @@ class Zumo32U4_bibliotek_gruppe_8{
     unsigned long timeBeforeCrossroad;
 
     bool crossroadPassed;
+    unsigned long adjustToCrossroadTimer;
     bool reverseLinefollower;
     unsigned long sideroadFoundStopTimer;
     int sideroad;

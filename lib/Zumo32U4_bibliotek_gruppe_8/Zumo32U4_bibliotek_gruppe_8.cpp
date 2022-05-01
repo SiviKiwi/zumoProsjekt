@@ -127,6 +127,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->timeBeforeCrossroad = 0;
 
   this->crossroadPassed = false;
+  this->adjustToCrossroadTimer = 0;
   this->reverseLinefollower = false;
   this->sideroadFoundStopTimer = 0;
   this->sideroad = 2000;
@@ -770,7 +771,7 @@ void Zumo32U4_bibliotek_gruppe_8::checkForBatteryStatus()
 
   if ((batteryHealth < 15) && batteryHealth > 3)
   {
-    level_1 == true;
+    level_1 = true;
   }
   else if (batteryHealth <= 3)
   {
@@ -838,6 +839,11 @@ void Zumo32U4_bibliotek_gruppe_8::calibrate()
   lineSensors.calibrate();
 }
 
+void Zumo32U4_bibliotek_gruppe_8::displayBegin()
+{
+  display.init();
+}
+
 
 ////---------------------------------------------------------
 void Zumo32U4_bibliotek_gruppe_8::preemptiveLookForCrossroad(int position, int prevPosition)
@@ -846,22 +852,30 @@ void Zumo32U4_bibliotek_gruppe_8::preemptiveLookForCrossroad(int position, int p
   // ved ny rundetid restart mulighet for lookForCrossroad
   if ((rundetidStart <= 200) && (crossroadPassed = true))
   {
-    bool crossroadPassed = false;   // crossroadPassed skrur av denne funksjonen hvis den har passert
-      }                             // området der man har kjørt ut.
+    crossroadPassed = false;   // crossroadPassed skrur av denne funksjonen hvis den har passert
+  }                                 // området der man har kjørt ut.
 
-  if (crossroadPassed == false)
+  if ((crossroadPassed == false) && (currentRoundTime - timeBeforeCrossroad >= 0) || \
+  ((millis() > 250) && (millis() - adjustToCrossroadTimer <= 250)))
   {
     /////
-    if ((position <= prevPosition - 600) && (timeBeforeCrossroad - currentRoundTime <= 0))
+    if (millis() - adjustToCrossroadTimer >= 200)
+    {
+      motors.setSpeeds(0, 0);
+    }
+    else if (position <= prevPosition - 600)
     {
       //*****************
+
       motors.setSpeeds(0, 300);
       crossroadPassed = true;
+      adjustToCrossroadTimer = millis();
     }
-    else if ((position <= prevPosition + 600) && (timeBeforeCrossroad - currentRoundTime <= 0))
+    else if (position <= prevPosition + 600)
     {
       motors.setSpeeds(300, 0);
       crossroadPassed = true;
+      adjustToCrossroadTimer = millis();
     }
   }
 }
@@ -989,6 +1003,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
   if ((position == 4000 || position == 0) && timesTrackRun > 0)
   {
     motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);                                 /////////////
+    delay(8);
   }
 
   ////----------------------------------------------------------------
@@ -1000,11 +1015,15 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
       unsigned long timeSinceRoadloss = millis();
       timeSinceRoadlossNotSet = false;
     }
-    if (millis() - timeSinceRoadloss <= 1500)
+    if (millis() - timeSinceRoadloss <= 1495)
     {
       motors.setSpeeds(venstrePaadrag / 2, hoyrePaadrag / 2);                                 /////////////
     }
-    else if (millis() - timeSinceRoadloss >= 1500)
+    else if (((millis() - timeSinceRoadloss) >= 1495) && ((millis() - timeSinceRoadloss) <= 1505))
+    {
+      motors.setSpeeds(0, 0);
+    }
+    else if (millis() - timeSinceRoadloss >= 1505)
     {
       motors.setSpeeds(-venstrePaadrag / 2, -hoyrePaadrag / 2);
       saveCrossroadData();
@@ -1019,6 +1038,7 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
       if (firstTimeSideroadFoundStopTimer)
       {
         motors.setSpeeds(0, 0);
+        delay(8);
         unsigned long sideroadFoundStopTimer = millis();
         sideroad = checkForCrossroad(position, prevPosition);
         firstTimeSideroadFoundStopTimer = false;
@@ -1031,12 +1051,14 @@ void Zumo32U4_bibliotek_gruppe_8::normalLinjefolger()
     else
     {
       motors.setSpeeds(-venstrePaadrag, -hoyrePaadrag);
+      delay(8);
     }
   }
 
   else
   {
     motors.setSpeeds(venstrePaadrag, hoyrePaadrag);                                 /////////////
+    delay(8);
   }
   
 }
@@ -1134,7 +1156,10 @@ void Zumo32U4_bibliotek_gruppe_8::idealTidLinjefolger()
   // mer enn 400 til
   // motorene.
 
-  motors.setSpeeds(venstrePaadrag, hoyrePaadrag);
+  //if ()
+  //{
+    motors.setSpeeds(venstrePaadrag, hoyrePaadrag);
+  //}
 }
 
 void Zumo32U4_bibliotek_gruppe_8::linjefolgerFunctions()
