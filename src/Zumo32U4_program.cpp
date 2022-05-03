@@ -5,11 +5,15 @@
  */
 
 #include <Arduino.h>
+// Importer vårt lokale bibliotek
 #include "Zumo32U4_bibliotek_gruppe_8.h"
+// Importer bibliotekene som kreves av Zumo
 #include <Wire.h>
 #include "Zumo32U4.h"
+// Importer EEPROM for lagring av verdier når Zumo er slått av
 #include <EEPROM.h>
 
+// Opretter objekter av Zumo-klasser
 Zumo32U4Encoders encoders;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
@@ -18,9 +22,11 @@ Zumo32U4ButtonB buttonB;
 Zumo32U4ButtonC buttonC;
 Zumo32U4Buzzer buzzer;
 Zumo32U4LCD display;
+// Opretter et objekt av vårt lokale bibliotek og gir den Zumo-objektene som parameter
 Zumo32U4_bibliotek_gruppe_8 egendefinert(lineSensors, encoders, motors, buttonA, buttonB, buttonC, buzzer, display);
 
 
+// definerer globale variabler
 unsigned long time;
 float speed;
 float dist;
@@ -32,10 +38,12 @@ float currentCapacity = 1200.0 * 3600;
 void setup()
 {
   display.init();
+  // Starter Serial1 for kommunikasjon med ESP32
   Serial1.begin(115200);
   
   time = millis();
 
+  // TODO: få iver til å forklare hva dette er
   noInterrupts();
   TCCR1A = 0;
   TCCR1B = 0;
@@ -43,13 +51,16 @@ void setup()
   TIMSK1 |= 0b00000001;
   interrupts();
 
+  // Leser batterihelse fra EEPROM
   if (EEPROM.read(1) == 1)
   {
+    // Setter batterihelsen
     egendefinert.setBatteryHealth(EEPROM.read(0));
   }
     
   delay(1000);
 
+  // kalibrerer linjesensorer
   egendefinert.initFiveSensors();
   time_now = millis();
   while (millis() < time_now + 5000)
@@ -57,6 +68,7 @@ void setup()
     egendefinert.calibrate();
     motors.setSpeeds(50, -50);
   }
+  // Stanser Zumo-bil og venter 1 sekund
   motors.setSpeeds(0, 0);
   delay(1000);
 }
@@ -65,6 +77,7 @@ void setup()
 void loop()
 {
 
+  // Setter state variabelen
   egendefinert.getState();
 
   // Funksjonen askForCharging må kjøres for å sjekke om case skal byttes.
@@ -96,6 +109,7 @@ void loop()
 
   }
 
+  // Funksjon som teller antall runder Zumoen har kjørt
   egendefinert.countRounds();
 
   egendefinert.oneSecBatState(); // Denne funksjonen sjekker om det har gått ti sekunder siden
@@ -103,43 +117,53 @@ void loop()
 
   egendefinert.updateSpeedDist();
 
+  // Koden her kjøres en gang hvert 100ms
   unsigned long timeNow = millis();
   if (timeNow - time > 100)
   {
     unsigned long elapsedTime = timeNow - time;
+    // Henter ut bilens hastighet
     speed = egendefinert.getSpeed();
+    // Henter ut distansen bilen har kjørt
     dist = egendefinert.getDistance();
+    // Regner ut ny batteri kapasitet
     egendefinert.setCapacity(speed, elapsedTime);
 
+    // Kjører funksjon for oppdatering av hastighet og distanse
     egendefinert.updateSpeedDist();
-    egendefinert.findSekstiSekTid(speed); // Denne funksjonen setter variabelen speedometerEvery60 trenger for agere.
-    egendefinert.speedometerEvery60(speed); // Setter variablene som vil brukes i battery_health
-
+    // Denne funksjonen setter variabelen speedometerEvery60 trenger for agere.
+    egendefinert.findSekstiSekTid(speed);
+    // Setter variablene som vil brukes i battery_health
+    egendefinert.speedometerEvery60(speed);
+    // Advarer om batterinivået er under 10 eller 5 prosent
     egendefinert.batteryLevelWarning();
 
+    // Oppdateret helsen til batteriet
     egendefinert.updateBatteryHealth();
+    // Sjekker batteriets status og om batteriet må på service eller byttes
     egendefinert.checkForBatteryStatus();
 
+    // Hvis bilen må på service starter denne muligheten til å 'fikse' batteriet
     egendefinert.batteryService();
+    // Hvis batteriet må byttes på starter denne muligheten til å 'bytte' batteriet
     egendefinert.batteryReplacement();
 
-//    display.clear();
-//    display.gotoXY(0, 0);
-//    display.print(dist);
-//    display.print((float)currentCapacity / 3600.0);
-//    display.print(dist);
-//    display.print(speed);
-
-
-
-    //egendefinert.displayFunctions(); // Denne skal erstatte alle med display ovenfor.
+    // Funksjon som printer verdier til displayet
+    // denne er kommentert ut siden displayet ikke kan brukes sammen med ESP32
+//egendefinert.displayFunctions(); // Denne skal erstatte alle med display ovenfor.
 
     time = millis();
   }
 
-  /* Under er for sekstisekunders */
-
-
+  /*
+    Sender følgene verdier til ESP32 over serielkommunikasjon:
+    BileierID
+    ZumoAskForCharging
+    CurrentCapacity
+    Speed
+    Distance
+    batteryHealth
+  */
   egendefinert.sendSerial();
 }
 
