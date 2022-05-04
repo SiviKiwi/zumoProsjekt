@@ -255,6 +255,7 @@ void Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en v
       idealTid = getSerialValue(serialStreng, ',', 1).toInt(); // TODO definere variabelen WX79
     }
     //return state;
+    //// Setter state variabelen
   }
 }
 
@@ -629,6 +630,7 @@ void Zumo32U4_bibliotek_gruppe_8::runningDisplay() // Den som skal kjøres til v
 }
 
 void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay() // Den som skal kjøres hvert tiende sekund på interrupt
+  // Stanser Zumo-bil og venter 1 sekund
 {
 
   display.scrollDisplayLeft();

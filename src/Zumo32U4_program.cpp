@@ -13,7 +13,7 @@
 // Importer EEPROM for lagring av verdier når Zumo er slått av
 #include <EEPROM.h>
 
-// Opretter objekter av Zumo-klasser
+// Oppretter objekter av Zumo-klasser
 Zumo32U4Encoders encoders;
 Zumo32U4LineSensors lineSensors;
 Zumo32U4Motors motors;
@@ -22,7 +22,7 @@ Zumo32U4ButtonB buttonB;
 Zumo32U4ButtonC buttonC;
 Zumo32U4Buzzer buzzer;
 Zumo32U4LCD display;
-// Opretter et objekt av vårt lokale bibliotek og gir den Zumo-objektene som parameter
+// Oppretter et objekt av vårt lokale bibliotek og gir den Zumo-objektene som parameter
 Zumo32U4_bibliotek_gruppe_8 egendefinert(lineSensors, encoders, motors, buttonA, buttonB, buttonC, buzzer, display);
 
 
