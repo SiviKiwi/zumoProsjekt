@@ -15,3 +15,9 @@ Mappen other inneholder koden til ladestasjon, Zumo-ens ESP, Arduino-skjerm og b
 - *screenReciver\_UNO\_program.cpp* er fila som styrer skjermen til ladestasjonen og Ultralydsensoren på ladestasjoen og banen.
 - *zumo32U4\_ESP32\_Komm.cpp* er fila som sitter på Zumo_en og sender og motar data fra Node Red til Zumo.
 
+
+## Bidragsytere
+Laget av gruppe 8 BIELEKTRO V22: 
+- Alvar(Executive Cloud Computing and Database Wizard⭐)
+- Sivert(Lord Prime Minister and Supreme Archive Overseer) 
+- Iver(Senior Integrated Circuit Developer God).
