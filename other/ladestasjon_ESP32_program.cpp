@@ -1,18 +1,23 @@
 #include <Arduino.h>
-#include <Wire.h>
+// Bibliotek for display
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+// Biliotek for tilkobling til Wifi
 #include <WiFi.h>
+// Bibliotek for kommunikasjon med Mosquito
 #include <PubSubClient.h>
+// Bibliotek for I2C kommunikasjon
 #include <Wire.h>
 
 #include <cstdlib>
 #include <iostream>
+// Bibliotek for konvertering av verdier
 #include <string>
 //#include <sstream>
 using namespace std;
 
+// Pins for Ultralydsensor
 int trigger = 32;
 int echo = 34;
 
@@ -20,9 +25,11 @@ unsigned long millisPrintScreen = 0;
 bool millisPrintScreenState = false;
 String unit = "cm";
 
+// Innloggingsinfo for nettverk
 const char* ssid = "iPhone 13 Pro Max";
 const char* password = "hallosivert";
 
+// Mosquitoserver ip
 const char* mqtt_server = "172.20.10.4";
 
 String nyRunde = "0";
@@ -79,29 +86,34 @@ void lading();
 
 
 void setup() {
-  // put your setup code here, to run once:
 
+  // Starter serielkommunikasjon med Arduino
   Serial2.begin(115200, SERIAL_8N1, 16, 17);
 
+  // Setter pins for UltralydSensor
   pinMode(trigger, OUTPUT);
   pinMode(echo, INPUT);
-  Serial2.println("hello");
+  //Serial2.println("hello");
 
+  // Setter opp wifi og Mosquitotjener
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 
+  // Prøver å koble til wifi
   if (!client.connected()) {
     reconnect();
   }
 
+  // Brukes for å oppdatere meldinger fra Mosquitto og opprettholde tilkobling til server
   client.loop();
 
+  // Sjekker om zumo har gjordt en ny runde
   nyRundeFunction();
+  // Sjekker om zumo er klar for lading
   zumoBelow5AndNyRunde();
 
 
@@ -125,6 +137,7 @@ void loop() {
   //Serial.print(distance);
   delay(100);
 
+  // Hvis det er mer enn 1 sekund siden timeren startet oppdateres skjermen.
   if (millisPrintScreenState == false)
   {
     millisPrintScreen = millis();
@@ -133,7 +146,9 @@ void loop() {
 
   if (millis() > millisPrintScreen + 1000)
   {
+    // Venter på TODO
     waitForLadeskjema();
+    //TODO
     lading();
     Serial2.println(displayFunctionsSSD1306());
     millisPrintScreenState = false;
@@ -143,69 +158,59 @@ void loop() {
 }
 
 
+// Funksjon for å koble til wifi
 void setup_wifi()
 {
   delay(10);
-  // We start by connecting to a WiFi network
-  //Serial.println();
-  //Serial.print("Connecting to ");
-  //Serial.println(ssid);
 
+  // Kobler til wifi
   WiFi.begin(ssid, password);
 
+  // Venter til wifi er tilkoblet
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    //Serial.print(".");
   }
 
-  /*Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());*/
 }
 
 
+// Kjører når en ny melding kommer over ett av topics-ene ESP-en abbonerer på
 void callback(String topic, byte* message, unsigned int length) {
   /*Serial.print("Message arrived on topic: ");
     Serial.print(topic);
     Serial.print(". Message: ");*/
   String messageTemp;
 
+  // Setter beskjeden sammen til en streng
   for (int i = 0; i < length; i++) {
     //Serial.print((char)message[i]);
     messageTemp += (char)message[i];
   }
-  //Serial.println();
-
-  // Feel free to add more if statements to control more GPIOs with MQTT
-
-  // If a message is received on the topic esp32/output, you check if the message is either "on" or "off".
-  // Changes the output state according to the message
 
 
+  // Henter saldo fra Node red
   if (topic == "sporOmSaldo2")
   {
 
     gamleSaldo = messageTemp.toFloat();
 
 
-    //Serial2.println("ubaduhba");
-    //delay(1000);
-    //sporOmSaldoState = true;
-
   }
+  // Henter bileier ID
   else if (topic == "bileierID")
   {
     bileierID = messageTemp;
     bileierIDState = true;
 
   }
+  // Henter hvilke ladetype som skal brukes
   else if (topic == "ladetype")
   {
     ladetype = messageTemp;
     ladetypeState = true;
 
   }
+  // Lagrer batterinivå som oppdateres fra nodeRed under lading
   else if (topic == "batteriNivaa")
   {
     float x = messageTemp.toFloat();
@@ -219,6 +224,7 @@ void callback(String topic, byte* message, unsigned int length) {
     prislisteLadingState = true;
 
   }
+  // Henter info om hvilken prosent zumo skal lade til
   else if (topic == "ladegrense")
   {
     ladeGrense = messageTemp.toFloat();
@@ -232,10 +238,12 @@ void callback(String topic, byte* message, unsigned int length) {
       ladeGrense = 100;
     }
   }
+  // Sjekker om bilen skal stoppe lading
   else if (topic == "stoppLading")
   {
     stoppLadingState = true;
   }
+  // Sjekker om bilen skal lades
   else if (topic == "zumoAskForCharging")
   {
     zumoAskForChargingState = true;
@@ -243,6 +251,7 @@ void callback(String topic, byte* message, unsigned int length) {
 }
 
 
+// Funksjon som kobler til MQTT og abbonerer på flere topics
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -269,34 +278,37 @@ void reconnect() {
 
     }
 
+    // Venter 5 sekund før den prøver å koble til igjen
     else {
-      /*Serial.print("failed, rc=");
-        Serial.print(client.state());
-        Serial.println(" try again in 5 seconds");*/
-      // Wait 5 seconds before retrying
       delay(5000);
     }
   }
 }
 
 
+// funksjon som kjører hvis zumo-en er forran ultrasonisk sensor
 void nyRundeFunction()
 {
+  // Hvis noe er nermere enn 15cm
   if (distance1 < 15)
   {
+    // Setter ny runde til 1, dette er en streng som skal sendes over seriell til Zumo
     nyRunde = "1";
     //nyRunde må settes lav etter alle funksjonene som er avhengig av den har fått kjørt.
   }
 }
 
 
+// Funksjon som kjører hvis bilen er forran ladestasjonen og den ber om å få lade
 void zumoBelow5AndNyRunde()
 {
 
   if (nyRunde == "1" && zumoAskForChargingState == true)
   {
 
+    // Sier i fra om at zumo har stoppet foran ladestasjon
     client.publish("zumoStopConfirmed", "1");
+    // Zumo skal spørre etter ladeskjema
     zumoWaitForLadeskjemaState = true;
     nyRunde = "0";
 
@@ -304,11 +316,13 @@ void zumoBelow5AndNyRunde()
   }
 }
 
+// Sjekker at zumo har mottatt all info den trenger for å starte lading
 void waitForLadeskjema()
 {
   if ( (zumoWaitForLadeskjemaState == true) && (ladeGrenseState == true) && (ladetypeState == true) && (bileierIDState == true) && (prislisteLadingState == true) && (batteriNivaaState == true))
   {
 
+    // Henter ut prisliste
     String prislisteLadingArray[3];
     for (int i = 0; i < 3; ++i)
     {
@@ -316,16 +330,19 @@ void waitForLadeskjema()
     }
 
 
+    // Ved sjukolading lades det sent, men billigere
     if (ladetype == "Schukolading")
     {
       ladePris = prislisteLadingArray[0].toFloat();
       ladeHastighet = 1;
     }
+    // Superlading er 3 ganger så rask som scuko men litt dyrere
     else if (ladetype == "Superlading")
     {
       ladePris = prislisteLadingArray[1].toFloat();
       ladeHastighet = 3;
     }
+    // Superduperlading er 5 ganger raskere enn schuko men dyrest
     else if (ladetype == "Superduperlading")
     {
       ladePris = prislisteLadingArray[2].toFloat();
@@ -337,13 +354,16 @@ void waitForLadeskjema()
 
 
 
+// Funksjon for lading av zumo
 void lading()
 {
+  // starter timer
   if (ladingTimerState == false)
   {
     ladingTimer = millis();
     ladingTimerState = true;
 
+    // spør banken om saldo på konto
     client.publish("sporOmSaldo", "WX79");
   }
 
@@ -362,21 +382,28 @@ void lading()
 */
         
 
+  // Hver 5. sekund "lades" zumo-en
   if ((millis() > ladingTimer + 5000) && (stoppLadingState == false) && (zumoWaitForLadeskjemaState == true))
   {
 
 
+    /// Sjekker at det er nok penger på konto
     if (gamleSaldo > (((100 - batteriNivaa)) / 4) * (ladePris * 4 * 0.01))
     {
 
+      // øker batterinivå
       batteriNivaa = batteriNivaa + (4 * ladeHastighet);
+      // regner ut pris
       float ladekost = 4 * ladePris * 0.01 * ladeHastighet;
+      // Sjekker om batteriet er over ladegrensen
       if (batteriNivaa >= ladeGrense)
       {
+        // trekker fra det som er ladet over og gir tilbake de pengene som ikke skulle vært trekkt
         int delta = batteriNivaa - ladeGrense;
         ladekost = ladekost - delta * ladePris * 0.01 * 4;
         batteriNivaa = ladeGrense;
 
+        // resetter variabler med info for lading
         bileierIDState = false;
         ladetypeState = false;
         batteriNivaaState = false;
@@ -385,22 +412,28 @@ void lading()
 
         zumoWaitForLadeskjemaState = false;
         zumoAskForChargingState = false;
+        // sier i fra om at lading er ferdig
         client.publish("ladingStoppet", "");
 
       }
 
+      // regner ut ny saldo
       nySaldo = gamleSaldo - ladekost;
+      // regner ut total ladekostnad
       totalLadekost = (totalLadekost + ladekost);
 
 
       int a = int(totalLadekost);
       String astring = String(a);
+      // Sier i fra hvor mye bilen ladet for
       client.publish("totalLadekost", astring.c_str());
       int b = int(batteriNivaa);
       String bstring = String(b);
+      // Sier i fra hva det nye batterinivået er
       client.publish("batteriNivaaSend", bstring.c_str());
       int c = int(nySaldo);
       String cstring = String(c);
+      // Sier i fra hva den nye saldoen er
       client.publish("sendSaldo", cstring.c_str());
 
       if (batteriNivaa >= ladeGrense) {
@@ -446,6 +479,7 @@ void lading()
 }
 
 
+// Returnerer hva som skal vises på displayet
 String displayFunctionsSSD1306()
 {
 
@@ -479,6 +513,7 @@ String displayFunctionsSSD1306()
 }
 
 
+// Funksjon som henter ut verdier fra en streng separert av et gitt tegn
 String getValue(String data, char separator, int index)
 {
   int found = 0;

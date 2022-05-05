@@ -1,18 +1,21 @@
-String hus = "hallo";
-
-#include <Wire.h>
+// Bibliotek for display
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+// Biliotek for tilkobling til Wifi
 #include <WiFi.h>
+// Bibliotek for kommunikasjon med Mosquito
 #include <PubSubClient.h>
+// Bibliotek for I2C kommunikasjon
 #include <Wire.h>
 
-//#include <cstdlib>
+
 #include <iostream>
+// Bibliotek for konvertering av verdier
 #include <string>
 using namespace std;
 
+// Pins for Ultralydsensor
 int trigger = 32;
 int echo = 34;
 
@@ -20,9 +23,11 @@ unsigned long millisPrintScreen = 0;
 bool millisPrintScreenState = false;
 String unit = "cm";
 
+// Innloggingsinfo for nettverk
 const char* ssid = "iPhone 13 Pro Max";
 const char* password = "hallosivert";
 
+// Mosquitotjener ip
 const char* mqtt_server = "172.20.10.4";
 
 String nyRunde = "0";
@@ -60,32 +65,34 @@ void bankKomm(int premiePenger);
 
 
 void setup() {
-  // put your setup code here, to run once:
+  // Starter serielkommunikasjon med Arduino
   Serial2.begin(115200, SERIAL_8N1, 16, 17);
 
+  // Setter pins for UltralydSensor
   pinMode(trigger, OUTPUT);
   pinMode(echo, INPUT);
-  Serial2.println("hello");
+  //Serial2.println("hello");
 
+  // Setter opp wifi og Mosquitotjener
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 
+  // Prøver å koble til wifi
   if (!client.connected()) {
     reconnect();
   }
 
+  // Brukes for å oppdatere meldinger fra Mosquitto og opprettholde tilkobling til server
   client.loop();
 
+  // Sjekker om zumo har gjordt en ny runde
   nyRundeFunction();
 
   
-  //Serial2.println("hallo");
-  //delay(1000);
 
   // Skrur trigger lav for å være sikker på at
   // høypulsen er "ren"
@@ -104,62 +111,50 @@ void loop() {
   //Serial.print(distance);
   delay(100);
 
+  // Hvis ingen timer er startet startes en timer.
   if (millisPrintScreenState == false)
   {
     millisPrintScreen = millis();
     millisPrintScreenState = true;
   }
 
+  // Hvis det er mer enn 1 sekund siden timeren startet oppdateres skjermen.
   if (millis() > millisPrintScreen + 1000)
   {
   Serial2.println(displayFunctionsSSD1306());
   millisPrintScreenState = false;
+  // Sjekker om det er en ny runde, og TODO:
   hendelserEtterNyRunde();
   }
   
 }
 
 
+// Funksjon for å koble til wifi
 void setup_wifi()
 {
   delay(10);
-  // We start by connecting to a WiFi network
-  //Serial.println();
-  //Serial.print("Connecting to ");
-  //Serial.println(ssid);
-
+  // Kobler til wifi
   WiFi.begin(ssid, password);
 
+  // Venter til wifi er tilkoblet
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    //Serial.print(".");
   }
-
-  /*Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());*/
 }
 
 
+// Kjører når en ny melding kommer over ett av topics-ene ESP-en abbonerer på
 void callback(String topic, byte* message, unsigned int length) {
-  /*Serial.print("Message arrived on topic: ");
-    Serial.print(topic);
-    Serial.print(". Message: ");*/
   String messageTemp;
 
+  // Setter beskjeden sammen til en streng
   for (int i = 0; i < length; i++) {
-    //Serial.print((char)message[i]);
     messageTemp += (char)message[i];
   }
-  //Serial.println();
 
-  // Feel free to add more if statements to control more GPIOs with MQTT
 
-  // If a message is received on the topic esp32/output, you check if the message is either "on" or "off".
-  // Changes the output state according to the message
-
-  
+  // konverterer idealtiden til en int og lagrer den i en variabel vi kan bruke i koden
   if (topic == "idealTid")
   {
     int b = messageTemp.length();
@@ -168,7 +163,9 @@ void callback(String topic, byte* message, unsigned int length) {
       idealTid = messageTemp.toInt();
     }
   }
-  
+
+  // Motar hva slags linjefølger zumoen skal bruke og lagrer det i en variabel som skal sendes med seriel
+  // til zumoen
   else if (topic == "linjeFolger")
   {
     if (messageTemp == "Avslått" || messageTemp == "Normal" || messageTemp == "Idealtid" || messageTemp == "Bestetid")
@@ -176,7 +173,8 @@ void callback(String topic, byte* message, unsigned int length) {
       linjeFolger = messageTemp;
     }
   }
-  
+
+  // Regner ut ny saldo fra gammelsaldo og sende tilbake den nye saldoen
   else if (topic == "sporOmSaldo2")
   {
     
@@ -191,6 +189,7 @@ void callback(String topic, byte* message, unsigned int length) {
 }
 
 
+// Funksjon som kobler til MQTT og abbonerer på flere topics
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -208,22 +207,21 @@ void reconnect() {
       client.subscribe("sporOmSaldo2");
 
     }
-
     else {
-      /*Serial.print("failed, rc=");
-        Serial.print(client.state());
-        Serial.println(" try again in 5 seconds");*/
-      // Wait 5 seconds before retrying
+      // Venter 5 sekund før den prøver å koble til igjen
       delay(5000);
     }
   }
 }
 
 
+// funksjon som kjører hvis zumo-en er forran ultrasonisk sensor
 void nyRundeFunction()
 {
+  // Hvis noe er nermere enn 15cm
   if (distance1 < 15)
   {
+    // Setter ny runde til 1, dette er en streng som skal sendes over seriell til Zumo
     nyRunde = "1";
   }
 }
@@ -231,27 +229,32 @@ void nyRundeFunction()
 
 void hendelserEtterNyRunde()
 {
-  
+
+  // Hvis det er en ny runde
   if (nyRunde == "1")
   {
+    // Send det over MQTT slik at nodered vet det
     client.publish("Ny_runde", nyRunde.c_str());
     bankKomm(200);
     //TODO sende penger fordi fullført runde som i monopol
 
 
+    // Regner ut rundetid
     rundeTidSlutt = millis();
     rundeTid = rundeTidSlutt - rundeTidStart; // TODO Sende rundetid til Node-red evt. bool nyRunde.
     rundeTidStart = millis();
 
+    // Regner ut avvik fra ideel rundetid
     idealTidsAvvik = rundeTid - idealTid;
 
     String idealTidsAvvikStreng = String(idealTidsAvvik);
 
 
+    // publiserer avviket til MQTT
     client.publish("idealTidsAvvik", idealTidsAvvikStreng.c_str());
 
-      
 
+    // Sjekker om rundetiden er raskere enn den beste tiden til banen
     if (rundeTid < besteTid)
     {
       besteTid = rundeTid;
@@ -259,7 +262,8 @@ void hendelserEtterNyRunde()
       //TODO penger
 
     }
-    if (idealTidsAvvik > besteIdealTidsAvvik)
+    // Sjekker om avviket er mindre enn det beste avviket fra idealtid
+    if (idealTidsAvvik < besteIdealTidsAvvik)
     {
       besteIdealTidsAvvik = idealTidsAvvik;
       //bankKomm(500);
@@ -267,11 +271,13 @@ void hendelserEtterNyRunde()
 
     }
 
+    // Si i fra om at det ikke lenger er en ny runde
     nyRunde = "0";
   }
 }
 
 
+// Returnerer hva som skal vises på displayet
 String displayFunctionsSSD1306()
 {
 
@@ -292,6 +298,8 @@ String displayFunctionsSSD1306()
 }
 
 
+// Regner ut pengepremie
+// Dette er ikke ferdig :(
 void bankKomm(int premiePenger)
 {
   client.publish("sporOmSaldo", "WX79");
