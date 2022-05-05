@@ -1,24 +1,30 @@
 
 #include <Arduino.h>
-#include <Wire.h>
+// Bibliotek for display
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+// Biliotek for tilkobling til Wifi
 #include <WiFi.h>
+// Bibliotek for kommunikasjon med Mosquito
 #include <PubSubClient.h>
+// Bibliotek for I2C kommunikasjon
 #include <Wire.h>
 
 #include <cstdlib>
 #include <iostream>
+// Bibliotek for konvertering av verdier
 #include <string>
 using namespace std;
 
 
 
 
+// Innloggingsinfo for nettverk
 const char* ssid = "iPhone 13 Pro Max";
 const char* password = "hallosivert";
 
+// Mosquitoserver ip
 const char* mqtt_server = "172.20.10.4";
 
 WiFiClient espClient;
@@ -30,7 +36,7 @@ int value = 0;
 int i = 0;
 unsigned long publishTimer = 0;
 
-
+// Deklarerer funskjoner
 String getValue(String data, char separator, int index);
 
 void setup_wifi();
@@ -41,11 +47,12 @@ void reconnect();
 String inputFromZumo = "";
 
 void setup() {
-  // put your setup code here, to run once:
 
+  // Starter seriellkommunikasjon med Zumo
   Serial.begin(115200);
 
 
+  // Setter opp wifi og Mosquitotjener
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
@@ -55,20 +62,25 @@ void setup() {
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
 
+  // Prøver å koble til wifi
   if (!client.connected()) {
     reconnect();
   }
 
+  // Brukes for å oppdatere meldinger fra Mosquitto og opprettholde tilkobling til server
   client.loop();
 
-  
+
+  // Publiserer kun til MQTT hvert sekund
   if (millis() > publishTimer + 1000) {
+    // Sjekker om ESP har data fra Zumo i seriellbuffer
     if (Serial.available() > 0)
     {
+      // Leser streng fra seriellbuffer
       inputFromZumo = Serial.readString();
 
+      // Henter ut verdier fra seriellstrengen og publiserer dem over MQTT
       String Streng = String(getValue(inputFromZumo, ';', 7));
       client.publish("speed", Streng.c_str()); // Speed
       Streng = String(getValue(inputFromZumo, ';', 9));
@@ -84,8 +96,10 @@ void loop()
       //Streng = String(getValue(inputFromZumo, ';', 13));
       //client.publish("sporOmSaldo", Streng.c_str()); sporOmSaldo
 
+      // Sjekker om zumo spør etter lading
       if (getValue(inputFromZumo, ';', 3) == "0")
       {
+        // Sender rellevant info for lading
         Streng = String(getValue(inputFromZumo, ';', 1));
         client.publish("bileierID", Streng.c_str()); // bileierID
         Streng = String(getValue(inputFromZumo, ';', 3));
@@ -102,46 +116,37 @@ void loop()
 
 
 
+// Funksjon for å koble til wifi
 void setup_wifi()
 {
   delay(10);
-  // We start by connecting to a WiFi network
-  //Serial.println(String(topic) + "," + String(messageTemp));
-  //Serial.print("Connecting to ");
-  //Serial.println(ssid);
 
+  // Kobler til wifi
   WiFi.begin(ssid, password);
 
+  // Venter til wifi er tilkoblet
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    //Serial.print(".");
   }
 
-  /*Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());*/
 }
 
 
+// Kjører når en ny melding kommer over ett av topics-ene ESP-en abbonerer på
 void callback(String topic, byte* message, unsigned int length) {
   /*Serial.print("Message arrived on topic: ");
     Serial.print(topic);
     Serial.print(". Message: ");*/
   String messageTemp;
 
+  // Setter beskjeden sammen til en streng
   for (int i = 0; i < length; i++) {
     //Serial.print((char)message[i]);
     messageTemp += (char)message[i];
   }
-  //Serial.println(String(topic) + "," + String(messageTemp));
-
-  // Feel free to add more if statements to control more GPIOs with MQTT
-
-  // If a message is received on the topic esp32/output, you check if the message is either "on" or "off".
-  // Changes the output state according to the message
 
 
+  // Henter idealtid fra node red og sender det til Zumo
   if (topic == "idealTid")
   {
     int b = messageTemp.length();
@@ -153,6 +158,7 @@ void callback(String topic, byte* message, unsigned int length) {
     }
   }
 
+  // Henter linjefølgertype og sender det til Zumo
   else if (topic = "linjeFolger")
   {
     if (messageTemp == "Avslått" || messageTemp == "Normal" || messageTemp == "Idealtid" || messageTemp == "Bestetid")
@@ -163,32 +169,34 @@ void callback(String topic, byte* message, unsigned int length) {
     }
   }
 
+  // Sjekker om NodeRed spør om saldo og sier i fra til Zumo
   else if (topic == "sporOmSaldo2")
   {
     // motta hva nå enn saldoen er
 
     Serial.println(String(topic) + "," + String(messageTemp));
   }
+  // Sjekker om zumoen har passert målstrek og sier i fra til zumo
   else if (topic == "Ny_runde")
   {
     Serial.println(String(topic) + "," + String(messageTemp));
   }
+  // Henter avviket fra idealtid og sender det til Zumo
   else if (topic == "idealTidsAvvik")
   {
     Serial.println(String(topic) + "," + String(messageTemp));
   }
-  else if (topic == "idealTid")
-  {
-    Serial.println(String(topic) + "," + String(messageTemp));
-  }
+  // Sier i fra til Zumo at lading har stoppet
   else if (topic == "ladingStoppet")
   {
     Serial.println(String(topic) + "," + String(messageTemp));
   }
+  // Sier i fra til zumo hva batterinivået er
   else if (topic == "batteriNivaa")
   {
     Serial.println(String(topic) + "," + String(messageTemp));
   }
+  //  Sier i fra at stopp er mottatt
   else if (topic == "zumoStopConfirmed")
   {
     Serial.println(String(topic) + "," + String(messageTemp));
@@ -197,6 +205,7 @@ void callback(String topic, byte* message, unsigned int length) {
 }
 
 
+// Funksjon som kobler til MQTT og abbonerer på flere topics
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
@@ -230,16 +239,14 @@ void reconnect() {
     }
 
     else {
-      /*Serial.print("failed, rc=");
-        Serial.print(client.state());
-        Serial.println(" try again in 5 seconds");*/
-      // Wait 5 seconds before retrying
+    // Venter 5 sekund før den prøver å koble til igjen
       delay(5000);
     }
   }
 }
 
 
+// Funksjon som henter ut verdier fra en streng separert av et gitt tegn
 String getValue(String data, char separator, int index)
 {
   int found = 0;
@@ -256,11 +263,3 @@ String getValue(String data, char separator, int index)
 
   return found > index ? data.substring(strengIndex[0], strengIndex[1]) : "";
 }
-
-
-
-
-
-
-
-
