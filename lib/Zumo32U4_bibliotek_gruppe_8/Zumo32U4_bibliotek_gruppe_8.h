@@ -57,7 +57,6 @@ class Zumo32U4_bibliotek_gruppe_8{
     void checkSerial();
     void sendSerial();
     void getState();
-    void setState(int state);
     String getSerialValue(String serialString, char seperator, int index);
     bool getZumoStopConfirmed();
     void preemptiveLookForCrossroad(int position, int prevPosition);
@@ -90,8 +89,6 @@ class Zumo32U4_bibliotek_gruppe_8{
 
     float currentCapacity;
 
-    int state;
-    String prevStateName;
     String serialString;
   
     int twoToTenCounter;

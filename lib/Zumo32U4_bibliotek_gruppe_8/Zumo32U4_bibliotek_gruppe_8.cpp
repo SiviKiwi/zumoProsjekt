@@ -5,12 +5,18 @@
  */
 
 #include <Arduino.h>
+// Importerer vårt lokale bibliotek
 #include "Zumo32U4_bibliotek_gruppe_8.h"
+// Importerer bibliotekene som kreves av Zumo
 #include <Wire.h>
 #include "Zumo32U4.h"
+// Importerer EEPROM form lagring av verdier når Zumo er slått av
 #include <EEPROM.h>
 
-
+/*
+** Definerer konstruktoren til klassen. Den tar inn metodene
+** for styring av Zumo-en som parametere.
+*/
 Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
     Zumo32U4LineSensors lineSensors,
     Zumo32U4Encoders encoders,
@@ -22,6 +28,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
     Zumo32U4LCD display)
 {
 
+  // Setter metodene fra parameterene til globale variabler i klassen.
   this->lineSensors = lineSensors;
   this->encoders = encoders;
   this->motors = motors;
@@ -33,38 +40,47 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
 
   this->lineSensorValues[5];
 
-  this->state = 0;
-  this->prevStateName = "";
+  // Setter variabel som som lagrer strengen som skal sendes til ESP32
   this->serialString = "";
 
+  // Hvor mange mAh som er igjen på bilen.
   this->currentCapacity = 1200.0 * 3600;
 
+  // Variabler for timing av display
   this->twoToTenCounter = 0;
   this->tenAchieved = false;
   this->lastTimeGetSpeed = 0;
   this->start_time_one_sec_display = 0;
-
-  this->SOSmode = false;
-  this->SOSmodeOneTimeOnly = false;
-
-  this->prevDist = 0;
-  this->dist = 0;
-  this->speed = 0;
-
   this->sekstiSekTimerFor = 0;
   this->sekstiSekTimerEtter = 0;
   this->sekstiSekTimer = 0;
 
+  // Variabler som viser gjennomsnittshastighet og distanse for visning på display.
   this->sekstiSekMaksHastighet = 0;
   this->gjennomsnittsHastighet = 0;
   this->sekstiSekunderDist = 0;
   this->prevSekstiSekunderDist = 0;
+  this->chargingCyclesPrev = 0;
+  this->sekstiSekMaksHastighetPrev = 0;
+  this->gjennomsnittsHastighetPrev = 0;
+
+  // Variabler som forteller om Zumo er i sos-lading eller ikke
+  this->SOSmode = false;
+  this->SOSmodeOneTimeOnly = false;
+
+  // Variabler for hastighet og distanse kjørt
+  this->prevDist = 0;
+  this->dist = 0;
+  this->speed = 0;
 
   this->tid70 = 0;
   this->tid70Etter = 0;
   this->tid70Differensial = 0;
-  this->maksHastighet = 400; // NB: husk å endre denne verdien til faktisk makshastighet.
 
+  // Zumo-ens maks hastighet, kan være mellom 0-400
+  this->maksHastighet = 400;
+
+  // Variabler for batteriovervåkning
   this->chargingCycles = 0;
   this->StateOfChargeBelow5 = 0;
   this->askForChargingState = false;
@@ -73,36 +89,46 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->absContinueChargingDisplay = false;
   this->everyTenSecondsDisplayState = false;
   this->batteryLevelState = false;
+  this->tid70DifferensialPrev = 0;
+  this->StateOfChargeBelow5Prev = 0;
+  // Timing for batteriadvarsler
   this->batteryLevelWarningLedTimer1 = 0;
   this->batteryLevelWarningLedTimer2 = 0;
   this->batteryLevelWarningTimer = 0;
   this->batteryLevelWarningOne = false;
 
+  // Variabler som holder styr på status til LED-lys
   this->ledYellow1State1 = false;
   this->ledYellow1State2 = false;
   this->ledYellow0State2 = false;
   this->ledYellow1Nr2State2 = false;
   this->ledYellow0Nr2State2 = false;
 
+  // Timing for display mens zumo lader.
   this->chargingDisplayTimer = 0;
   this->continueChargingDisplayPrev = false;
 
+  // Batterihelse i prosent
   this->batteryHealth = 100;
+  // Ved level_1 må batteriet på service
   this->level_1 = false;
+  // Ved level_0 må batteriet byttes
   this->level_0 = false;
 
-  this->tid70DifferensialPrev = 0;
-  this->chargingCyclesPrev = 0;
-  this->sekstiSekMaksHastighetPrev = 0;
-  this->gjennomsnittsHastighetPrev = 0;
-  this->StateOfChargeBelow5Prev = 0;
 
+  // BileierID som sendes til ladestatjon
   this->bileierID = "Gruppe 8";
+  // Om zumo har stoppet eller ikke
   this->zumoStopConfirmed = false;
+  // Om lading er ferdig eller ikke
   this->ladingStoppet = false;
+  // om Zumo har passert en "lysport" og startet en ny runde.
   this->nyRunde = "0";
+  // Linjeføkger-state, kan være normal, idealtid, beste tid eller avslått
   this->linjeFolger = "Normal";
+  // Hva idealtiden er
   this->idealTid = 0;
+  // Variabler for kontroll av kjøring for å komme nærmest mulig idealtid
   this->forrigeAvvik = 0;
   this->idealtidForrigeAvvik = 0;
   this->idealRundetidStart = 0;
@@ -113,19 +139,23 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->timesTrackRun = 0;
   this->currentRoundTime = 0;
 
+
   this->fluxingCountSinceCrossroadLeft = 0;
   this->fluxingCountSinceCrossroadRight = 0;
   this->fluxingAverageCountCrossroad = 0;
   this->fluxingTimeBeforeCrossroad = 0;
 
+  // Variabel for å overvåke hvor lenge det er siden zumo mista linja
   this->timeSinceRoadloss = 0;
   this->timeSinceRoadlossNotSet = true;
 
+  // Teller distanse siden zumo møtte på et kryss
   this->countSinceCrossroadLeft = 0;
   this->countSinceCrossroadRight = 0;
   this->averageCountCrossroad = 0;
   this->timeBeforeCrossroad = 0;
 
+  // Variabler som brukes til å oppdage et kryss
   this->crossroadPassed = false;
   this->adjustToCrossroadTimer = 0;
   this->reverseLinefollower = false;
@@ -133,6 +163,7 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->sideroad = 2000;
   this->firstTimeSideroadFoundStopTimer = true;
 
+  // Variabler som lagrer beste rundetid
   this->rundetid = 0;
   this->rundetidStart = 0;
   this->rundetidSlutt = 0;
@@ -140,20 +171,11 @@ Zumo32U4_bibliotek_gruppe_8::Zumo32U4_bibliotek_gruppe_8(
   this->antall_runder_counter = 0;
 }
 
-void Zumo32U4_bibliotek_gruppe_8::checkSerial()
-{
-  if (Serial1.available() > 0)
-  {
-    // TODO: Kanskje sjekke om strengen er tom.             // Vi trenger ikke den her lenger.
-    serialString = Serial1.readString();
-    // Serial1.flush(); //TODO: Kansje vi ma bruke dette?
-  }
-}
-
-void Zumo32U4_bibliotek_gruppe_8::sendSerial()
-{
   /*
-  Sendes:
+  Funksjon som sender en serielverdi til ESP32 koblet inn i zumo.
+  Funksjonen bruker concat til å legge sammen verdiene til en lang
+  streng som sendes over serielkommunikasjon
+  Funksjonen sender verdiene:
   Bileierid
   zumoAskforCharging
   CurrentCapacity
@@ -162,9 +184,9 @@ void Zumo32U4_bibliotek_gruppe_8::sendSerial()
   batteryHealth
   sporOmSaldo
   sendSaldo
-
-
   */
+void Zumo32U4_bibliotek_gruppe_8::sendSerial()
+{
   String sendString = "";
   sendString.concat("BileierID;");
   sendString.concat(getBileierID());
@@ -179,26 +201,24 @@ void Zumo32U4_bibliotek_gruppe_8::sendSerial()
   }
 
   sendString.concat(";batteriNivaa;");
-  sendString.concat(getBatteryLevel()); // * (100/(1200 * 3600))
+  sendString.concat(getBatteryLevel());
   sendString.concat(";speed;");
   sendString.concat(getSpeed());
   sendString.concat(";distance;");
   sendString.concat(getDistance());
   sendString.concat(";batteryHealth;");
   sendString.concat(getBatteryHealth());
-  sendString.concat(";sporOmSaldo;"); // TODO: Her må det vurderes om lading fra bilen skal kunne trekke fra kontoen.
-  sendString.concat("");              // TODO: Det vil komplisere koden betraktelig, siden man kan ikke sende saldo,
-  sendString.concat(";sendSaldo;");   // TODO: med mindre man har hentet inn saldoen først.
+  sendString.concat(";sporOmSaldo;");
+  sendString.concat("");
+  sendString.concat(";sendSaldo;");
   sendString.concat("");
 
   Serial1.println(sendString);
 }
 
-void Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en void?
-{
-
   /*
-  mottas:
+  Funksjon som leser serielkommunikasjon fra ESP32 og bruker det til å sette "state" for zumo-en,
+  Verdiene den mottar fra ESP32-en er:
   zumoStopConfirm
   ladingStoppet
   batteriNivaSend
@@ -208,31 +228,34 @@ void Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en v
   sporOmSaldo2
   linjeFolger
   */
+void Zumo32U4_bibliotek_gruppe_8::getState()
+{
 
-  // TODO: Kanskje sjekke at det ikke er lik prevKommando
 
+  // Sjekker om det er data i zumo-ens "buffer"
   if (Serial1.available() > 0)
   {
-    // TODO: Kanskje sjekke om strengen er tom.  ------- og definere variabelen som streng/int
     String serialStreng = Serial1.readString();
 
+    // Henter ut den første verdien i den kommasepparerte strengen
     String kommando = getSerialValue(serialStreng, ',', 0);
-    // Serial1.flush(); //TODO: Kansje vi ma bruke dette?
 
     if (kommando == "zumoStopConfirmed")
     {
-      zumoStopConfirmed = true; // WX79 TODO å definere variabelen. Skal bestemme linjefølger
+      zumoStopConfirmed = true;
     }
     else if (kommando == "ladingStoppet")
     {
-      ladingStoppet = true; // WX79 HUSK å definere variabelen.
+      ladingStoppet = true;
     }
     else if (kommando == "batteriNivaaSend")
     {
-      currentCapacity = ((getSerialValue(serialStreng, ',', 1).toInt() * 0.01) * (1200 * 3600)); // Dette gjør om fra prosent til faktisk kapasitet.
+      // Dette gjør om fra prosent til faktisk kapasitet.
+      currentCapacity = ((getSerialValue(serialStreng, ',', 1).toInt() * 0.01) * (1200 * 3600));
     }
     else if (kommando == "batteryHealth")
     {
+      // Henter ut oppdatert batterihelse fra avlest streng
       batteryHealth = getSerialValue(serialStreng, ',', 1).toInt();
     }
     else if (kommando == "Ny_runde")
@@ -254,16 +277,9 @@ void Zumo32U4_bibliotek_gruppe_8::getState() // Burde ikke denne endres til en v
     {
       idealTid = getSerialValue(serialStreng, ',', 1).toInt(); // TODO definere variabelen WX79
     }
-    //return state;
-    //// Setter state variabelen
   }
 }
 
-void Zumo32U4_bibliotek_gruppe_8::setState(int state)
-{
-
-  this->state = state;
-}
 
 bool Zumo32U4_bibliotek_gruppe_8::getZumoStopConfirmed()
 {
@@ -300,14 +316,16 @@ void Zumo32U4_bibliotek_gruppe_8::setBatteryHealth(int batteryHealth)
   this->batteryHealth = batteryHealth;
 }
 
+// Setter batteriets kapasitet. Hvis zumoen reverserer lades batteriet og
+// Zumo er i "SOS-modus" lader den 10 ganger så fort
 float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
 {
+  // Hvis zumo rygger
   if (speed < 0 )
   {
     chargingCycles++;
   }
 
-  //---------------------------------------------------------------
   // SOS modus for 10x lading av batteri
   if ((buttonB.isPressed()) && (SOSmodeOneTimeOnly == false))
   {
@@ -328,6 +346,7 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
     }
   }
 
+  // Hvis batteriet er fullt
   if (currentCapacity > 864000)
   {
     SOSmode = false;
@@ -348,6 +367,7 @@ float Zumo32U4_bibliotek_gruppe_8::setCapacity(float speed, unsigned long ms)
   return currentCapacity;
 }
 
+// Funksjon for diplay timing
 void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
 {
   twoToTenCounter = twoToTenCounter + 1;
@@ -357,11 +377,11 @@ void Zumo32U4_bibliotek_gruppe_8::vectorOverflow()
   }
 }
 
+// Funksjon for timing for å på vise batteristatus på skjermen i 1 sekund
 void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
 {
   if (tenAchieved == true)
   {
-    // everyTenSecondsDisplay(); Ikke nødvendig siden den er flyttet til egen skjermvelger
 
     if (everyTenSecondsDisplayState == false)
     {
@@ -378,6 +398,7 @@ void Zumo32U4_bibliotek_gruppe_8::oneSecBatState()
   }
 }
 
+// Timer for å vise hastighet og distanse på display hvert 60s
 void Zumo32U4_bibliotek_gruppe_8::findSekstiSekTid(float speed)
 {
 
@@ -412,14 +433,15 @@ void Zumo32U4_bibliotek_gruppe_8::speedometerEvery60(float speed)
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     if (speed > sekstiSekMaksHastighet)
-    {                                 // Her henter jeg inn makshastigheten som skal vises etter seksti sekunder.
-      sekstiSekMaksHastighet = speed; // VIKTIG
+    {
+      // Her hentes makshastigheten inn som skal vises etter seksti sekunder.
+      sekstiSekMaksHastighet = speed;
     }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    gjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist) / 60; // VIKTIG Denne er ikke ferdig!!!
-    prevSekstiSekunderDist = sekstiSekunderDist;                                 // sekstiSekunderDist trenger en verdi.
+    gjennomsnittsHastighet = (sekstiSekunderDist - prevSekstiSekunderDist) / 60;
+    prevSekstiSekunderDist = sekstiSekunderDist;
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -431,7 +453,7 @@ void Zumo32U4_bibliotek_gruppe_8::speedometerEvery60(float speed)
     if (speed < sekstiSekMaksHastighet)
     {
       tid70Etter = millis();
-      tid70Differensial = tid70Etter - tid70; // VIKTIG
+      tid70Differensial = tid70Etter - tid70;
     }
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -440,7 +462,8 @@ void Zumo32U4_bibliotek_gruppe_8::speedometerEvery60(float speed)
   }
 }
 
-void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist() // Denne funksjonen erstatter distanse koden.
+// Oppdaterer utregningen av distanse kjørt og hvert 100ms oppdaterer den hastighet.
+void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist()
 {
   int16_t countLeft = encoders.getCountsLeft();
   int16_t countRight = encoders.getCountsRight();
@@ -450,8 +473,10 @@ void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist() // Denne funksjonen erstatte
   float rotasjoner = (float)avgCount / (75.81 * 12.0);
   dist = rotasjoner * 12.2522;
 
+  // Hvis det er gått 100ms siden fart ble regnet ut gjøres det på nytt
   if (millis() - lastTimeGetSpeed > 100)
   {
+    // dist - prevdist blir distansen som er kjørt siden sidte utrekning
     speed = (dist - prevDist) / ((float)(millis() - lastTimeGetSpeed) / 1000);
 
     prevDist = dist;
@@ -459,9 +484,11 @@ void Zumo32U4_bibliotek_gruppe_8::updateSpeedDist() // Denne funksjonen erstatte
   }
 }
 
+// Sjekker om bilen trenger ladning, eller om den mannuelt blir bedt om å lade.
 void Zumo32U4_bibliotek_gruppe_8::askForCharging()
 {
-  if ((buttonA.isPressed() == true && buttonC.isPressed() == true) || askForChargingState == true || (batteryLevel <= 10)) // WX79
+
+  if ((buttonA.isPressed() == true && buttonC.isPressed() == true) || askForChargingState == true || (batteryLevel <= 10))
   {
     // sett swith variabel til casen med funksjonen actualCharging() i.
     askForChargingState = true;
@@ -469,6 +496,7 @@ void Zumo32U4_bibliotek_gruppe_8::askForCharging()
   }
 }
 
+// Manuell lading med knappetrykk
 void Zumo32U4_bibliotek_gruppe_8::actualCharging()
 {
 
@@ -484,7 +512,8 @@ void Zumo32U4_bibliotek_gruppe_8::actualCharging()
     // hvis kontoen er tom, så må ladingen avsluttes(askForChargingState)
   }
 
-  if (((buttonA.isPressed() == true) && (buttonC.isPressed() == true)) || (ladingStoppet == true)) // Jeg har gjort det slik at WX79
+  // Hvis ladinf stoppes, enten manuelt eller fra ESP32 melding
+  if (((buttonA.isPressed() == true) && (buttonC.isPressed() == true)) || (ladingStoppet == true))
   {
     askForChargingState = false;
     continueChargingDisplay = true;
@@ -494,6 +523,7 @@ void Zumo32U4_bibliotek_gruppe_8::actualCharging()
   }
 }
 
+// Advarer om lite strøm på zumo. Setter på gult lys og piper en buzzer.
 void Zumo32U4_bibliotek_gruppe_8::batteryLevelWarning()
 {
   if ((batteryLevel <= 10) && (batteryLevel > 5) && batteryLevelWarningOne == false)
@@ -581,7 +611,11 @@ void Zumo32U4_bibliotek_gruppe_8::batteryLevelWarning()
   }
 }
 
-void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man lader og 15 sek etterpå
+// Funksjon for å vise batteristatus mens Zumo lader
+// den kjører mens man lader og 15 sek etterpå
+// Funksjonen er ikke komplett siden det viste seg at vi ikke kunne
+// bruke display sammtidig som ESP32
+void Zumo32U4_bibliotek_gruppe_8::chargingDisplay()
 {
   // Her må vi displaye de rette variablene.
 
@@ -589,7 +623,7 @@ void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man 
 
   display.gotoXY(0, 0);
   display.print("Bat: ");
-  display.print(getBatteryLevel()); // TODO trenger vi getBatteryLevel sivert?
+  display.print(getBatteryLevel());
   display.print("%");
 
   display.gotoXY(0, 1);
@@ -614,7 +648,9 @@ void Zumo32U4_bibliotek_gruppe_8::chargingDisplay() // den som kjører mens man 
   }
 }
 
-void Zumo32U4_bibliotek_gruppe_8::runningDisplay() // Den som skal kjøres til vanlig
+// Displayfunksjon som kjører under vanlig kjøring på bane
+// den viser distanse kjørt og hastighet til Zumo
+void Zumo32U4_bibliotek_gruppe_8::runningDisplay()
 {
 
   display.clear();
@@ -629,8 +665,10 @@ void Zumo32U4_bibliotek_gruppe_8::runningDisplay() // Den som skal kjøres til v
   display.print("cm");
 }
 
-void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay() // Den som skal kjøres hvert tiende sekund på interrupt
-  // Stanser Zumo-bil og venter 1 sekund
+// Displayfunksjon skal kjøres hvert tiende sekund på interrupt
+// Den viser batteristatus og hvor hange ladesykluser zumoen har hatt
+// Funksjonen er ikke komplett siden vi ikke kan bruke display med ESP32
+void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay()
 {
 
   display.scrollDisplayLeft();
@@ -650,9 +688,11 @@ void Zumo32U4_bibliotek_gruppe_8::everyTenSecondsDisplay() // Den som skal kjør
   display.print("p");
 }
 
+// Funksjon som bytter mellom hva som vises på display
+// funksjonen er ikke komplett
 void Zumo32U4_bibliotek_gruppe_8::displayFunctions()
 {
-  if (tenAchieved == true) // TODO Trenger vi getTenAchieved Sivert?
+  if (tenAchieved == true) // TODO Trenger vi getTenAchieved?
   {
     everyTenSecondsDisplay();
   }
@@ -737,20 +777,16 @@ void Zumo32U4_bibliotek_gruppe_8::batteryHealthAlgorithm()
   // Når det gjelder utregningen av batteryhealthfunksjonen så må vi nesten bare tilpasse konstantene når det blir nødving.
 }
 
+// oppdaterer batterihelse og lagrer verdien i EEPROM
 void Zumo32U4_bibliotek_gruppe_8::updateBatteryHealth()
 {
 
   batteryHealthAlgorithm();
-
-  // if (batteryHealth != last_EEPROM_batteryHealth)
-  //{
   unsigned long time_now_batteryHealth = millis();
   if ((millis() - time_now_batteryHealth) > 1000)
   {
-    // EEPROM.write(0, batteryHealth)
     EEPROM.put(0, batteryHealth);
     EEPROM.put(1, 1);
-    // last_EEPROM_batteryHealth = batteryHealth;
   }
 }
 // chargingCycles
